@@ -1,0 +1,161 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run daily at 9 AM UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # CodeQL analysis for JavaScript/TypeScript
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
+
+      - name: Build project
+        run: |
+          npm ci
+          npm run build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # Content validation security scan
+  content-scan:
+    name: Content Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run content security scan
+        id: content-scan
+        shell: bash
+        run: |
+          echo "🔒 Scanning content for security patterns..."
+          
+          # Create scan results directory
+          mkdir -p scan-results
+          
+          # Run validation on all content
+          npm run validate -- --security-only --output scan-results/security-report.json || true
+          
+          # Check for critical issues
+          if [ -f scan-results/security-report.json ]; then
+            CRITICAL_COUNT=$(jq '.issues[] | select(.severity == "critical") | length' scan-results/security-report.json | wc -l || echo "0")
+            HIGH_COUNT=$(jq '.issues[] | select(.severity == "high") | length' scan-results/security-report.json | wc -l || echo "0")
+            
+            echo "critical_count=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
+            echo "high_count=$HIGH_COUNT" >> $GITHUB_OUTPUT
+            
+            if [ "$CRITICAL_COUNT" -gt 0 ] || [ "$HIGH_COUNT" -gt 0 ]; then
+              echo "SCAN_FAILED=true" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Upload scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: scan-results/
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = '## 🔒 Content Security Scan Results\n\n';
+            
+            const failed = process.env.SCAN_FAILED === 'true';
+            if (failed) {
+              report += '### ❌ Security Issues Found\n\n';
+              report += 'Critical security patterns were detected in the content. Please review the scan results.\n';
+            } else {
+              report += '### ✅ Security Scan Passed\n\n';
+              report += 'No critical security issues found in the content.\n';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+
+      - name: Fail if critical issues found
+        if: env.SCAN_FAILED == 'true'
+        run: |
+          echo "❌ Security scan found critical issues. Please review the report."
+          exit 1
+
+  # Dependency vulnerability scan
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: |
+          npm audit --production --audit-level=moderate || echo "AUDIT_FAILED=true" >> $GITHUB_ENV
+
+      - name: Upload audit report
+        if: always()
+        run: |
+          npm audit --json > npm-audit.json || true
+          echo "### NPM Audit Report" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+          cat npm-audit.json >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail if vulnerabilities found
+        if: env.AUDIT_FAILED == 'true'
+        run: |
+          echo "❌ npm audit found vulnerabilities. Please run 'npm audit fix' or review manually."
+          exit 1

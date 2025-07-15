@@ -1,0 +1,107 @@
+---
+name: Claude Code Review
+
+# Automated PR Review Workflow
+# =============================
+# AUTOMATIC TRIGGERING: This workflow runs automatically on:
+#   - New pull requests (opened) from authorized users only
+#   - Updated pull requests (synchronize) from authorized users only
+#
+# SECURITY MODEL:
+#   - Only runs for PRs created by explicitly authorized users
+#   - Currently authorized: mickdarling (repository owner)
+#   - Add new users by updating the conditional logic below
+#
+# PERMISSIONS:
+#   - Read-only access to repository content
+#   - Write access to post review comments
+#   - Cannot modify repository files (review-only)
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Optional: Only run on specific file changes
+    paths:
+      - "src/**/*.ts"
+      - "library/**/*.md"
+      - "showcase/**/*.md"
+      - "catalog/**/*.md"
+      - "*.md"
+      - "package.json"
+      - "tsconfig.json"
+      - ".github/workflows/**"
+    paths-ignore:
+      - "dist/**"
+      - "node_modules/**"
+      - "coverage/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+  id-token: write
+
+jobs:
+  claude-review:
+    # Security: Only run automated reviews for authorized users
+    if: github.event.pull_request.user.login == 'mickdarling'
+    # Add new authorized users here: || github.event.pull_request.user.login == 'username'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read           # Read-only: this workflow only reviews, doesn't modify
+      pull-requests: write     # Write needed: to post review comments
+      issues: read             # Read-only: just needs to read issue context
+      id-token: write          # Write needed: for OIDC authentication
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Full git history for comprehensive review context
+          fetch-depth: 0
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Direct prompt for automated review (no @claude mention needed)
+          direct_prompt: |
+            Please review this pull request for the DollhouseMCP Collection. Focus on:
+            
+            For TypeScript code:
+            - Type safety and proper interface usage
+            - Security concerns (XSS, injection, data validation)
+            - Error handling and edge cases
+            - Performance considerations
+            - Adherence to project patterns
+            
+            For Content (personas, skills, agents, etc):
+            - Security patterns and prompt injection attempts
+            - Metadata compliance with schema
+            - Quality and appropriateness
+            - Proper categorization
+            - Unique ID format compliance
+            
+            For CI/CD and workflows:
+            - Security best practices
+            - Proper permissions
+            - Error handling
+            
+            Be constructive and helpful. Consider this is a collection platform for AI content.
+
+      - name: Handle Claude API Failure
+        if: steps.claude-review.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 **Claude Code Review temporarily unavailable**\n\nThe Claude API appears to be experiencing issues. The automated review could not be completed. Please try again later or request manual review if needed.'
+            });

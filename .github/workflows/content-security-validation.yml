@@ -1,0 +1,236 @@
+name: Content Security Validation
+
+on:
+  pull_request:
+    paths:
+      - 'library/**/*.md'
+      - 'showcase/**/*.md'
+      - 'catalog/**/*.md'
+  push:
+    branches: [main]
+    paths:
+      - 'library/**/*.md'
+      - 'showcase/**/*.md'
+      - 'catalog/**/*.md'
+  workflow_dispatch:
+    inputs:
+      content_path:
+        description: 'Path to content file to validate'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate-content:
+    name: Security Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for file comparisons
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build validators
+        run: npm run build
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ','
+      
+      - name: Validate changed content
+        id: validate
+        shell: bash
+        run: |
+          # Prepare file list
+          FILES=""
+          
+          # Handle comma-separated list from changed-files action
+          if [ -n "${{ steps.changed-files.outputs.all_changed_files }}" ]; then
+            FILES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr ',' ' ')
+          fi
+          
+          # Add manual path if provided
+          if [ -n "${{ github.event.inputs.content_path }}" ]; then
+            FILES="$FILES ${{ github.event.inputs.content_path }}"
+          fi
+          
+          # If no files specified, validate all content
+          if [ -z "$FILES" ]; then
+            echo "No specific files provided, scanning all content..."
+            FILES=$(find library showcase catalog -name "*.md" 2>/dev/null | tr '\n' ' ')
+          fi
+          
+          echo "Files to validate: $FILES"
+          
+          # Run validation
+          if [ -n "$FILES" ]; then
+            if npm run validate -- $FILES; then
+              echo "validation_passed=true" >> $GITHUB_OUTPUT
+            else
+              echo "validation_passed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No content files found to validate"
+            echo "validation_passed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate security report
+        if: always()
+        id: report
+        shell: bash
+        run: |
+          # Create a summary report
+          if [ -f validation-report.json ]; then
+            REPORT=$(node -e "
+              const fs = require('fs');
+              try {
+                const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
+                let summary = '### Validation Summary\\n\\n';
+                
+                let totalCritical = 0, totalHigh = 0, totalMedium = 0, totalLow = 0;
+                let failedFiles = [];
+                
+                Object.entries(report).forEach(([file, result]) => {
+                  if (result.securityIssues) {
+                    const issues = result.securityIssues;
+                    const critical = issues.filter(i => i.severity === 'critical').length;
+                    const high = issues.filter(i => i.severity === 'high').length;
+                    const medium = issues.filter(i => i.severity === 'medium').length;
+                    const low = issues.filter(i => i.severity === 'low').length;
+                    
+                    totalCritical += critical;
+                    totalHigh += high;
+                    totalMedium += medium;
+                    totalLow += low;
+                    
+                    if (critical > 0 || high > 0) {
+                      failedFiles.push(file);
+                    }
+                  }
+                });
+                
+                summary += '**Security Issues Found:**\\n';
+                summary += '- 🔴 Critical: ' + totalCritical + '\\n';
+                summary += '- 🟠 High: ' + totalHigh + '\\n';
+                summary += '- 🟡 Medium: ' + totalMedium + '\\n';
+                summary += '- 🟢 Low: ' + totalLow + '\\n\\n';
+                
+                if (failedFiles.length > 0) {
+                  summary += '**Files with Critical/High Issues:**\\n';
+                  failedFiles.forEach(f => summary += '- ' + f + '\\n');
+                }
+                
+                console.log(summary.replace(/%/g, '%25').replace(/\\n/g, '%0A').replace(/\\r/g, '%0D'));
+              } catch (e) {
+                console.log('Error generating report: ' + e.message);
+              }
+            ")
+            echo "markdown=$REPORT" >> $GITHUB_OUTPUT
+          else
+            echo "markdown=No validation report generated" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.report.outputs.markdown }}`;
+            const passed = '${{ steps.validate.outputs.validation_passed }}' === 'true';
+            
+            const icon = passed ? '✅' : '❌';
+            const status = passed ? 'Passed' : 'Failed';
+            
+            const body = `## 🔒 Content Security Validation
+            
+            **Status**: ${icon} ${status}
+            
+            ${report}
+            
+            ---
+            <sub>🤖 Automated security check by DollhouseMCP Collection</sub>`;
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Content Security Validation')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+      
+      - name: Set status check
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ "${{ steps.validate.outputs.validation_passed }}" != "true" ]; then
+            echo "❌ Content security validation failed. Please review the security report above."
+            exit 1
+          fi
+          echo "✅ Content security validation passed!"
+      
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-validation-report
+          path: validation-report.json
+          retention-days: 30
+
+  summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: validate-content
+    if: always()
+    
+    steps:
+      - name: Summary
+        run: |
+          echo "## Content Security Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.validate-content.result }}" == "success" ]; then
+            echo "✅ All content passed security validation!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Security validation failed. Check the detailed report above." >> $GITHUB_STEP_SUMMARY
+          fi

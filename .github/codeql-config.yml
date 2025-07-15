@@ -1,0 +1,40 @@
+# CodeQL configuration for DollhouseMCP Collection
+
+name: "DollhouseMCP Collection CodeQL Config"
+
+# Paths to include in analysis
+paths:
+  - src
+  - library
+  - showcase
+  - catalog
+
+# Paths to exclude from analysis
+paths-ignore:
+  - node_modules
+  - dist
+  - coverage
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+
+# Additional queries to run
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+
+# Language-specific configuration
+languages:
+  javascript:
+    # Include TypeScript files
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"]
+    
+    # Security focus areas
+    security_severity: "high"
+    
+    # Custom query suites
+    query-filters:
+      - include:
+          tags: 
+            - "security"
+            - "correctness"
+            - "maintainability"
