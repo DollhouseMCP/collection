@@ -42,12 +42,13 @@ name: Test Persona
 description: A test persona for unit testing validation logic
 type: persona
 version: 1.0.0
+category: educational
 tags:
   - test
   - validation
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 ---
 
 # Test Persona
@@ -70,6 +71,10 @@ This is a valid test persona with proper structure and content.
       writeFileSync(testFile, validPersona);
       
       const result = await validator.validateContent(testFile);
+      
+      if (!result.passed) {
+        console.log('Validation failed with issues:', JSON.stringify(result.issues, null, 2));
+      }
       
       expect(result.passed).toBe(true);
       expect(result.issues).toHaveLength(0);
@@ -108,11 +113,12 @@ name: Malicious Persona
 description: A persona with security issues
 type: persona
 version: 1.0.0
+category: professional
 tags:
   - test
 author: Malicious Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 ---
 
 # Malicious Persona
@@ -186,10 +192,11 @@ name: Long Content
 description: Content that exceeds maximum length
 type: persona
 version: 1.0.0
+category: personal
 tags: []
 author: Test
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 ---
 
 `;
@@ -214,10 +221,11 @@ name: Placeholder Persona
 description: Lorem ipsum dolor sit amet
 type: persona
 version: 1.0.0
+category: creative
 tags: []
 author: Test
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 ---
 
 # Lorem Ipsum
@@ -250,10 +258,11 @@ name: Valid Content
 description: This is valid content
 type: persona
 version: 1.0.0
+category: professional
 tags: []
 author: Test
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 ---
 
 Valid content here.`);
