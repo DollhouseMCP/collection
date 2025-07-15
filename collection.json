@@ -1,0 +1,159 @@
+{
+  "collection": {
+    "name": "DollhouseMCP Collection",
+    "description": "The official collection of AI content for enhanced Claude interactions - personas, skills, agents, prompts, templates, tools, and ensembles",
+    "version": "1.0.0",
+    "created_date": "2025-07-15",
+    "repository": "https://github.com/DollhouseMCP/collection",
+    "main_project": "https://github.com/DollhouseMCP/mcp-server",
+    "website": "https://dollhousemcp.com",
+    "license": "Dual: AGPL-3.0 (platform) / Custom (content)",
+    "maintainer": {
+      "name": "DollhouseMCP Team",
+      "email": "support@dollhousemcp.com",
+      "github": "DollhouseMCP"
+    }
+  },
+  "content_types": {
+    "personas": {
+      "name": "Personas",
+      "description": "AI behavioral profiles and character definitions",
+      "path": "library/personas/",
+      "icon": "🎭",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "skills": {
+      "name": "Skills", 
+      "description": "Functional capabilities and specialized abilities",
+      "path": "library/skills/",
+      "icon": "🛠️",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "agents": {
+      "name": "Agents",
+      "description": "Autonomous AI agents for specific tasks", 
+      "path": "library/agents/",
+      "icon": "🤖",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "prompts": {
+      "name": "Prompts",
+      "description": "Optimized prompt templates and chains",
+      "path": "library/prompts/",
+      "icon": "💬",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "templates": {
+      "name": "Templates",
+      "description": "Document and workflow templates",
+      "path": "library/templates/",
+      "icon": "📄",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "tools": {
+      "name": "Tools",
+      "description": "MCP-compatible tools and utilities",
+      "path": "library/tools/",
+      "icon": "🔧",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "ensembles": {
+      "name": "Ensembles",
+      "description": "Multi-agent collaborative setups",
+      "path": "library/ensembles/",
+      "icon": "👥",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    }
+  },
+  "categories": {
+    "creative": {
+      "name": "Creative",
+      "description": "Writing, art, music, and creative expression",
+      "icon": "🎨",
+      "keywords": ["writing", "storytelling", "art", "music", "creativity", "imagination"]
+    },
+    "professional": {
+      "name": "Professional", 
+      "description": "Business, coding, analysis, and productivity",
+      "icon": "💼",
+      "keywords": ["business", "coding", "analysis", "productivity", "consulting", "development"]
+    },
+    "educational": {
+      "name": "Educational",
+      "description": "Teaching, tutoring, and learning enhancement",
+      "icon": "🎓",
+      "keywords": ["teaching", "tutoring", "learning", "education", "training", "mentoring"]
+    },
+    "gaming": {
+      "name": "Gaming",
+      "description": "RPG, game design, and interactive experiences",
+      "icon": "🎮",
+      "keywords": ["rpg", "gaming", "game design", "dungeons & dragons", "interactive", "roleplay"]
+    },
+    "personal": {
+      "name": "Personal",
+      "description": "Lifestyle, wellness, and personal development",
+      "icon": "🏠",
+      "keywords": ["lifestyle", "wellness", "personal", "habits", "self-improvement", "coaching"]
+    }
+  },
+  "areas": {
+    "library": {
+      "name": "Library",
+      "description": "Free community-contributed content",
+      "access": "public"
+    },
+    "showcase": {
+      "name": "Showcase",
+      "description": "Featured and recommended content",
+      "access": "public"
+    },
+    "catalog": {
+      "name": "Catalog",
+      "description": "Premium curated content",
+      "access": "premium"
+    }
+  },
+  "submission_process": {
+    "methods": ["github_pr", "issue_form", "api"],
+    "review_stages": ["automated_validation", "security_scan", "quality_review", "community_feedback"],
+    "quality_standards": {
+      "required": ["unique_id", "name", "description", "category", "author"],
+      "security": ["no_prompt_injection", "no_data_exfiltration", "no_system_commands"],
+      "quality": ["clear_purpose", "appropriate_content", "tested_functionality"]
+    }
+  },
+  "api_endpoints": {
+    "browse": "/api/browse",
+    "search": "/api/search", 
+    "get": "/api/get",
+    "submit": "/api/submit",
+    "validate": "/api/validate"
+  },
+  "tools_integration": {
+    "mcp_commands": [
+      "browse_collection",
+      "search_collection",
+      "get_collection_item",
+      "validate_content",
+      "submit_content"
+    ]
+  },
+  "licensing": {
+    "platform_license": "AGPL-3.0",
+    "content_license": "Custom - Creator retains ownership",
+    "commercial_use": "Contact licensing@dollhousemcp.com",
+    "attribution_required": true,
+    "revenue_sharing": {
+      "free_content": "Always free",
+      "premium_split": "70% creator / 30% platform"
+    }
+  },
+  "stats": {
+    "total_items": 0,
+    "content_types": 7,
+    "categories": 5,
+    "contributors": 0,
+    "last_updated": "2025-07-15"
+  }
+}

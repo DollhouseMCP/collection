@@ -1,0 +1,74 @@
+{
+  "name": "@dollhousemcp/collection",
+  "version": "1.0.0",
+  "description": "DollhouseMCP Collection - The official collection of AI content including personas, skills, agents, prompts, templates, tools, and ensembles",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist coverage",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration", 
+    "test:security": "jest --testPathPattern=security",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "validate": "npm run lint && npm run test",
+    "validate:content": "node dist/src/cli/validate-content.js",
+    "security:check": "node scripts/security-check.js",
+    "setup": "npm install && npm run build",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DollhouseMCP/collection.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-content",
+    "ai-personas",
+    "ai-skills",
+    "ai-agents", 
+    "claude",
+    "collection",
+    "dollhousemcp"
+  ],
+  "author": "DollhouseMCP Team <support@dollhousemcp.com>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DollhouseMCP/collection/issues"
+  },
+  "homepage": "https://github.com/DollhouseMCP/collection#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.17.14",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
+    "zod": "^3.24.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "library",
+    "LICENSE",
+    "LICENSE-CONTENT", 
+    "README.md"
+  ]
+}
