@@ -43,10 +43,10 @@ jobs:
         id: perf-tests
         run: |
           # Create performance test script
-          cat > perf-test.js << 'EOF'
-          const { performance } = require('perf_hooks');
-          const { ContentValidator } = require('./dist/validators/content-validator.js');
-          const { scanForSecurityPatterns } = require('./dist/validators/security-patterns.js');
+          cat > perf-test.mjs << 'EOF'
+          import { performance } from 'perf_hooks';
+          import { ContentValidator } from './dist/validators/content-validator.js';
+          import { scanForSecurityPatterns } from './dist/validators/security-patterns.js';
           
           async function runBenchmarks() {
             const results = {
@@ -93,7 +93,7 @@ jobs:
           runBenchmarks().catch(console.error);
           EOF
           
-          node perf-test.js > performance-results.json
+          node perf-test.mjs > performance-results.json
 
       - name: Calculate build metrics
         shell: bash
