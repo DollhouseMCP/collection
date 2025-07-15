@@ -44,7 +44,9 @@ permissions:
 jobs:
   claude-review:
     # Security: Only run automated reviews for authorized users
-    if: github.event.pull_request.user.login == 'mickdarling'
+    if: |
+      github.event.pull_request.user.login == 'mickdarling' ||
+      github.event.pull_request.user.login == 'dependabot[bot]'
     # Add new authorized users here: || github.event.pull_request.user.login == 'username'
 
     runs-on: ubuntu-latest
@@ -64,7 +66,7 @@ jobs:
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@v0.1.1
         continue-on-error: true
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
