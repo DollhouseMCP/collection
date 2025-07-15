@@ -7,8 +7,8 @@ on:
     types: [opened, reopened]
 
 permissions:
-  issues: read
-  pull-requests: read
+  issues: write
+  pull-requests: write
   repository-projects: write
 
 jobs:
@@ -19,10 +19,27 @@ jobs:
     steps:
       - name: Add Issue to Project
         uses: actions/add-to-project@v1.0.2
+        continue-on-error: true
         with:
           # Use the organization-level project
           project-url: https://github.com/orgs/DollhouseMCP/projects/1
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT || secrets.GITHUB_TOKEN }}
+          # Note: This requires a PAT with 'project' scope to add to org projects
+          
+      - name: Fallback - Comment if Project Add Fails
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number || context.payload.pull_request.number;
+            if (issueNumber) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: '⚠️ Note: This issue/PR needs to be manually added to the [DollhouseMCP Roadmap](https://github.com/orgs/DollhouseMCP/projects/1) project.\n\nTo enable automatic project tracking, please configure the `ADD_TO_PROJECT_PAT` secret with a PAT that has `project` scope.'
+              });
+            }
           
       - name: Label Repository Source
         if: github.event_name == 'issues'
