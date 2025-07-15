@@ -36,6 +36,8 @@ Content is organized in three main areas:
 
 ### Using with DollhouseMCP
 
+When using the DollhouseMCP server with Claude or another AI assistant:
+
 ```bash
 # Browse all content
 browse_collection
@@ -48,7 +50,14 @@ search_collection "creative writing"
 
 # Get details
 get_collection_item "persona" "creative-writer-pro"
+
+# Create and submit new content (coming soon!)
+create_persona "My Expert Helper" "A specialized assistant for..."
+validate_content "My Expert Helper"
+submit_to_collection "My Expert Helper"
 ```
+
+The MCP server handles all the complexity - just describe what you want to create!
 
 ## 🏗️ Repository Structure
 
@@ -73,8 +82,31 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - Security requirements
 - Review process
 
-### Quick Submission
+### Submission Methods
 
+#### 1. Direct MCP Server Submission (Recommended)
+Soon, you'll be able to contribute directly while chatting with Claude or any AI using the DollhouseMCP server:
+```
+create_content "My Amazing Persona" "persona" "A helpful assistant that..." 
+submit_to_collection "My Amazing Persona"
+```
+The AI will guide you through the process, validate your content, and submit it for review - all within your chat session!
+
+#### 2. Build Your Own Tools
+Our validation system is open source! You can create your own tools to:
+- Bulk import existing personas, prompts, or tools
+- Generate content programmatically
+- Integrate with your workflow
+- Submit PRs automatically
+
+The validation API ensures all content meets quality and security standards:
+```typescript
+import { ContentValidator } from '@dollhousemcp/collection';
+const validator = new ContentValidator();
+const result = await validator.validateContent('my-content.md');
+```
+
+#### 3. Traditional GitHub Flow
 1. Fork the repository
 2. Create your content following our templates
 3. Run validation: `npm run validate`
