@@ -1,0 +1,86 @@
+name: Claude Bot Setup Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly to check configuration
+    - cron: '0 9 * * 1'
+
+permissions:
+  issues: write
+
+jobs:
+  check-claude-setup:
+    name: Check Claude Bot Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check ANTHROPIC_API_KEY
+        id: check-api-key
+        run: |
+          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "has_api_key=true" >> $GITHUB_OUTPUT
+            echo "✅ ANTHROPIC_API_KEY is configured"
+          else
+            echo "has_api_key=false" >> $GITHUB_OUTPUT
+            echo "❌ ANTHROPIC_API_KEY is not configured"
+          fi
+      
+      - name: Create Setup Issue if Needed
+        if: steps.check-api-key.outputs.has_api_key == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Check if setup issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'claude-setup',
+              state: 'open'
+            });
+            
+            if (issues.data.length === 0) {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Setup Claude Bot for PR Reviews',
+                body: `## Claude Bot Setup Required
+                
+The Claude bot is configured but needs an API key to function.
+
+### Setup Steps
+
+1. **Get an Anthropic API Key**
+   - Sign up at [console.anthropic.com](https://console.anthropic.com)
+   - Create a new API key
+   
+2. **Add Secret to Repository**
+   - Go to Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: \`ANTHROPIC_API_KEY\`
+   - Value: Your Anthropic API key
+   
+3. **Verify Setup**
+   - The Claude bot will automatically review new PRs
+   - Look for Claude's comments on PR submissions
+
+### Benefits
+- 🤖 Automated code review
+- 🔒 Security issue detection
+- 📝 Documentation suggestions
+- 🎯 Best practices enforcement
+
+### Current Status
+- ❌ ANTHROPIC_API_KEY not configured
+- ✅ Claude review workflow is ready
+- ✅ Authorized users configured
+
+Once the API key is added, Claude will begin reviewing PRs automatically!`,
+                labels: ['claude-setup', 'documentation', 'priority: high']
+              });
+              
+              console.log('Created Claude setup issue');
+            } else {
+              console.log('Setup issue already exists');
+            }

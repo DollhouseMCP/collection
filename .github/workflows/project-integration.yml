@@ -1,0 +1,108 @@
+name: DollhouseMCP Project Integration
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
+jobs:
+  add-to-project:
+    name: Add to DollhouseMCP Roadmap
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Add Issue to Project
+        uses: actions/add-to-project@v1.0.2
+        continue-on-error: true
+        with:
+          # Use the organization-level project
+          project-url: https://github.com/orgs/DollhouseMCP/projects/1
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT || secrets.GITHUB_TOKEN }}
+          # Note: This requires a PAT with 'project' scope to add to org projects
+          
+      - name: Fallback - Comment if Project Add Fails
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number || context.payload.pull_request.number;
+            if (issueNumber) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: '⚠️ Note: This issue/PR needs to be manually added to the [DollhouseMCP Roadmap](https://github.com/orgs/DollhouseMCP/projects/1) project.\n\nTo enable automatic project tracking, please configure the `ADD_TO_PROJECT_PAT` secret with a PAT that has `project` scope.'
+              });
+            }
+          
+      - name: Label Repository Source
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Add a label to identify this came from the Collection repo
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ['collection-repo']
+              });
+            } catch (error) {
+              console.log('Label might already exist or other error:', error.message);
+            }
+            
+      - name: Add Project Fields
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // This would set custom fields on the project item
+            // Requires GraphQL API and project field IDs
+            console.log('Issue/PR added to DollhouseMCP Roadmap project');
+            
+  sync-labels:
+    name: Sync Repository Labels
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    
+    steps:
+      - name: Ensure Common Labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Common labels across DollhouseMCP organization
+            const commonLabels = [
+              { name: 'collection-repo', color: '7057ff', description: 'Issue from Collection repository' },
+              { name: 'priority: critical', color: 'e11d21', description: 'Critical priority' },
+              { name: 'priority: high', color: 'eb6420', description: 'High priority' },
+              { name: 'priority: medium', color: 'fbca04', description: 'Medium priority' },
+              { name: 'priority: low', color: '0e8a16', description: 'Low priority' },
+              { name: 'area: content', color: '5319e7', description: 'Content-related issue' },
+              { name: 'area: validation', color: '0052cc', description: 'Validation system' },
+              { name: 'area: security', color: 'd93f0b', description: 'Security-related' },
+              { name: 'area: docs', color: '006b75', description: 'Documentation' },
+              { name: 'type: feature', color: '84b6eb', description: 'New feature request' },
+              { name: 'type: bug', color: 'd73a4a', description: 'Bug report' },
+              { name: 'type: enhancement', color: 'a2eeef', description: 'Enhancement' }
+            ];
+            
+            for (const label of commonLabels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ...label
+                });
+              } catch (error) {
+                // Label might already exist
+                if (error.status !== 422) {
+                  console.error(`Failed to create label ${label.name}:`, error.message);
+                }
+              }
+            }
