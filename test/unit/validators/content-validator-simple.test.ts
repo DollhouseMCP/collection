@@ -74,6 +74,7 @@ This is a valid test persona with proper structure and content.
       
       if (!result.passed) {
         console.log('Validation failed with issues:', JSON.stringify(result.issues, null, 2));
+        console.log('File content:', validPersona);
       }
       
       expect(result.passed).toBe(true);

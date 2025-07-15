@@ -29,8 +29,8 @@ const BaseMetadataSchema = z.object({
   author: z.string().min(2).max(100),
   category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional']),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
-  created_date: z.string().optional(),
-  updated_date: z.string().optional(),
+  created_date: z.union([z.string(), z.date()]).optional(),
+  updated_date: z.union([z.string(), z.date()]).optional(),
   tags: z.array(z.string()).max(10).optional(),
   license: z.string().optional()
 });
@@ -130,13 +130,24 @@ export class ContentValidator {
       // Read file content
       const content = fs.readFileSync(filePath, 'utf8');
       
+      // Check for empty content
+      if (!content || content.trim() === '') {
+        issues.push({
+          severity: 'critical',
+          type: 'empty_content',
+          details: 'File is empty or contains only whitespace'
+        });
+        return this.createResult(issues);
+      }
+      
       // Check file size
       if (content.length > MAX_CONTENT_LENGTH) {
         issues.push({
-          severity: 'high',
-          type: 'file_too_large',
-          details: `File exceeds maximum size of ${MAX_CONTENT_LENGTH} characters`
+          severity: 'critical',
+          type: 'content_too_long',
+          details: `Content exceeds maximum size of ${MAX_CONTENT_LENGTH} characters`
         });
+        return this.createResult(issues);
       }
 
       // Parse frontmatter
@@ -220,9 +231,10 @@ export class ContentValidator {
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach(err => {
+          const isMissingField = err.code === 'invalid_type' && err.received === 'undefined';
           issues.push({
             severity: 'high',
-            type: 'invalid_metadata',
+            type: isMissingField ? 'missing_field' : 'invalid_metadata',
             details: `${err.path.join('.')}: ${err.message}`,
             suggestion: this.getMetadataSuggestion(err)
           });
@@ -273,6 +285,19 @@ export class ContentValidator {
         });
       }
     });
+    
+    // Check for Lorem ipsum placeholder text (but not in metadata)
+    const contentLower = content.toLowerCase();
+    if (contentLower.includes('lorem ipsum') && 
+        (metadata.description?.toLowerCase().includes('lorem ipsum') || 
+         contentLower.split('---')[2]?.includes('lorem ipsum'))) {
+      issues.push({
+        severity: 'medium',
+        type: 'placeholder_content',
+        details: 'Contains Lorem ipsum placeholder text',
+        suggestion: 'Replace placeholder text with actual content'
+      });
+    }
 
     // Check for external URLs (warning only)
     const urlMatch = content.match(/https?:\/\/[^\s]+/g);
