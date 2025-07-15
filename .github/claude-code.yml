@@ -1,0 +1,81 @@
+# Claude Code Configuration
+# This file configures the Claude Code GitHub App behavior
+
+# Model configuration
+model: claude-3-5-sonnet-20241022
+temperature: 0.7
+max_tokens: 4096
+
+# Review settings
+auto_review:
+  enabled: true
+  # Review all PRs automatically
+  pull_requests: true
+  # Respond to @claude mentions in comments
+  mentions: true
+  # Review on specific labels
+  labels:
+    - "needs-review"
+    - "security"
+    - "help wanted"
+
+# Security settings
+security:
+  # Block PRs with critical security issues
+  block_on_critical: true
+  # Security patterns to check
+  patterns:
+    - prompt_injection
+    - code_execution
+    - data_exfiltration
+
+# Content-specific settings
+content_validation:
+  # Validate all content files
+  enabled: true
+  # Check metadata compliance
+  check_metadata: true
+  # Validate unique IDs
+  check_unique_ids: true
+
+# Review prompts
+prompts:
+  pull_request: |
+    Review this PR for the DollhouseMCP Collection. Focus on:
+    - Security vulnerabilities and patterns
+    - Code quality and best practices
+    - Content validation (for .md files)
+    - TypeScript type safety
+    - Test coverage
+    Be constructive and specific with suggestions.
+
+  issue: |
+    Help with this issue. If it's a bug, suggest debugging steps.
+    If it's a feature request, provide implementation guidance.
+    Consider the project's architecture and standards.
+
+# Ignore patterns
+ignore:
+  files:
+    - "*.lock"
+    - "dist/**"
+    - "coverage/**"
+  
+  users:
+    # Don't review bot PRs except Dependabot
+    - "github-actions[bot]"
+    - "renovate[bot]"
+
+# Custom commands
+commands:
+  - name: "security-check"
+    description: "Run a security audit on the PR"
+    trigger: "/security"
+    
+  - name: "explain"
+    description: "Explain code or changes in detail"
+    trigger: "/explain"
+    
+  - name: "suggest-tests"
+    description: "Suggest test cases"
+    trigger: "/tests"
