@@ -104,7 +104,15 @@ export class ContentValidator {
 
       // Security scanning
       const securityIssues = scanForSecurityPatterns(content);
-      issues.push(...securityIssues);
+      // Convert SecurityIssue to ValidationIssue format
+      const convertedSecurityIssues = securityIssues.map(securityIssue => ({
+        severity: securityIssue.severity,
+        type: `security_${securityIssue.category}`,
+        details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,
+        line: securityIssue.line,
+        suggestion: `Review and remove potentially unsafe content related to ${securityIssue.category}.`
+      }));
+      issues.push(...convertedSecurityIssues);
 
       // Content quality checks
       const qualityIssues = this.validateContentQuality(parsed.content, parsed.data as ContentMetadata);
@@ -244,6 +252,52 @@ export class ContentValidator {
   /**
    * Creates a validation result from issues
    */
+  /**
+   * Validates multiple content files and returns a summary
+   */
+  async validateAllContent(filePaths: string[]): Promise<ValidationSummary & {
+    totalFiles: number;
+    validFiles: number;
+    invalidFiles: number;
+    fileResults: Array<{ file: string; passed: boolean; issues: number }>;
+  }> {
+    const fileResults: Array<{ file: string; passed: boolean; issues: number }> = [];
+    let totalIssues = {
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      total: 0
+    };
+    
+    for (const filePath of filePaths) {
+      const result = await this.validateContent(filePath);
+      fileResults.push({
+        file: filePath,
+        passed: result.passed,
+        issues: result.summary.total
+      });
+      
+      // Aggregate issues
+      totalIssues.critical += result.summary.critical;
+      totalIssues.high += result.summary.high;
+      totalIssues.medium += result.summary.medium;
+      totalIssues.low += result.summary.low;
+      totalIssues.total += result.summary.total;
+    }
+    
+    const validFiles = fileResults.filter(r => r.passed).length;
+    const invalidFiles = fileResults.filter(r => !r.passed).length;
+    
+    return {
+      ...totalIssues,
+      totalFiles: filePaths.length,
+      validFiles,
+      invalidFiles,
+      fileResults
+    };
+  }
+
   private createResult(issues: ValidationIssue[]): ValidationResult {
     const summary: ValidationSummary = {
       critical: issues.filter(i => i.severity === 'critical').length,
