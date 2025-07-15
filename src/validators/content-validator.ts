@@ -147,7 +147,7 @@ export class ContentValidator {
         issues.push({
           severity: 'critical',
           type: 'invalid_format',
-          details: 'Failed to parse YAML frontmatter',
+          details: `Failed to parse YAML frontmatter: ${error instanceof Error ? error.message : 'Unknown error'}`,
           suggestion: 'Ensure the file starts with valid YAML between --- markers'
         });
         return this.createResult(issues);

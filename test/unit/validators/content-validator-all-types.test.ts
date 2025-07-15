@@ -25,7 +25,7 @@ describe('ContentValidator - All Content Types', () => {
     // Create test directory
     try {
       mkdirSync(testDir, { recursive: true });
-    } catch (e) {
+    } catch {
       // Directory might already exist
     }
   });
@@ -34,7 +34,7 @@ describe('ContentValidator - All Content Types', () => {
     // Clean up test directory
     try {
       rmSync(testDir, { recursive: true, force: true });
-    } catch (e) {
+    } catch {
       // Ignore cleanup errors
     }
   });
