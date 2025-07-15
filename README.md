@@ -7,6 +7,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Content License](https://img.shields.io/badge/Content%20License-Custom-green.svg)](LICENSE-CONTENT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Enabled-purple.svg)](https://github.com/apps/claude-code)
 
 </div>
 
