@@ -1,0 +1,23 @@
+# DollhouseMCP Collection Code Owners
+# These owners will be automatically requested for review
+
+# Global owners
+* @mickdarling
+
+# Documentation
+/docs/ @mickdarling
+/README.md @mickdarling
+/CONTRIBUTING.md @mickdarling
+/SECURITY.md @mickdarling
+
+# Core validation system
+/src/validators/ @mickdarling
+/src/types/ @mickdarling
+
+# GitHub configuration
+/.github/ @mickdarling
+
+# Content areas (can add content moderators later)
+/library/ @mickdarling
+/showcase/ @mickdarling
+/catalog/ @mickdarling
