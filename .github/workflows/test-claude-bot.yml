@@ -65,7 +65,7 @@ Claude should respond to this issue if properly configured.
       
       - name: Test Claude Action Directly
         if: steps.check-key.outputs.has_key == 'true'
-        uses: anthropics/claude-code-action@v0.1.1
+        uses: anthropics/claude-code-action@beta
         continue-on-error: true
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
