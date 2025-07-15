@@ -1,0 +1,96 @@
+name: Test Claude Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_message:
+        description: 'Test message for Claude'
+        required: false
+        default: 'Testing Claude bot configuration'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  test-claude:
+    name: Test Claude Bot Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check API Key
+        id: check-key
+        run: |
+          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "✅ ANTHROPIC_API_KEY is configured"
+            echo "has_key=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ ANTHROPIC_API_KEY is not configured"
+            echo "has_key=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+      
+      - name: Create Test Issue
+        if: steps.check-key.outputs.has_key == 'true'
+        id: create-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Claude Bot Test: ${{ github.event.inputs.test_message }}',
+              body: `## Claude Bot Test
+              
+This is a test issue to verify Claude bot configuration.
+
+### Test Message
+${{ github.event.inputs.test_message }}
+
+### Expected Result
+Claude should respond to this issue if properly configured.
+
+### Test Details
+- Workflow Run: ${{ github.run_id }}
+- Triggered By: @${{ github.actor }}
+- Timestamp: ${new Date().toISOString()}
+
+---
+*This issue was created automatically for testing purposes and can be closed once verified.*`,
+              labels: ['claude-test', 'automated']
+            });
+            
+            console.log(`Created test issue #${issue.data.number}`);
+            return issue.data.number;
+      
+      - name: Test Claude Action Directly
+        if: steps.check-key.outputs.has_key == 'true'
+        uses: anthropics/claude-code-action@v0.1.1
+        continue-on-error: true
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          direct_prompt: |
+            This is a test of the Claude bot configuration. Please respond with:
+            1. Confirmation that you received this message
+            2. The current date and time
+            3. A brief greeting
+            
+            Test message: ${{ github.event.inputs.test_message }}
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Claude Bot Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check-key.outputs.has_key }}" = "true" ]; then
+            echo "✅ API Key is configured" >> $GITHUB_STEP_SUMMARY
+            echo "📝 Test issue created (check issues)" >> $GITHUB_STEP_SUMMARY
+            echo "🤖 Claude action test executed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ API Key is NOT configured" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Setup Instructions" >> $GITHUB_STEP_SUMMARY
+            echo "1. Get an API key from [console.anthropic.com](https://console.anthropic.com)" >> $GITHUB_STEP_SUMMARY
+            echo "2. Add it as a repository secret named \`ANTHROPIC_API_KEY\`" >> $GITHUB_STEP_SUMMARY
+          fi
