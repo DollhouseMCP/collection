@@ -1,0 +1,100 @@
+name: Validate Content
+
+on:
+  pull_request:
+    paths:
+      - 'library/**/*.md'
+      - 'showcase/**/*.md'
+      - 'catalog/**/*.md'
+  push:
+    branches: [main]
+    paths:
+      - 'library/**/*.md'
+      - 'showcase/**/*.md'
+      - 'catalog/**/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: Validate Content
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ' '
+      
+      - name: Validate changed files
+        if: steps.changed-files.outputs.all_changed_files != ''
+        run: |
+          echo "Validating changed files..."
+          node dist/src/cli/validate-content.js ${{ steps.changed-files.outputs.all_changed_files }}
+      
+      - name: Comment PR with results
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.existsSync('validation-report.json') 
+              ? JSON.parse(fs.readFileSync('validation-report.json', 'utf8'))
+              : null;
+            
+            let body = '## 🔍 Content Validation Report\n\n';
+            body += '❌ **Validation Failed**\n\n';
+            
+            if (report) {
+              body += 'Please review and fix the issues found in your content.\n\n';
+              body += '<details><summary>View detailed report</summary>\n\n';
+              
+              report.forEach(({file, report}) => {
+                if (!report.passed) {
+                  body += `### ${file}\n`;
+                  body += report.markdown + '\n';
+                }
+              });
+              
+              body += '</details>';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+      
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.json
+          retention-days: 30
