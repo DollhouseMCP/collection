@@ -1,0 +1,77 @@
+# Configuration for actions/labeler
+
+# Documentation changes
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'docs/**'
+      - '*.md'
+      - 'LICENSE*'
+
+# Source code changes
+source:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**'
+
+# Test changes
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'test/**'
+      - '**/*.test.ts'
+      - '**/*.spec.ts'
+      - 'jest.*.config.*'
+
+# CI/CD changes
+ci/cd:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+
+# Content changes
+content:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'library/**'
+      - 'showcase/**'
+      - 'catalog/**'
+
+# Security-related changes
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/validators/security-patterns.ts'
+      - 'scripts/security-check.js'
+      - '.github/codeql/**'
+      - '**/security/**'
+
+# Configuration changes
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'eslint.config.js'
+      - '.gitignore'
+      - '.npmignore'
+
+# Dependencies
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package-lock.json'
+
+# Scripts
+scripts:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'scripts/**'
+
+# CLI tools
+cli:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/cli/**'

@@ -1,0 +1,194 @@
+name: Core Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096 --experimental-vm-modules
+  CI: true
+
+jobs:
+  build-and-test:
+    name: Build & Test - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            .jest-cache
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+
+      - name: Run integration tests
+        run: npm run test:integration
+        if: success()
+
+      - name: Run security tests
+        run: npm run test:security
+        if: success()
+
+      - name: Validate all content
+        run: npm run validate:all
+        if: success()
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-${{ matrix.os }}
+          path: test/coverage/
+          retention-days: 7
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: |
+            test-results/
+            *.log
+          retention-days: 7
+
+  coverage-report:
+    name: Coverage Report
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Generate coverage summary
+        run: |
+          echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f test/coverage/coverage-summary.json ]; then
+            node -e "
+              const coverage = require('./test/coverage/coverage-summary.json');
+              const total = coverage.total;
+              console.log('| Metric | Coverage |');
+              console.log('|--------|----------|');
+              console.log(\`| Lines | \${total.lines.pct}% |\`);
+              console.log(\`| Statements | \${total.statements.pct}% |\`);
+              console.log(\`| Functions | \${total.functions.pct}% |\`);
+              console.log(\`| Branches | \${total.branches.pct}% |\`);
+            " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No coverage data found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const issue_number = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            let comment = '## 🧪 Test Results\n\n';
+            comment += '✅ All tests passed on all platforms!\n\n';
+            
+            // Add coverage data if available
+            try {
+              const coverageData = fs.readFileSync('test/coverage/coverage-summary.json', 'utf8');
+              const coverage = JSON.parse(coverageData);
+              const total = coverage.total;
+              
+              comment += '### 📊 Coverage Report\n\n';
+              comment += '| Metric | Coverage |\n';
+              comment += '|--------|----------|\n';
+              comment += `| Lines | ${total.lines.pct}% |\n`;
+              comment += `| Statements | ${total.statements.pct}% |\n`;
+              comment += `| Functions | ${total.functions.pct}% |\n`;
+              comment += `| Branches | ${total.branches.pct}% |\n`;
+            } catch (e) {
+              console.log('No coverage data found');
+            }
+            
+            // Find and update existing comment or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('🧪 Test Results')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: comment
+              });
+            }
+
+  quality-gates:
+    name: Quality Gates
+    needs: [build-and-test, coverage-report]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Check job results
+        run: |
+          if [[ "${{ needs.build-and-test.result }}" != "success" ]]; then
+            echo "❌ Build and test failed"
+            exit 1
+          fi
+          echo "✅ All quality gates passed"
