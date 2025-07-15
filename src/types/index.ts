@@ -65,9 +65,17 @@ export interface ToolMetadata extends BaseMetadata {
 
 export interface EnsembleMetadata extends BaseMetadata {
   type: 'ensemble';
-  agents: string[];
+  components: {
+    personas?: string[];      // References to persona unique_ids
+    skills?: string[];        // References to skill unique_ids
+    agents?: string[];        // References to agent unique_ids
+    prompts?: string[];       // References to prompt unique_ids
+    templates?: string[];     // References to template unique_ids
+    tools?: string[];         // References to tool unique_ids
+  };
   coordination_strategy?: string;
   use_cases?: string[];
+  dependencies?: string[];    // External requirements
 }
 
 // Union type for all content metadata

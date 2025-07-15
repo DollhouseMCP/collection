@@ -22,7 +22,7 @@ The DollhouseMCP Collection is a comprehensive library of AI-enhancing content i
 - **💬 Prompts** - Optimized prompt templates and chains
 - **📄 Templates** - Document and workflow templates
 - **🔧 Tools** - MCP-compatible tools and utilities
-- **👥 Ensembles** - Multi-agent collaborative setups
+- **👥 Ensembles** - Curated collections combining personas, skills, tools, and more for complex workflows
 
 ## 🚀 Quick Start
 

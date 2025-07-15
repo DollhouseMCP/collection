@@ -59,7 +59,7 @@
     },
     "ensembles": {
       "name": "Ensembles",
-      "description": "Multi-agent collaborative setups",
+      "description": "Curated collections combining multiple content types for complex tasks",
       "path": "library/ensembles/",
       "icon": "👥",
       "categories": ["creative", "educational", "gaming", "personal", "professional"]
