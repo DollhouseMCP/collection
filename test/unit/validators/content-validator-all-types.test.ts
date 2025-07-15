@@ -51,8 +51,8 @@ tags:
   - data
   - analysis
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 capabilities:
   - "Statistical analysis"
@@ -97,8 +97,8 @@ description: Skill without capabilities
 type: skill
 version: 1.0.0
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 ---
 
@@ -131,8 +131,8 @@ tags:
   - research
   - assistant
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: educational
 capabilities:
   - "Web search"
@@ -178,8 +178,8 @@ tags:
   - code-review
   - development
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 input_variables:
   - "code_snippet"
@@ -230,8 +230,8 @@ tags:
   - documentation
   - readme
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 format: "markdown"
 variables:
@@ -286,8 +286,8 @@ tags:
   - weather
   - api
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 mcp_version: "1.0.0"
 parameters:
@@ -346,8 +346,8 @@ tags:
   - academic
   - comprehensive
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: educational
 components:
   personas:
@@ -422,8 +422,8 @@ version: 1.0.0
 tags:
   - writing
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: creative
 components:
   personas:
@@ -457,8 +457,8 @@ description: Content where type doesn't match structure
 type: skill
 version: 1.0.0
 author: Test Author
-created_at: 2024-01-01T00:00:00Z
-updated_at: 2024-01-01T00:00:00Z
+created_date: 2024-01-01T00:00:00Z
+updated_date: 2024-01-01T00:00:00Z
 category: professional
 # This is persona-specific field on a skill type
 triggers:

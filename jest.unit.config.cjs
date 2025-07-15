@@ -31,9 +31,13 @@ module.exports = {
   },
   
   // Module resolution
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/'
-  }),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}, {
+      prefix: '<rootDir>/'
+    }),
+    // Handle .js extensions in imports
+    '^(\\.{1,2}/.*)\\.js$': '$1'
+  },
   
   // Setup
   setupFilesAfterEnv: ['<rootDir>/test/jest.setup.ts'],
