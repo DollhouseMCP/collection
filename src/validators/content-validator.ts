@@ -46,10 +46,65 @@ const PersonaMetadataSchema = BaseMetadataSchema.extend({
   revenue_split: z.string().optional()
 });
 
-// Add other content type schemas as needed
+const SkillMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('skill'),
+  capabilities: z.array(z.string()),
+  requirements: z.array(z.string()).optional(),
+  compatibility: z.array(z.string()).optional()
+});
+
+const AgentMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('agent'),
+  capabilities: z.array(z.string()),
+  tools_required: z.array(z.string()).optional(),
+  model_requirements: z.string().optional()
+});
+
+const PromptMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('prompt'),
+  input_variables: z.array(z.string()).optional(),
+  output_format: z.string().optional(),
+  examples: z.array(z.string()).optional()
+});
+
+const TemplateMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('template'),
+  format: z.string(),
+  variables: z.array(z.string()).optional(),
+  use_cases: z.array(z.string()).optional()
+});
+
+const ToolMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('tool'),
+  mcp_version: z.string(),
+  parameters: z.record(z.any()).optional(),
+  returns: z.string().optional()
+});
+
+const EnsembleMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('ensemble'),
+  components: z.object({
+    personas: z.array(z.string()).optional(),
+    skills: z.array(z.string()).optional(),
+    agents: z.array(z.string()).optional(),
+    prompts: z.array(z.string()).optional(),
+    templates: z.array(z.string()).optional(),
+    tools: z.array(z.string()).optional()
+  }),
+  coordination_strategy: z.string().optional(),
+  use_cases: z.array(z.string()).optional(),
+  dependencies: z.array(z.string()).optional()
+});
+
+// Complete schema with all content types
 const ContentMetadataSchema = z.discriminatedUnion('type', [
   PersonaMetadataSchema,
-  // Add other schemas here as implemented
+  SkillMetadataSchema,
+  AgentMetadataSchema,
+  PromptMetadataSchema,
+  TemplateMetadataSchema,
+  ToolMetadataSchema,
+  EnsembleMetadataSchema
 ]);
 
 export class ContentValidator {
