@@ -1,0 +1,102 @@
+name: Content Submission
+description: Submit new content to the DollhouseMCP Collection
+title: "[Content]: "
+labels: ["area: content", "type: feature", "collection-repo"]
+projects: ["DollhouseMCP/1"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting content to the DollhouseMCP Collection! Please fill out the form below.
+
+  - type: dropdown
+    id: content-type
+    attributes:
+      label: Content Type
+      description: What type of content are you submitting?
+      options:
+        - Persona
+        - Skill
+        - Agent
+        - Prompt
+        - Template
+        - Tool
+        - Ensemble
+    validations:
+      required: true
+
+  - type: input
+    id: content-name
+    attributes:
+      label: Content Name
+      description: The name of your content
+      placeholder: e.g., Creative Writer, Task Manager, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what your content does
+      placeholder: A brief description of the content's purpose and capabilities
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category best fits your content?
+      options:
+        - Creative
+        - Professional
+        - Educational
+        - Personal
+        - Gaming
+    validations:
+      required: true
+
+  - type: textarea
+    id: content-file
+    attributes:
+      label: Content File
+      description: Paste your complete content file here (including YAML frontmatter)
+      render: markdown
+      placeholder: |
+        ---
+        type: persona
+        name: Your Content Name
+        ...
+        ---
+        
+        # Content goes here
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have tested this content locally
+          required: true
+        - label: I have run the validation tool
+          required: true
+        - label: This content does not contain security vulnerabilities
+          required: true
+        - label: I agree to the contribution guidelines
+          required: true
+
+  - type: dropdown
+    id: target-area
+    attributes:
+      label: Target Area
+      description: Where should this content be placed?
+      options:
+        - Library (Free)
+        - Showcase (Featured) - Requires Review
+        - Catalog (Premium) - Contact Required

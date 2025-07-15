@@ -1,0 +1,87 @@
+name: Bug Report
+description: Report a bug in the DollhouseMCP Collection
+title: "[Bug]: "
+labels: ["type: bug", "collection-repo"]
+projects: ["DollhouseMCP/1"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the sections below.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: What area of the Collection is affected?
+      options:
+        - Content Validation
+        - Security Scanning
+        - CI/CD Workflows
+        - Content Display
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is
+      placeholder: Describe the issue you're experiencing
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Run command '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs
+      description: Any relevant error messages or logs
+      render: shell
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of the Collection are you using?
+      placeholder: e.g., 1.0.0 or latest
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How critical is this bug?
+      options:
+        - Low - Cosmetic or minor issue
+        - Medium - Affects functionality
+        - High - Major functionality broken
+        - Critical - Security or data loss
