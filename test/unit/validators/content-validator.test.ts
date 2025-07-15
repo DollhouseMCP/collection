@@ -10,7 +10,6 @@ import { ContentValidator } from '../../../src/validators/content-validator';
 import { scanForSecurityPatterns } from '../../../src/validators/security-patterns';
 import type { ContentMetadata } from '../../../src/types';
 import * as fs from 'fs';
-import * as path from 'path';
 
 // Mock the security patterns module
 jest.mock('../../../src/validators/security-patterns');
