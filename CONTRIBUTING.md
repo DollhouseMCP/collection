@@ -27,6 +27,9 @@ We accept the following types of content:
 
 ### 1. Choose Your Submission Method
 
+#### Direct MCP Server Submission (Coming Soon!)
+The DollhouseMCP server will soon allow direct contributions to the Collection from any AI tool using the MCP protocol. This means you'll be able to create and submit content directly from Claude, or any other MCP-compatible AI assistant.
+
 #### GitHub Pull Request (Recommended)
 1. Fork the repository
 2. Create your content

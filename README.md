@@ -30,8 +30,8 @@ The DollhouseMCP Collection is a comprehensive library of AI-enhancing content i
 
 Content is organized in three main areas:
 
-1. **📚 Library** - Free community-contributed content
-2. **✨ Showcase** - Featured and recommended content
+1. **✨ Showcase** - Featured and recommended content
+2. **📚 Library** - Free community-contributed content
 3. **💎 Catalog** - Premium content (coming soon)
 
 ### Using with DollhouseMCP
