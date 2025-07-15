@@ -4,7 +4,6 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 import matter from 'gray-matter';
 import { z } from 'zod';
 import { 
@@ -108,7 +107,7 @@ export class ContentValidator {
       issues.push(...securityIssues);
 
       // Content quality checks
-      const qualityIssues = this.validateContentQuality(parsed.content, parsed.data);
+      const qualityIssues = this.validateContentQuality(parsed.content, parsed.data as ContentMetadata);
       issues.push(...qualityIssues);
 
       // Line length check
