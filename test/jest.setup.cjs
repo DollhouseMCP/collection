@@ -5,6 +5,8 @@
  * Based on DollhouseMCP/mcp-server patterns.
  */
 
+/* global beforeEach, afterEach, expect */
+
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.TEST_MODE = 'true';
