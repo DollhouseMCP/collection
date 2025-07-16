@@ -34,7 +34,12 @@ describe('CLI Validation Tool Integration Tests', () => {
    */
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
-      const proc = spawn(process.execPath, [cliPath, ...args], {
+      // On Windows, we need to use cmd.exe to run the script
+      const isWindows = process.platform === 'win32';
+      const command = isWindows ? process.execPath : process.execPath;
+      const commandArgs = isWindows ? [cliPath.replace(/\\/g, '/'), ...args] : [cliPath, ...args];
+      
+      const proc = spawn(command, commandArgs, {
         cwd: testDir,
         env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
         shell: false,
@@ -65,20 +70,7 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   describe('Basic CLI Operations', () => {
     it('should show usage when run without arguments', async () => {
-      const { code, stdout, stderr } = await runCLI([]);
-      
-      // Debug output for CI
-      if (code === 0 && !stdout && !stderr) {
-        console.log('DEBUG: Empty output from CLI');
-        console.log('DEBUG: cliPath:', cliPath);
-        console.log('DEBUG: process.execPath:', process.execPath);
-        try {
-          await access(cliPath, constants.F_OK);
-          console.log('DEBUG: CLI file exists');
-        } catch (err) {
-          console.log('DEBUG: CLI file does NOT exist:', err);
-        }
-      }
+      const { code, stderr } = await runCLI([]);
 
       expect(code).toBe(1);
       expect(stderr).toContain('Usage: validate-content');
