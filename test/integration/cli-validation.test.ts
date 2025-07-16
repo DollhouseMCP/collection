@@ -3,7 +3,7 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { writeFile, mkdir, rm } from 'fs/promises';
+import { writeFile, mkdir, rm, readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { main as validateContent } from '../../dist/src/cli/validate-content.js';
@@ -13,6 +13,7 @@ const __dirname = dirname(__filename);
 
 // Test constants
 const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
+const LARGE_BATCH_SIZE = 50; // Number of files for performance testing
 
 describe('CLI Validation Tool Integration Tests', () => {
   const testDir = join(__dirname, '../../.test-tmp/cli-integration');
@@ -390,7 +391,6 @@ category: educational
       }
 
       // Check if report was created
-      const { readFile } = await import('fs/promises');
       const reportContent = await readFile(outputPath, 'utf8');
       const report = JSON.parse(reportContent) as Array<{file: string; report: {passed: boolean; summary: unknown; issues: unknown[]}}>;
 
@@ -447,9 +447,9 @@ capabilities:
 
   describe('Performance with Large Batches', () => {
     it('should handle large numbers of files efficiently', async () => {
-      // Create 50 test files
+      // Create test files for performance testing
       const filePromises = [];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < LARGE_BATCH_SIZE; i++) {
         const content = `---
 type: prompt
 name: Batch Test Prompt ${i}
@@ -471,14 +471,13 @@ category: educational
       const { code, stdout } = await runCLI(['batch-*.md']);
       const duration = Date.now() - startTime;
 
-      expect(stdout).toContain('Validating 50 file(s)');
-      expect(stdout).toContain('Total files: 50');
-      expect(stdout).toContain('Passed: 50');
+      expect(stdout).toContain(`Validating ${LARGE_BATCH_SIZE} file(s)`);
+      expect(stdout).toContain(`Total files: ${LARGE_BATCH_SIZE}`);
+      expect(stdout).toContain(`Passed: ${LARGE_BATCH_SIZE}`);
       expect(code).toBe(0);
 
       // Should complete within reasonable time
       expect(duration).toBeLessThan(BATCH_TEST_TIMEOUT);
-      console.log(`CLI validated 50 files in ${duration}ms`);
     });
   });
 });
