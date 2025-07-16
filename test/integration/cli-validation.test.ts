@@ -41,7 +41,7 @@ describe('CLI Validation Tool Integration Tests', () => {
         cwd: testDir,
         env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
         shell: false, // Explicit no shell for security
-        stdio: ['ignore', 'pipe', 'pipe'] // Explicitly set stdio
+        stdio: ['pipe', 'pipe', 'pipe'] // Change to pipe stdin as well
       });
 
       let stdout = '';
@@ -77,7 +77,17 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   describe('Basic CLI Operations', () => {
     it('should show usage when run without arguments', async () => {
-      const { code, stderr } = await runCLI([]);
+      // Debug: Log the paths being used
+      console.log('CLI Path:', cliPath);
+      console.log('Test Dir:', testDir);
+      console.log('Process:', process.execPath);
+      
+      const { code, stdout, stderr } = await runCLI([]);
+      
+      // Debug: Log what we got back
+      console.log('Exit code:', code);
+      console.log('Stdout:', stdout);
+      console.log('Stderr:', stderr);
 
       expect(code).toBe(1);
       expect(stderr).toContain('Usage: validate-content');
