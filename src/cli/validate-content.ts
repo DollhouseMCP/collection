@@ -100,9 +100,10 @@ async function main() {
   }
 
   // Write detailed report if requested
-  const outputPath = process.env.OUTPUT_FILE || process.env.GITHUB_WORKSPACE 
-    ? path.join(process.env.GITHUB_WORKSPACE || '.', 'validation-report.json')
-    : null;
+  const outputPath = process.env.OUTPUT_FILE || 
+    (process.env.GITHUB_WORKSPACE 
+      ? path.join(process.env.GITHUB_WORKSPACE, 'validation-report.json')
+      : null);
     
   if (outputPath) {
     fs.writeFileSync(outputPath, JSON.stringify(allReports, null, 2));
