@@ -200,8 +200,12 @@ This agent helps with security analysis without containing any vulnerabilities.
         });
 
         let output = '';
-        proc.stdout.on('data', (data) => output += data.toString());
-        proc.stderr.on('data', (data) => output += data.toString());
+        proc.stdout.on('data', (data: Buffer) => {
+          output += data.toString();
+        });
+        proc.stderr.on('data', (data: Buffer) => {
+          output += data.toString();
+        });
 
         proc.on('close', (code) => {
           resolve({ code: code || 0, output });
@@ -440,7 +444,7 @@ const query = 'SELECT * FROM users WHERE id = ?';
 db.query(query, [userId]);
 
 // Bad practice - DO NOT USE
-// const query = 'SELECT * FROM users WHERE id = ' + userId;
+// const query = 'SELECT * FROM users WHERE id = ' + userId; // eslint-disable-line
 \`\`\`
 
 Note: This is educational content. No actual vulnerabilities are present.`;
@@ -484,8 +488,8 @@ class SecurityScanner:
     def __init__(self):
         # Pattern definitions for detection
         self.patterns = {
-            'api_key': r'(api_key|apikey|api-key)\\s*=\\s*["\']?[a-zA-Z0-9_-]+["\']?',
-            'sql_injection': r"'\\s*(OR|AND)\\s*'?1'?\\s*=\\s*'?1'?",
+            'api_key': r'(api_key|apikey|api-key)\s*=\s*[a-zA-Z0-9_-]+',
+            'sql_injection': r"'\s*(OR|AND)\s*'?1'?\s*=\s*'?1'?",
             'xss': r'<script[^>]*>.*?</script>',
         }
     

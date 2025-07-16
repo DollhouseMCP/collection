@@ -40,11 +40,11 @@ describe('CLI Validation Tool Integration Tests', () => {
       let stdout = '';
       let stderr = '';
 
-      proc.stdout.on('data', (data) => {
+      proc.stdout.on('data', (data: Buffer) => {
         stdout += data.toString();
       });
 
-      proc.stderr.on('data', (data) => {
+      proc.stderr.on('data', (data: Buffer) => {
         stderr += data.toString();
       });
 
@@ -340,15 +340,14 @@ category: educational
         env
       });
 
-      // Wait for the process to complete and capture output
-      let stdout = '';
-      proc.stdout.on('data', (data) => stdout += data.toString());
-      
+      // Wait for the process to complete
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error('Process timeout')), TEST_TIMEOUT);
         proc.on('close', (code) => {
           clearTimeout(timeout);
-          if (code !== 0) reject(new Error(`Process failed with code ${code}`));
+          if (code !== 0) {
+            reject(new Error(`Process failed with code ${code}`));
+          }
           resolve();
         });
         proc.on('error', reject);
@@ -357,7 +356,7 @@ category: educational
       // Check if report was created
       const { readFile } = await import('fs/promises');
       const reportContent = await readFile(outputPath, 'utf8');
-      const report = JSON.parse(reportContent);
+      const report = JSON.parse(reportContent) as Array<{file: string; report: {passed: boolean; summary: unknown; issues: unknown[]}}>;
 
       expect(report).toBeInstanceOf(Array);
       expect(report[0]).toHaveProperty('file');
