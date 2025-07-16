@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
+import globals from 'globals';
 
 export default [
   // Base ESLint recommended rules
@@ -14,17 +15,11 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        project: ['./tsconfig.json', './tsconfig.test.json']
       },
       globals: {
-        console: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        global: 'readonly',
-        require: 'readonly',
-        module: 'readonly',
-        exports: 'readonly',
+        ...globals.node,
+        ...globals.es2021
       },
     },
     plugins: {
@@ -49,12 +44,14 @@ export default [
       'no-unused-expressions': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
+      'no-unused-vars': 'off', // Turned off in favor of TypeScript version
       
       // Security-related rules
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
+      'no-with': 'error',
       
       // Best practices
       'eqeqeq': ['error', 'always'],
@@ -74,11 +71,12 @@ export default [
   
   // JavaScript-specific configuration
   {
-    files: ['**/*.js', '**/*.mjs'],
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
+        ...globals.node,
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
@@ -86,8 +84,8 @@ export default [
         __filename: 'readonly',
         global: 'readonly',
         require: 'readonly',
-        module: 'readonly',
-        exports: 'readonly',
+        module: 'writable',
+        exports: 'writable',
       },
     },
     rules: {
@@ -100,7 +98,13 @@ export default [
   
   // Configuration for test files
   {
-    files: ['**/*.test.ts', '**/*.test.js', '**/tests/**/*', '**/__tests__/**/*'],
+    files: ['**/*.test.ts', '**/*.test.js', '**/*.spec.ts', '**/tests/**/*', '**/__tests__/**/*', '**/test/**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+        ...globals.node
+      }
+    },
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -110,7 +114,12 @@ export default [
   
   // Configuration for configuration files and scripts
   {
-    files: ['*.config.js', '*.config.ts', '*.config.mjs', 'scripts/**/*.js', 'src/cli/**/*.ts'],
+    files: ['*.config.js', '*.config.ts', '*.config.mjs', '*.config.cjs', 'scripts/**/*.js', 'src/cli/**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node
+      }
+    },
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-var-requires': 'off',
@@ -129,6 +138,10 @@ export default [
       '.nuxt/**',
       '.vercel/**',
       '.netlify/**',
+      '.test-tmp/**',
+      '*.d.ts',
+      'test/coverage/**',
+      '.jest-cache/**'
     ],
   },
 ];

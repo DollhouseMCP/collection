@@ -1,6 +1,23 @@
 name: Claude Code
 
+# Manual Claude Integration Workflow
+# ==================================
+# This workflow handles MANUAL Claude interactions via @claude mentions.
+# 
+# AUTOMATIC PR reviews are handled by claude-review.yml for maintainers only.
+# This separation prevents duplicate reviews and allows different behavior for:
+#   - Maintainer PRs: Automatic comprehensive reviews (claude-review.yml)
+#   - Community PRs: Manual reviews only when requested via @claude
+#   - Issues/Comments: Available via @claude mention (restricted to authorized users)
+#
+# SECURITY: To prevent abuse and control costs, @claude mentions only work for:
+#   - mickdarling (repository owner)
+#   - dependabot[bot]
+#   - Users with OWNER or MEMBER association (organization members)
+
 on:
+  # Pull request triggers removed to prevent duplicate reviews
+  # Use @claude in PR comments if you need manual review
   issue_comment:
     types: [created]
   pull_request_review_comment:
@@ -21,10 +38,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+        (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      ) && (
+        github.actor == 'mickdarling' ||
+        github.actor == 'dependabot[bot]' ||
+        github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'MEMBER' ||
+        github.event.issue.author_association == 'OWNER' ||
+        github.event.issue.author_association == 'MEMBER'
+      )
 
     permissions:
       contents: read

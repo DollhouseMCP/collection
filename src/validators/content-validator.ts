@@ -29,8 +29,8 @@ const BaseMetadataSchema = z.object({
   author: z.string().min(2).max(100),
   category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional']),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
-  created_date: z.string().optional(),
-  updated_date: z.string().optional(),
+  created_date: z.union([z.string(), z.date()]).optional(),
+  updated_date: z.union([z.string(), z.date()]).optional(),
   tags: z.array(z.string()).max(10).optional(),
   license: z.string().optional()
 });
@@ -46,10 +46,65 @@ const PersonaMetadataSchema = BaseMetadataSchema.extend({
   revenue_split: z.string().optional()
 });
 
-// Add other content type schemas as needed
+const SkillMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('skill'),
+  capabilities: z.array(z.string()),
+  requirements: z.array(z.string()).optional(),
+  compatibility: z.array(z.string()).optional()
+});
+
+const AgentMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('agent'),
+  capabilities: z.array(z.string()),
+  tools_required: z.array(z.string()).optional(),
+  model_requirements: z.string().optional()
+});
+
+const PromptMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('prompt'),
+  input_variables: z.array(z.string()).optional(),
+  output_format: z.string().optional(),
+  examples: z.array(z.string()).optional()
+});
+
+const TemplateMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('template'),
+  format: z.string(),
+  variables: z.array(z.string()).optional(),
+  use_cases: z.array(z.string()).optional()
+});
+
+const ToolMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('tool'),
+  mcp_version: z.string(),
+  parameters: z.record(z.any()).optional(),
+  returns: z.string().optional()
+});
+
+const EnsembleMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('ensemble'),
+  components: z.object({
+    personas: z.array(z.string()).optional(),
+    skills: z.array(z.string()).optional(),
+    agents: z.array(z.string()).optional(),
+    prompts: z.array(z.string()).optional(),
+    templates: z.array(z.string()).optional(),
+    tools: z.array(z.string()).optional()
+  }),
+  coordination_strategy: z.string().optional(),
+  use_cases: z.array(z.string()).optional(),
+  dependencies: z.array(z.string()).optional()
+});
+
+// Complete schema with all content types
 const ContentMetadataSchema = z.discriminatedUnion('type', [
   PersonaMetadataSchema,
-  // Add other schemas here as implemented
+  SkillMetadataSchema,
+  AgentMetadataSchema,
+  PromptMetadataSchema,
+  TemplateMetadataSchema,
+  ToolMetadataSchema,
+  EnsembleMetadataSchema
 ]);
 
 export class ContentValidator {
@@ -75,13 +130,24 @@ export class ContentValidator {
       // Read file content
       const content = fs.readFileSync(filePath, 'utf8');
       
+      // Check for empty content
+      if (!content || content.trim() === '') {
+        issues.push({
+          severity: 'critical',
+          type: 'empty_content',
+          details: 'File is empty or contains only whitespace'
+        });
+        return this.createResult(issues);
+      }
+      
       // Check file size
       if (content.length > MAX_CONTENT_LENGTH) {
         issues.push({
-          severity: 'high',
-          type: 'file_too_large',
-          details: `File exceeds maximum size of ${MAX_CONTENT_LENGTH} characters`
+          severity: 'critical',
+          type: 'content_too_long',
+          details: `Content exceeds maximum size of ${MAX_CONTENT_LENGTH} characters`
         });
+        return this.createResult(issues);
       }
 
       // Parse frontmatter
@@ -92,7 +158,7 @@ export class ContentValidator {
         issues.push({
           severity: 'critical',
           type: 'invalid_format',
-          details: 'Failed to parse YAML frontmatter',
+          details: `Failed to parse YAML frontmatter: ${error instanceof Error ? error.message : 'Unknown error'}`,
           suggestion: 'Ensure the file starts with valid YAML between --- markers'
         });
         return this.createResult(issues);
@@ -104,7 +170,15 @@ export class ContentValidator {
 
       // Security scanning
       const securityIssues = scanForSecurityPatterns(content);
-      issues.push(...securityIssues);
+      // Convert SecurityIssue to ValidationIssue format
+      const convertedSecurityIssues = securityIssues.map(securityIssue => ({
+        severity: securityIssue.severity,
+        type: `security_${securityIssue.category}`,
+        details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,
+        line: securityIssue.line,
+        suggestion: `Review and remove potentially unsafe content related to ${securityIssue.category}.`
+      }));
+      issues.push(...convertedSecurityIssues);
 
       // Content quality checks
       const qualityIssues = this.validateContentQuality(parsed.content, parsed.data as ContentMetadata);
@@ -157,9 +231,10 @@ export class ContentValidator {
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach(err => {
+          const isMissingField = err.code === 'invalid_type' && err.received === 'undefined';
           issues.push({
             severity: 'high',
-            type: 'invalid_metadata',
+            type: isMissingField ? 'missing_field' : 'invalid_metadata',
             details: `${err.path.join('.')}: ${err.message}`,
             suggestion: this.getMetadataSuggestion(err)
           });
@@ -210,6 +285,16 @@ export class ContentValidator {
         });
       }
     });
+    
+    // Check for Lorem ipsum placeholder text
+    if (content.toLowerCase().includes('lorem ipsum')) {
+      issues.push({
+        severity: 'medium',
+        type: 'placeholder_content',
+        details: 'Contains Lorem ipsum placeholder text',
+        suggestion: 'Replace placeholder text with actual content'
+      });
+    }
 
     // Check for external URLs (warning only)
     const urlMatch = content.match(/https?:\/\/[^\s]+/g);
@@ -244,6 +329,52 @@ export class ContentValidator {
   /**
    * Creates a validation result from issues
    */
+  /**
+   * Validates multiple content files and returns a summary
+   */
+  async validateAllContent(filePaths: string[]): Promise<ValidationSummary & {
+    totalFiles: number;
+    validFiles: number;
+    invalidFiles: number;
+    fileResults: Array<{ file: string; passed: boolean; issues: number }>;
+  }> {
+    const fileResults: Array<{ file: string; passed: boolean; issues: number }> = [];
+    let totalIssues = {
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      total: 0
+    };
+    
+    for (const filePath of filePaths) {
+      const result = await this.validateContent(filePath);
+      fileResults.push({
+        file: filePath,
+        passed: result.passed,
+        issues: result.summary.total
+      });
+      
+      // Aggregate issues
+      totalIssues.critical += result.summary.critical;
+      totalIssues.high += result.summary.high;
+      totalIssues.medium += result.summary.medium;
+      totalIssues.low += result.summary.low;
+      totalIssues.total += result.summary.total;
+    }
+    
+    const validFiles = fileResults.filter(r => r.passed).length;
+    const invalidFiles = fileResults.filter(r => !r.passed).length;
+    
+    return {
+      ...totalIssues,
+      totalFiles: filePaths.length,
+      validFiles,
+      invalidFiles,
+      fileResults
+    };
+  }
+
   private createResult(issues: ValidationIssue[]): ValidationResult {
     const summary: ValidationSummary = {
       critical: issues.filter(i => i.severity === 'critical').length,

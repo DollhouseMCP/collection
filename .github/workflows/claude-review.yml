@@ -4,13 +4,17 @@ name: Claude Code Review
 # Automated PR Review Workflow
 # =============================
 # AUTOMATIC TRIGGERING: This workflow runs automatically on:
-#   - New pull requests (opened) from authorized users only
-#   - Updated pull requests (synchronize) from authorized users only
+#   - New pull requests (opened) from authorized users
+#   - Updated pull requests (synchronize) from authorized users
+#   - Reopened pull requests (reopened) from authorized users
+#   - PRs marked ready for review (ready_for_review) from authorized users
 #
 # SECURITY MODEL:
 #   - Only runs for PRs created by explicitly authorized users
-#   - Currently authorized: mickdarling (repository owner)
-#   - Add new users by updating the conditional logic below
+#   - Currently authorized: mickdarling (repository owner), dependabot[bot]
+#   - Community content submissions (personas, skills, etc.) do NOT trigger automatic reviews
+#   - This prevents unnecessary API usage and allows for community contribution scaling
+#   - Add new maintainers by updating the conditional logic below
 #
 # PERMISSIONS:
 #   - Read-only access to repository content
@@ -19,21 +23,10 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    paths:
-      - "src/**/*.ts"
-      - "library/**/*.md"
-      - "showcase/**/*.md"
-      - "catalog/**/*.md"
-      - "*.md"
-      - "package.json"
-      - "tsconfig.json"
-      - ".github/workflows/**"
-    paths-ignore:
-      - "dist/**"
-      - "node_modules/**"
-      - "coverage/**"
+    types: [opened, synchronize, reopened, ready_for_review]
+    # Note: We intentionally don't filter paths here because the job condition
+    # already filters by authorized users. This ensures maintainer changes
+    # always get reviewed while community content submissions are excluded.
 
 permissions:
   contents: read
@@ -43,11 +36,14 @@ permissions:
 
 jobs:
   claude-review:
-    # Security: Only run automated reviews for authorized users
+    # Security: Only run automated reviews for authorized maintainers
+    # This excludes community content submissions (personas, skills, etc.) which
+    # should be reviewed by human maintainers to manage API usage and ensure
+    # appropriate content moderation at scale.
     if: |
       github.event.pull_request.user.login == 'mickdarling' ||
       github.event.pull_request.user.login == 'dependabot[bot]'
-    # Add new authorized users here: || github.event.pull_request.user.login == 'username'
+    # Add new maintainers here: || github.event.pull_request.user.login == 'username'
 
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -66,7 +62,7 @@ jobs:
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v0.1.1
+        uses: anthropics/claude-code-action@beta
         continue-on-error: true
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
