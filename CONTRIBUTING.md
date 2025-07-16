@@ -155,20 +155,22 @@ npm run validate:content library/personas/professional/my-persona.md
 
 ## 🔄 Pull Request Process
 
+**Important**: We follow a PR-based workflow. All changes must go through pull requests for review and tracking. See our detailed [Workflow Guide](docs/WORKFLOW.md) for more information.
+
 ### 1. Create Your PR
 
 ```bash
 # Create a feature branch
-git checkout -b add-my-awesome-persona
+git checkout -b content/my-awesome-persona
 
 # Add your files
 git add library/personas/professional/my-persona.md
 
 # Commit with clear message
-git commit -m "feat: Add business analyst persona for professional category"
+git commit -m "content: add business analyst persona for professional category"
 
 # Push to your fork
-git push origin add-my-awesome-persona
+git push origin content/my-awesome-persona
 ```
 
 ### 2. PR Title Format
