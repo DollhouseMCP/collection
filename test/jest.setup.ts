@@ -5,8 +5,6 @@
  * Based on DollhouseMCP/mcp-server patterns.
  */
 
-import { jest } from '@jest/globals';
-
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.TEST_MODE = 'true';
@@ -16,11 +14,17 @@ const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 const originalConsoleWarn = console.warn;
 
+// Create mock functions without jest.fn()
+const createMockFn = () => {
+  const mockFn = (...args: any[]) => {};
+  return mockFn;
+};
+
 beforeEach(() => {
   // Reset console methods before each test
-  console.log = jest.fn();
-  console.error = jest.fn();
-  console.warn = jest.fn();
+  console.log = createMockFn();
+  console.error = createMockFn();
+  console.warn = createMockFn();
 });
 
 afterEach(() => {
@@ -41,9 +45,9 @@ global.testUtils = {
   
   // Helper to suppress console for specific tests
   suppressConsole: () => {
-    console.log = jest.fn();
-    console.error = jest.fn();
-    console.warn = jest.fn();
+    console.log = createMockFn();
+    console.error = createMockFn();
+    console.warn = createMockFn();
   },
   
   // Helper to create mock file content
