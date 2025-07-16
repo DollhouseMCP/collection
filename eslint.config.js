@@ -26,7 +26,7 @@ export default [
       '@typescript-eslint': tseslint,
     },
     rules: {
-      // TypeScript-specific rules
+      // TypeScript-specific rules (strict)
       '@typescript-eslint/no-unused-vars': ['error', { 
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_' 
@@ -34,8 +34,13 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'error', // Upgraded from warn
       '@typescript-eslint/no-var-requires': 'error',
+      '@typescript-eslint/prefer-as-const': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-return': 'error',
       
       // General code quality rules
       'no-console': 'warn',
@@ -46,12 +51,17 @@ export default [
       'no-var': 'error',
       'no-unused-vars': 'off', // Turned off in favor of TypeScript version
       
-      // Security-related rules
+      // Security-related rules (strict)
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
       'no-with': 'error',
+      'no-global-assign': 'error',
+      'no-implicit-globals': 'error',
+      'no-proto': 'error',
+      'no-caller': 'error',
+      'no-extend-native': 'error',
       
       // Best practices
       'eqeqeq': ['error', 'always'],

@@ -21,6 +21,9 @@ import type {
   ValidationSummary 
 } from '../types/index.js';
 
+// Re-export types for external use
+export type { ValidationResult, ValidationIssue, ValidationSummary };
+
 // Zod schemas for metadata validation
 const BaseMetadataSchema = z.object({
   name: z.string().min(3).max(100),
@@ -243,7 +246,7 @@ export class ContentValidator {
     }
 
     // Additional validation
-    if (metadata.author && metadata.author.includes('@')) {
+    if (metadata.author && typeof metadata.author === 'string' && metadata.author.includes('@')) {
       if (!EMAIL_REGEX.test(metadata.author)) {
         issues.push({
           severity: 'medium',

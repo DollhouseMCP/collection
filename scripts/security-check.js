@@ -108,8 +108,30 @@ function checkSecurityFiles() {
  * Run dependency security audit
  */
 function runDependencyAudit() {
+  console.log('📋 Running comprehensive dependency security audit...');
+  
   // Check for high/critical vulnerabilities
-  runCommand('npm audit --audit-level=high', 'npm dependency security audit');
+  const auditResult = runCommand('npm audit --audit-level=high --json', 'npm dependency security audit');
+  
+  if (auditResult) {
+    try {
+      const auditData = JSON.parse(auditResult);
+      if (auditData.metadata && auditData.metadata.vulnerabilities) {
+        const vulns = auditData.metadata.vulnerabilities;
+        const total = vulns.high + vulns.critical;
+        
+        if (total > 0) {
+          console.log(`  ⚠️  Found ${vulns.critical} critical and ${vulns.high} high severity vulnerabilities`);
+          console.log('  💡 Run "npm audit fix" to resolve automatically fixable issues');
+          console.log('  📖 Review "npm audit" output for manual fixes\n');
+        } else {
+          console.log('  ✅ No high or critical vulnerabilities found\n');
+        }
+      }
+    } catch {
+      console.log('  ℹ️  Unable to parse audit JSON, but command completed successfully\n');
+    }
+  }
 }
 
 /**

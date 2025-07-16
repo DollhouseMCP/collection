@@ -34,8 +34,22 @@ afterEach(() => {
   console.warn = originalConsoleWarn;
 });
 
+// Test utilities interface
+interface TestUtils {
+  restoreConsole: () => void;
+  suppressConsole: () => void;
+  createMockFileContent: (metadata: Record<string, unknown>, content?: string) => string;
+  createTestFixture: (type: string, data: Record<string, unknown>) => Record<string, unknown>;
+  createMockValidationResult: (passed: boolean, issues?: unknown[]) => {
+    passed: boolean;
+    issues: unknown[];
+    summary: Record<string, unknown>;
+  };
+  extractIssuesByType: (issues: unknown[], type: string) => unknown[];
+}
+
 // Global test utilities
-(global as any).testUtils = {
+(global as typeof global & { testUtils: TestUtils }).testUtils = {
   // Helper to restore console for debugging specific tests
   restoreConsole: () => {
     console.log = originalConsoleLog;
@@ -51,7 +65,7 @@ afterEach(() => {
   },
   
   // Helper to create mock file content
-  createMockFileContent: (metadata: Record<string, any>, content: string = '') => {
+  createMockFileContent: (metadata: Record<string, unknown>, content = '') => {
     const frontmatter = Object.entries(metadata)
       .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
       .join('\n');
@@ -60,7 +74,7 @@ afterEach(() => {
   },
   
   // Helper to create test fixtures
-  createTestFixture: (type: string, data: Record<string, any>) => {
+  createTestFixture: (type: string, data: Record<string, unknown>) => {
     const baseMetadata = {
       unique_id: `test-${type}-${Date.now()}`,
       name: `Test ${type}`,
@@ -74,31 +88,64 @@ afterEach(() => {
   }
 };
 
+// Types for Jest custom matchers
+interface ValidationResult {
+  isValid: boolean;
+  issues: Array<{ severity: string; type: string; details: string }>;
+}
+
+interface CustomMatchers<R = unknown> {
+  toBeValidationResult(): R;
+  toHaveSecurityIssue(severity: string): R;
+}
+
+declare global {
+  namespace jest {
+    interface Expect extends CustomMatchers {}
+    interface Matchers<R> extends CustomMatchers<R> {}
+    interface InverseAsymmetricMatchers extends CustomMatchers {}
+  }
+}
+
 // Extend Jest matchers for better assertions
 expect.extend({
   // Custom matcher for validation results
-  toBeValidationResult(received: any) {
-    const pass = received && 
-      typeof received.isValid === 'boolean' &&
-      Array.isArray(received.issues);
+  toBeValidationResult(received: unknown) {
+    const isValidationResult = (obj: unknown): obj is ValidationResult => {
+      return obj !== null && 
+        typeof obj === 'object' &&
+        'isValid' in obj &&
+        'issues' in obj &&
+        typeof (obj as ValidationResult).isValid === 'boolean' &&
+        Array.isArray((obj as ValidationResult).issues);
+    };
+    
+    const pass = isValidationResult(received);
     
     if (pass) {
       return {
-        message: () => `expected ${received} not to be a validation result`,
+        message: () => `expected ${String(received)} not to be a validation result`,
         pass: true,
       };
     } else {
       return {
-        message: () => `expected ${received} to be a validation result with isValid and issues properties`,
+        message: () => `expected ${String(received)} to be a validation result with isValid and issues properties`,
         pass: false,
       };
     }
   },
   
   // Custom matcher for security issues
-  toHaveSecurityIssue(received: any, severity: string) {
-    const issues = received.issues || [];
-    const hasIssue = issues.some((issue: any) => 
+  toHaveSecurityIssue(received: unknown, severity: string) {
+    if (!received || typeof received !== 'object' || !('issues' in received)) {
+      return {
+        message: () => 'received value is not a validation result with issues',
+        pass: false,
+      };
+    }
+    
+    const issues = (received as ValidationResult).issues;
+    const hasIssue = issues.some(issue => 
       issue.severity === severity && issue.type && issue.details
     );
     
