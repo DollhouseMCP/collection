@@ -124,11 +124,11 @@ function checkSecurityMisconfigurations() {
     
     // Check for scripts that might be dangerous
     const dangerousScripts = ['postinstall', 'preinstall'];
-    const haseDangerousScripts = dangerousScripts.some(script => 
+    const hasDangerousScripts = dangerousScripts.some(script => 
       packageJson.scripts && packageJson.scripts[script]
     );
     
-    if (haseDangerousScripts) {
+    if (hasDangerousScripts) {
       console.log('  ⚠️  Potentially dangerous npm scripts detected');
       hasErrors = true;
     } else {

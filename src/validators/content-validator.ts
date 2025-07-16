@@ -154,7 +154,7 @@ export class ContentValidator {
       let parsed;
       try {
         parsed = matter(content);
-      } catch {
+      } catch (error) {
         issues.push({
           severity: 'critical',
           type: 'invalid_format',
