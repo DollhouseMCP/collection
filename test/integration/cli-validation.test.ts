@@ -12,7 +12,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Test constants
-const TEST_TIMEOUT = 5000; // 5 seconds
 const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
 
 describe('CLI Validation Tool Integration Tests', () => {
@@ -367,25 +366,23 @@ category: educational
       await writeFile(testFile, validContent, 'utf8');
 
       const outputPath = join(testDir, 'report.json');
-      const env = { ...process.env, OUTPUT_FILE: outputPath, NO_COLOR: '1' };
-
-      const proc = spawn('node', [cliPath, testFile], {
-        cwd: testDir,
-        env
-      });
-
-      // Wait for the process to complete
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Process timeout')), TEST_TIMEOUT);
-        proc.on('close', (code) => {
-          clearTimeout(timeout);
-          if (code !== 0) {
-            reject(new Error(`Process failed with code ${code}`));
-          }
-          resolve();
-        });
-        proc.on('error', reject);
-      });
+      
+      // Set environment variable for OUTPUT_FILE
+      const originalOutputFile = process.env.OUTPUT_FILE;
+      process.env.OUTPUT_FILE = outputPath;
+      process.env.NO_COLOR = '1';
+      
+      try {
+        const { code } = await runCLI([testFile]);
+        expect(code).toBe(0);
+      } finally {
+        // Restore original environment
+        if (originalOutputFile === undefined) {
+          delete process.env.OUTPUT_FILE;
+        } else {
+          process.env.OUTPUT_FILE = originalOutputFile;
+        }
+      }
 
       // Check if report was created
       const { readFile } = await import('fs/promises');
