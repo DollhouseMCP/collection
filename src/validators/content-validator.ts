@@ -234,7 +234,9 @@ export class ContentValidator {
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.issues.forEach(err => {
-          const isMissingField = err.code === 'invalid_type' && 'received' in err && err.received === 'undefined';
+          const isMissingField = err.code === 'invalid_type' && 
+            (('received' in err && err.received === 'undefined') || 
+             (!('received' in err) && err.message.includes('received undefined')));
           issues.push({
             severity: 'high',
             type: isMissingField ? 'missing_field' : 'invalid_metadata',
