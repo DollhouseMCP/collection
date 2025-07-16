@@ -29,6 +29,7 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   /**
    * Helper function to run CLI command
+   * Uses shell: true on Windows to ensure proper Node.js script execution
    */
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
