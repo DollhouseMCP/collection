@@ -42,7 +42,7 @@ module.exports = {
   // Setup and teardown
   globalSetup: '<rootDir>/test/integration/setup.ts',
   globalTeardown: '<rootDir>/test/integration/teardown.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.cjs'],
   
   // Timeouts and workers - longer for integration tests
   testTimeout: 30000,

@@ -1,5 +1,5 @@
 /**
- * Jest Global Setup
+ * Jest Global Setup - CommonJS version
  * 
  * This file runs before all tests and configures the global test environment.
  * Based on DollhouseMCP/mcp-server patterns.
@@ -16,7 +16,7 @@ const originalConsoleWarn = console.warn;
 
 // Create mock functions without jest.fn()
 const createMockFn = () => {
-  const mockFn = (..._args: any[]) => {};
+  const mockFn = (..._args) => {};
   return mockFn;
 };
 
@@ -35,7 +35,7 @@ afterEach(() => {
 });
 
 // Global test utilities
-(global as any).testUtils = {
+global.testUtils = {
   // Helper to restore console for debugging specific tests
   restoreConsole: () => {
     console.log = originalConsoleLog;
@@ -51,7 +51,7 @@ afterEach(() => {
   },
   
   // Helper to create mock file content
-  createMockFileContent: (metadata: Record<string, any>, content: string = '') => {
+  createMockFileContent: (metadata, content = '') => {
     const frontmatter = Object.entries(metadata)
       .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
       .join('\n');
@@ -60,7 +60,7 @@ afterEach(() => {
   },
   
   // Helper to create test fixtures
-  createTestFixture: (type: string, data: Record<string, any>) => {
+  createTestFixture: (type, data) => {
     const baseMetadata = {
       unique_id: `test-${type}-${Date.now()}`,
       name: `Test ${type}`,
@@ -77,7 +77,7 @@ afterEach(() => {
 // Extend Jest matchers for better assertions
 expect.extend({
   // Custom matcher for validation results
-  toBeValidationResult(received: any) {
+  toBeValidationResult(received) {
     const pass = received && 
       typeof received.isValid === 'boolean' &&
       Array.isArray(received.issues);
@@ -96,9 +96,9 @@ expect.extend({
   },
   
   // Custom matcher for security issues
-  toHaveSecurityIssue(received: any, severity: string) {
+  toHaveSecurityIssue(received, severity) {
     const issues = received.issues || [];
-    const hasIssue = issues.some((issue: any) => 
+    const hasIssue = issues.some((issue) => 
       issue.severity === severity && issue.type && issue.details
     );
     
@@ -115,23 +115,3 @@ expect.extend({
     }
   }
 });
-
-// Extend global namespace
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBeValidationResult(): R;
-      toHaveSecurityIssue(severity: string): R;
-    }
-  }
-  
-  var testUtils: {
-    restoreConsole: () => void;
-    suppressConsole: () => void;
-    createMockFileContent: (metadata: Record<string, any>, content?: string) => string;
-    createTestFixture: (type: string, data: Record<string, any>) => Record<string, any>;
-  };
-}
-
-// This export makes the file a module and enables global declarations
-export const _setupComplete = true;
