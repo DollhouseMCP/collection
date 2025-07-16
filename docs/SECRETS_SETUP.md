@@ -65,7 +65,7 @@ After adding `ADD_TO_PROJECT_PAT`:
 - Verify secret name is exactly `ANTHROPIC_API_KEY`
 - Check the API key is valid and has credits
 - Review workflow runs in Actions tab
-- Ensure PR author is authorized (currently: mickdarling)
+- Ensure PR author is authorized (check `.github/workflows/claude.yml` for authorized users)
 
 ### Project Integration Failing
 - Verify PAT has `project` scope

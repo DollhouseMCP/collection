@@ -17,8 +17,10 @@ jobs:
     steps:
       - name: Check ANTHROPIC_API_KEY
         id: check-api-key
+        env:
+          API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+          if [ -n "$API_KEY" ]; then
             echo "has_api_key=true" >> $GITHUB_OUTPUT
             echo "✅ ANTHROPIC_API_KEY is configured"
           else
