@@ -82,10 +82,11 @@ jobs:
               avgTime: (scanEnd - scanStart) / 1000
             };
             
-            // Benchmark 3: Startup time
-            const startupCmd = process.platform === 'win32' 
-              ? 'powershell -Command "Measure-Command { node dist/src/cli/validate.js --help }"'
-              : 'time -p node dist/src/cli/validate.js --help';
+            // Benchmark 3: Startup time (simplified for now)
+            // TODO: Implement actual startup time measurement
+            results.benchmarks.startupTime = {
+              note: 'Startup time measurement not yet implemented'
+            };
             
             console.log(JSON.stringify(results, null, 2));
           }
