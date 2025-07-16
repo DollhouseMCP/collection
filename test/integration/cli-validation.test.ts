@@ -4,9 +4,10 @@
  */
 
 import { spawn } from 'child_process';
-import { writeFile, mkdir, rm } from 'fs/promises';
+import { writeFile, mkdir, rm, access } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { constants } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -64,7 +65,20 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   describe('Basic CLI Operations', () => {
     it('should show usage when run without arguments', async () => {
-      const { code, stderr } = await runCLI([]);
+      const { code, stdout, stderr } = await runCLI([]);
+      
+      // Debug output for CI
+      if (code === 0 && !stdout && !stderr) {
+        console.log('DEBUG: Empty output from CLI');
+        console.log('DEBUG: cliPath:', cliPath);
+        console.log('DEBUG: process.execPath:', process.execPath);
+        try {
+          await access(cliPath, constants.F_OK);
+          console.log('DEBUG: CLI file exists');
+        } catch (err) {
+          console.log('DEBUG: CLI file does NOT exist:', err);
+        }
+      }
 
       expect(code).toBe(1);
       expect(stderr).toContain('Usage: validate-content');
