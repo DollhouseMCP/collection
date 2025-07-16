@@ -85,6 +85,34 @@ interface TestUtils {
     };
     
     return { ...baseMetadata, ...data };
+  },
+  
+  // Helper to create mock validation results
+  createMockValidationResult: (passed: boolean, issues: unknown[] = []) => {
+    const isValidIssue = (issue: unknown): issue is { severity: string } => {
+      return typeof issue === 'object' && issue !== null && 'severity' in issue;
+    };
+    
+    return {
+      passed,
+      issues,
+      summary: {
+        critical: issues.filter(issue => isValidIssue(issue) && issue.severity === 'critical').length,
+        high: issues.filter(issue => isValidIssue(issue) && issue.severity === 'high').length,
+        medium: issues.filter(issue => isValidIssue(issue) && issue.severity === 'medium').length,
+        low: issues.filter(issue => isValidIssue(issue) && issue.severity === 'low').length,
+        total: issues.length
+      }
+    };
+  },
+  
+  // Helper to extract issues by type
+  extractIssuesByType: (issues: unknown[], type: string) => {
+    const hasType = (issue: unknown): issue is { type: string } => {
+      return typeof issue === 'object' && issue !== null && 'type' in issue;
+    };
+    
+    return issues.filter(issue => hasType(issue) && issue.type === type);
   }
 };
 
