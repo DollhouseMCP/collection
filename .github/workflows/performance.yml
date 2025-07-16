@@ -45,8 +45,8 @@ jobs:
           # Create performance test script
           cat > perf-test.mjs << 'EOF'
           import { performance } from 'perf_hooks';
-          import { ContentValidator } from './dist/validators/content-validator.js';
-          import { scanForSecurityPatterns } from './dist/validators/security-patterns.js';
+          import { ContentValidator } from './dist/src/validators/content-validator.js';
+          import { scanForSecurityPatterns } from './dist/src/validators/security-patterns.js';
           
           async function runBenchmarks() {
             const results = {
@@ -84,8 +84,8 @@ jobs:
             
             // Benchmark 3: Startup time
             const startupCmd = process.platform === 'win32' 
-              ? 'powershell -Command "Measure-Command { node dist/cli/validate.js --help }"'
-              : 'time -p node dist/cli/validate.js --help';
+              ? 'powershell -Command "Measure-Command { node dist/src/cli/validate.js --help }"'
+              : 'time -p node dist/src/cli/validate.js --help';
             
             console.log(JSON.stringify(results, null, 2));
           }
