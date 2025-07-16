@@ -34,7 +34,8 @@ describe('CLI Validation Tool Integration Tests', () => {
     return new Promise((resolve) => {
       const proc = spawn('node', [cliPath, ...args], {
         cwd: testDir,
-        env: { ...process.env, NO_COLOR: '1' } // Disable color output for testing
+        env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
+        shell: process.platform === 'win32' // Use shell on Windows for proper execution
       });
 
       let stdout = '';
