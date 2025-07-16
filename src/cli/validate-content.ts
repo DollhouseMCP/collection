@@ -57,13 +57,16 @@ export async function main(args?: string[]): Promise<number> {
       
       // Print result
       const status = result.passed ? '✅ PASSED' : '❌ FAILED';
-      console.log(`${status} - ${file}`);
+      // Normalize path separators to forward slashes for consistent output
+      const normalizedPath = file.replace(/\\/g, '/');
+      console.log(`${status} - ${normalizedPath}`);
       
       if (!result.passed) {
         console.log(`   Critical: ${result.summary.critical}, High: ${result.summary.high}`);
       }
     } catch (error) {
-      console.error(`❌ ERROR - ${file}: ${error}`);
+      const normalizedPath = file.replace(/\\/g, '/');
+      console.error(`❌ ERROR - ${normalizedPath}: ${error}`);
       allPassed = false;
     }
   }
@@ -116,7 +119,8 @@ export async function main(args?: string[]): Promise<number> {
     console.log('\n❌ Failed validations:');
     for (const { file, report } of allReports) {
       if (!report.passed) {
-        console.log(`\n${file}:`);
+        const normalizedPath = file.replace(/\\/g, '/');
+        console.log(`\n${normalizedPath}:`);
         console.log(report.markdown.split('\n').map((line: string) => '  ' + line).join('\n'));
       }
     }
