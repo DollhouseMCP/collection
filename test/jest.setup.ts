@@ -16,7 +16,7 @@ const originalConsoleWarn = console.warn;
 
 // Create mock functions without jest.fn()
 const createMockFn = () => {
-  const mockFn = (...args: any[]) => {};
+  const mockFn = (..._args: any[]) => {};
   return mockFn;
 };
 
@@ -35,7 +35,7 @@ afterEach(() => {
 });
 
 // Global test utilities
-global.testUtils = {
+(global as any).testUtils = {
   // Helper to restore console for debugging specific tests
   restoreConsole: () => {
     console.log = originalConsoleLog;
@@ -117,6 +117,8 @@ expect.extend({
 });
 
 // Declare global types for TypeScript
+export {}; // Make this a module
+
 declare global {
   namespace jest {
     interface Matchers<R> {
