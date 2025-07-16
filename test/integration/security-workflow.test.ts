@@ -488,8 +488,8 @@ class SecurityScanner:
     def __init__(self):
         # Pattern definitions for detection
         self.patterns = {
-            'api_key': r'(api_key|apikey|api-key)\s*=\s*[a-zA-Z0-9_-]+',
-            'sql_injection': r"'\s*(OR|AND)\s*'?1'?\s*=\s*'?1'?",
+            'api_key': r'(api_key|apikey|api-key) *= *[a-zA-Z0-9_-]+',
+            'sql_injection': r"' *(OR|AND) *'?1'? *= *'?1'?",
             'xss': r'<script[^>]*>.*?</script>',
         }
     
