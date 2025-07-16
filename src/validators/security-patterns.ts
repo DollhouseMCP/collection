@@ -11,6 +11,14 @@ export interface SecurityPattern {
   category: string;
 }
 
+export interface SecurityIssue {
+  pattern: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  line: number;
+  category: string;
+  description: string;
+}
+
 export const SECURITY_PATTERNS: SecurityPattern[] = [
   // Prompt Injection Patterns
   {
@@ -42,6 +50,27 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'prompt_injection'
   },
   {
+    name: 'forget_everything',
+    pattern: /forget\s+everything\s+(above|before|previous)/i,
+    severity: 'critical',
+    description: 'Attempts to override system context',
+    category: 'prompt_injection'
+  },
+  {
+    name: 'act_as_different',
+    pattern: /act\s+as\s+a?\s?(different|another)\s+(AI|system|assistant|bot)/i,
+    severity: 'high',
+    description: 'Attempts to change AI role or identity',
+    category: 'role_hijacking'
+  },
+  {
+    name: 'you_are_now',
+    pattern: /you\s+are\s+now\s+a?\s?(different|another)\s+(AI|system|assistant|bot)/i,
+    severity: 'high',
+    description: 'Attempts to redefine AI identity',
+    category: 'role_hijacking'
+  },
+  {
     name: 'act_as_root',
     pattern: /act\s+as\s+(root|admin|administrator|system|sudo)/i,
     severity: 'high',
@@ -62,6 +91,13 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     pattern: /\b(exec|system|shell|bash|sh|cmd|powershell)\s*\(/i,
     severity: 'critical',
     description: 'Attempts to execute shell commands',
+    category: 'command_execution'
+  },
+  {
+    name: 'execute_command',
+    pattern: /execute\s+(the\s+)?(following\s+|this\s+)?command/i,
+    severity: 'critical',
+    description: 'Direct command execution request',
     category: 'command_execution'
   },
   {
@@ -200,15 +236,19 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
  * @param content The content to scan
  * @returns Array of detected security issues
  */
-export function scanForSecurityPatterns(content: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
+export function scanForSecurityPatterns(content: string): SecurityIssue[] {
+  if (!content || content.trim() === '') {
+    return [];
+  }
+
+  const issues: SecurityIssue[] = [];
   const lines = content.split('\n');
 
   for (const pattern of SECURITY_PATTERNS) {
     // Check full content
     if (pattern.pattern.test(content)) {
       // Find which line(s) contain the pattern
-      let lineNumber: number | null = null;
+      let lineNumber = 1;
       for (let i = 0; i < lines.length; i++) {
         if (pattern.pattern.test(lines[i])) {
           lineNumber = i + 1;
@@ -217,11 +257,11 @@ export function scanForSecurityPatterns(content: string): ValidationIssue[] {
       }
 
       issues.push({
+        pattern: pattern.name,
         severity: pattern.severity,
-        type: `security_${pattern.category}`,
-        details: `${pattern.description}: Pattern "${pattern.name}" detected`,
         line: lineNumber,
-        suggestion: getSuggestionForPattern(pattern)
+        category: pattern.category,
+        description: pattern.description
       });
     }
   }
@@ -229,26 +269,7 @@ export function scanForSecurityPatterns(content: string): ValidationIssue[] {
   return issues;
 }
 
-/**
- * Gets a helpful suggestion for fixing a security pattern
- */
-function getSuggestionForPattern(pattern: SecurityPattern): string {
-  const suggestions: Record<string, string> = {
-    prompt_injection: 'Remove attempts to override or ignore instructions. Focus on describing the intended behavior.',
-    privilege_escalation: 'Remove references to admin or system privileges. Content should work within normal user permissions.',
-    command_execution: 'Remove shell commands or code execution. Use descriptive language instead of executable code.',
-    file_system: 'Remove file system operations. Describe the desired outcome instead.',
-    network_access: 'Remove external URLs and network requests. Keep content self-contained.',
-    data_exfiltration: 'Remove attempts to send data externally. Focus on local processing.',
-    obfuscation: 'Use clear, readable text. Avoid encoded or obfuscated content.',
-    jailbreak: 'Stay within the intended use of the system. Remove attempts to bypass safety features.',
-    yaml_security: 'Use simple YAML structures. Avoid advanced features that could be exploited.',
-    resource_exhaustion: 'Use reasonable sizes for content. Avoid excessive repetition or large values.',
-    sensitive_data: 'Remove API keys, tokens, or other sensitive information. Use placeholders if needed.'
-  };
-
-  return suggestions[pattern.category] || 'Review and remove potentially unsafe content.';
-}
+// Note: getSuggestionForPattern function moved to content-validator.ts where it's used
 
 // Additional security constants
 export const MAX_CONTENT_LENGTH = 50000; // 50KB max content size
@@ -261,4 +282,4 @@ export const EMAIL_REGEX = /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{1,63}$/;
 // Safe URL validation
 export const SAFE_URL_REGEX = /^https?:\/\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]{1,2000}$/;
 
-import type { ValidationIssue } from '../types/index.js';
+// Note: ValidationIssue import removed as we now use SecurityIssue for this function
