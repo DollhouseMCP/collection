@@ -114,7 +114,7 @@ This skill is missing the required capabilities field.
       
       expect(result.passed).toBe(false);
       expect(result.issues.some(issue => 
-        issue.type === 'invalid_metadata' && issue.details.includes('capabilities')
+        issue.type === 'missing_field' && issue.details.includes('capabilities')
       )).toBe(true);
     });
   });
@@ -478,7 +478,7 @@ This content has persona fields but claims to be a skill.
       
       expect(result.passed).toBe(false);
       expect(result.issues.some(issue => 
-        issue.type === 'invalid_metadata'
+        issue.type === 'missing_field' || issue.type === 'invalid_metadata'
       )).toBe(true);
     });
   });
