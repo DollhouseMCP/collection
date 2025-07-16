@@ -40,7 +40,7 @@ module.exports = {
   },
   
   // Setup
-  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.cjs'],
   
   // Timeouts and workers
   testTimeout: 10000,
