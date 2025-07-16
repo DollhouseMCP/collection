@@ -4,8 +4,10 @@ name: Claude Code Review
 # Automated PR Review Workflow
 # =============================
 # AUTOMATIC TRIGGERING: This workflow runs automatically on:
-#   - New pull requests (opened) from authorized users only
-#   - Updated pull requests (synchronize) from authorized users only
+#   - New pull requests (opened) from authorized users
+#   - Updated pull requests (synchronize) from authorized users
+#   - Reopened pull requests (reopened) from authorized users
+#   - PRs marked ready for review (ready_for_review) from authorized users
 #
 # SECURITY MODEL:
 #   - Only runs for PRs created by explicitly authorized users
@@ -19,21 +21,9 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    paths:
-      - "src/**/*.ts"
-      - "library/**/*.md"
-      - "showcase/**/*.md"
-      - "catalog/**/*.md"
-      - "*.md"
-      - "package.json"
-      - "tsconfig.json"
-      - ".github/workflows/**"
-    paths-ignore:
-      - "dist/**"
-      - "node_modules/**"
-      - "coverage/**"
+    types: [opened, synchronize, reopened, ready_for_review]
+    # Removed path filters to ensure all PR changes get reviewed
+    # This ensures Claude reviews every update to catch any issues
 
 permissions:
   contents: read
@@ -58,6 +48,14 @@ jobs:
       id-token: write          # Write needed: for OIDC authentication
 
     steps:
+      - name: Debug PR Event
+        run: |
+          echo "Event Name: ${{ github.event_name }}"
+          echo "PR Action: ${{ github.event.action }}"
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Is Authorized: ${{ github.event.pull_request.user.login == 'mickdarling' || github.event.pull_request.user.login == 'dependabot[bot]' }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
