@@ -34,10 +34,14 @@ describe('CLI Validation Tool Integration Tests', () => {
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
       // Always use Node.js to run the script, ignoring the shebang
-      const proc = spawn(process.execPath, [cliPath, ...args], {
+      // Use normalized paths for cross-platform compatibility
+      const normalizedCliPath = cliPath.replace(/\\/g, '/');
+      
+      const proc = spawn(process.execPath, [normalizedCliPath, ...args], {
         cwd: testDir,
         env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
-        windowsVerbatimArguments: true // Prevent Windows from messing with arguments
+        shell: false, // Explicit no shell for security
+        stdio: ['ignore', 'pipe', 'pipe'] // Explicitly set stdio
       });
 
       let stdout = '';
@@ -51,12 +55,21 @@ describe('CLI Validation Tool Integration Tests', () => {
         stderr += data.toString();
       });
 
+      // Add timeout handler
+      const timeoutId = setTimeout(() => {
+        proc.kill('SIGTERM');
+        stderr += 'Process timed out';
+        resolve({ code: 1, stdout, stderr });
+      }, TEST_TIMEOUT);
+
       proc.on('error', (error) => {
+        clearTimeout(timeoutId);
         stderr += `Process error: ${error.message}`;
         resolve({ code: 1, stdout, stderr });
       });
 
       proc.on('close', (code) => {
+        clearTimeout(timeoutId);
         resolve({ code: code || 0, stdout, stderr });
       });
     });
