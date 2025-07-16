@@ -286,11 +286,8 @@ export class ContentValidator {
       }
     });
     
-    // Check for Lorem ipsum placeholder text (but not in metadata)
-    const contentLower = content.toLowerCase();
-    if (contentLower.includes('lorem ipsum') && 
-        (metadata.description?.toLowerCase().includes('lorem ipsum') || 
-         contentLower.split('---')[2]?.includes('lorem ipsum'))) {
+    // Check for Lorem ipsum placeholder text
+    if (content.toLowerCase().includes('lorem ipsum')) {
       issues.push({
         severity: 'medium',
         type: 'placeholder_content',
