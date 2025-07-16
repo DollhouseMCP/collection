@@ -11,6 +11,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Test constants
+const TEST_TIMEOUT = 5000; // 5 seconds
+const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
+
 describe('CLI Validation Tool Integration Tests', () => {
   const testDir = join(__dirname, '../../.test-tmp/cli-integration');
   const cliPath = join(__dirname, '../../dist/src/cli/validate-content.js');
@@ -340,11 +344,14 @@ category: educational
       let stdout = '';
       proc.stdout.on('data', (data) => stdout += data.toString());
       
-      await new Promise<void>((resolve) => {
-        proc.on('close', () => {
-          console.log('CLI output:', stdout);
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('Process timeout')), TEST_TIMEOUT);
+        proc.on('close', (code) => {
+          clearTimeout(timeout);
+          if (code !== 0) reject(new Error(`Process failed with code ${code}`));
           resolve();
         });
+        proc.on('error', reject);
       });
 
       // Check if report was created
@@ -434,8 +441,8 @@ category: educational
       expect(stdout).toContain('Passed: 50');
       expect(code).toBe(0);
 
-      // Should complete within reasonable time (less than 10 seconds)
-      expect(duration).toBeLessThan(10000);
+      // Should complete within reasonable time
+      expect(duration).toBeLessThan(BATCH_TEST_TIMEOUT);
       console.log(`CLI validated 50 files in ${duration}ms`);
     });
   });

@@ -12,6 +12,9 @@ import { spawn } from 'child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Test constants
+const PERFORMANCE_TIMEOUT = 1000; // 1 second for performance tests
+
 describe('Security Workflow Integration Tests', () => {
   const testDir = join(__dirname, '../../.test-tmp/security-integration');
   const validator = new ContentValidator();
@@ -140,8 +143,8 @@ ${lines.join('\n')}`;
       const result = await validator.validateContent(testFile);
       const duration = Date.now() - startTime;
 
-      // Main goal: Should complete within reasonable time (less than 1 second)
-      expect(duration).toBeLessThan(1000);
+      // Main goal: Should complete within reasonable time
+      expect(duration).toBeLessThan(PERFORMANCE_TIMEOUT);
       
       // The validator should have processed the file
       expect(result).toBeDefined();
@@ -269,6 +272,13 @@ capabilities:
       expect(detectedCategories).toContain('prompt_injection');
       expect(detectedCategories).toContain('command_execution');
       expect(detectedCategories).toContain('data_exfiltration');
+      
+      // More specific assertions about detected patterns
+      const issueDetails = securityIssues.map(i => i.details || '').join(' ');
+      // Check for key security pattern detections in the details
+      expect(issueDetails).toMatch(/override.*previous.*instructions|ignore.*instructions/i);
+      expect(issueDetails).toMatch(/execute.*command|command.*execution/i);
+      expect(issueDetails).toMatch(/exfiltrate.*data|send.*data/i);
     });
 
     it('should detect various security attack patterns', async () => {
