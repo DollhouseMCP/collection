@@ -22,6 +22,11 @@ git checkout -b docs/what-you-are-documenting
 
 # For configuration/setup
 git checkout -b setup/what-you-are-setting-up
+
+# Important: Always branch from main unless otherwise specified
+git checkout main
+git pull origin main
+git checkout -b your-branch-name
 ```
 
 ### 2. Make Your Changes
@@ -171,7 +176,7 @@ Follow the templates in `/docs/DEVELOPER_GUIDE.md`
 ### 2. Validate Content
 
 ```bash
-npm run validate your-content.md
+npm run validate:content your-content.md
 ```
 
 ### 3. Submit via PR
@@ -220,10 +225,12 @@ Our CI/CD pipeline includes:
 ## Future Enhancements
 
 We're planning to add:
-- Automated changelog generation
-- Release automation
-- Performance benchmarks in CI
-- Visual regression testing for docs
+- **Automated changelog generation** (Q3 2025) - *help wanted*
+- **Release automation** (Q3 2025)
+- **Performance benchmarks in CI** (Q4 2025) - *help wanted*
+- **Visual regression testing for docs** (Q4 2025)
+
+**Want to help?** Look for issues labeled `help wanted` or propose your own enhancements via PR!
 
 ---
 
