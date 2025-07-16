@@ -3,7 +3,7 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { spawn } from 'cross-spawn';
+import spawn from 'cross-spawn';
 import { writeFile, mkdir, rm } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
