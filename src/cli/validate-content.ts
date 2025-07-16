@@ -40,7 +40,7 @@ export async function main(args?: string[]): Promise<number> {
 
   if (allFiles.length === 0) {
     console.error('No files found matching the provided patterns');
-    process.exit(1);
+    return 1;
   }
 
   console.log(`\n🔍 Validating ${allFiles.length} file(s)...\n`);
