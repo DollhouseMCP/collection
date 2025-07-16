@@ -212,7 +212,7 @@ export class ContentValidator {
   /**
    * Validates metadata against schema
    */
-  private validateMetadata(metadata: any): ValidationIssue[] {
+  private validateMetadata(metadata: Record<string, unknown>): ValidationIssue[] {
     const issues: ValidationIssue[] = [];
 
     // Check metadata size
