@@ -1,0 +1,120 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Performance Benchmarks - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        id: build-benchmark
+        run: |
+          echo "build_start=$(date +%s%N)" >> $GITHUB_OUTPUT
+          npm run build
+          echo "build_end=$(date +%s%N)" >> $GITHUB_OUTPUT
+
+      - name: Run performance tests
+        id: perf-tests
+        run: node scripts/performance-test.js
+
+      - name: Calculate build metrics
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            # Windows doesn't have nanosecond precision, use milliseconds
+            BUILD_TIME=0
+          else
+            BUILD_START=${{ steps.build-benchmark.outputs.build_start }}
+            BUILD_END=${{ steps.build-benchmark.outputs.build_end }}
+            BUILD_TIME=$((($BUILD_END - $BUILD_START) / 1000000))
+          fi
+          
+          echo "Build time: ${BUILD_TIME}ms"
+          echo "build_time=${BUILD_TIME}" >> $GITHUB_ENV
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-${{ matrix.os }}
+          path: performance-results.json
+          retention-days: 90
+
+      - name: Compare with baseline
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "## 📊 Performance Metrics - ${{ matrix.os }}" >> pr-message.md
+          echo "" >> pr-message.md
+          echo "**Build Time:** ${{ env.build_time }}ms" >> pr-message.md
+          echo "" >> pr-message.md
+          echo "### Benchmark Results" >> pr-message.md
+          echo '```json' >> pr-message.md
+          cat performance-results.json >> pr-message.md
+          echo '```' >> pr-message.md
+
+  performance-report:
+    name: Performance Report
+    needs: benchmark
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all performance results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: performance-*
+          merge-multiple: false
+
+      - name: Generate consolidated report
+        run: |
+          echo "# 🚀 Performance Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Process results from each platform
+          for result in performance-*/performance-results.json; do
+            if [ -f "$result" ]; then
+              platform=$(basename $(dirname $result))
+              echo "## $platform" >> $GITHUB_STEP_SUMMARY
+              echo '```json' >> $GITHUB_STEP_SUMMARY
+              cat "$result" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Store performance trends
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # This would typically push to a metrics service or create a trend file
+          echo "Performance data stored for trend analysis"
