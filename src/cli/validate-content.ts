@@ -8,16 +8,17 @@ import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
 
-async function main() {
-  const args = process.argv.slice(2);
+export async function main(args?: string[]): Promise<number> {
+  // Use provided args or get from process.argv
+  const cliArgs = args || process.argv.slice(2);
   
-  if (args.length === 0) {
+  if (cliArgs.length === 0) {
     console.error('Usage: validate-content <file-or-pattern> [file-or-pattern...]');
     console.error('Examples:');
     console.error('  validate-content persona.md');
     console.error('  validate-content library/personas/**/*.md');
     console.error('  validate-content "library/**/*.md" "showcase/**/*.md"');
-    process.exit(1);
+    return 1;
   }
 
   const validator = new ContentValidator();
@@ -26,7 +27,7 @@ async function main() {
 
   // Expand glob patterns and collect all files
   const allFiles: string[] = [];
-  for (const pattern of args) {
+  for (const pattern of cliArgs) {
     if (pattern.includes('*')) {
       // It's a glob pattern
       const files = await glob(pattern);
@@ -122,13 +123,15 @@ async function main() {
   }
 
   // Exit with appropriate code
-  process.exit(allPassed ? 0 : 1);
+  return allPassed ? 0 : 1;
 }
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
+  main()
+    .then(exitCode => process.exit(exitCode))
+    .catch(error => {
+      console.error('Fatal error:', error);
+      process.exit(1);
+    });
 }
