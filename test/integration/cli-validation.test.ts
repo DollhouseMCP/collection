@@ -3,7 +3,7 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { spawn } from 'child_process';
+import { spawn } from 'cross-spawn';
 import { writeFile, mkdir, rm } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -29,14 +29,13 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   /**
    * Helper function to run CLI command
-   * Uses shell: true on Windows to ensure proper Node.js script execution
+   * Uses cross-spawn for cross-platform compatibility
    */
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
       const proc = spawn('node', [cliPath, ...args], {
         cwd: testDir,
-        env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
-        shell: process.platform === 'win32' // Use shell on Windows for proper execution
+        env: { ...process.env, NO_COLOR: '1' } // Disable color output for testing
       });
 
       let stdout = '';
