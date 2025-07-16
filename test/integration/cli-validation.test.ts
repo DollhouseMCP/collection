@@ -34,16 +34,11 @@ describe('CLI Validation Tool Integration Tests', () => {
    */
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
-      // On Windows, we need to use cmd.exe to run the script
-      const isWindows = process.platform === 'win32';
-      const command = isWindows ? process.execPath : process.execPath;
-      const commandArgs = isWindows ? [cliPath.replace(/\\/g, '/'), ...args] : [cliPath, ...args];
-      
-      const proc = spawn(command, commandArgs, {
+      // Always use Node.js to run the script, ignoring the shebang
+      const proc = spawn(process.execPath, [cliPath, ...args], {
         cwd: testDir,
         env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
-        shell: false,
-        windowsHide: true
+        windowsVerbatimArguments: true // Prevent Windows from messing with arguments
       });
 
       let stdout = '';
