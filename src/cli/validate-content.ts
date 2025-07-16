@@ -3,7 +3,7 @@
  * CLI for validating collection content
  */
 
-import { ContentValidator } from '../validators/content-validator.js';
+import { ContentValidator, ValidationResult } from '../validators/content-validator.js';
 import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
@@ -22,7 +22,7 @@ async function main() {
 
   const validator = new ContentValidator();
   let allPassed = true;
-  const allReports: Array<{ file: string; report: any }> = [];
+  const allReports: Array<{ file: string; report: ValidationResult }> = [];
 
   // Expand glob patterns and collect all files
   const allFiles: string[] = [];
