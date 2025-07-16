@@ -38,7 +38,15 @@ function runCommand(command, description) {
     return output;
   } catch (error) {
     console.error(`❌ ${description} - FAILED`);
-    console.error(`Error: ${error.message}\n`);
+    if (error.code === 'ENOENT') {
+      console.error(`Command not found: ${command.split(' ')[0]}`);
+      console.error(`Please ensure the command is installed and available in PATH\n`);
+    } else if (error.status) {
+      console.error(`Command exited with code ${error.status}`);
+      console.error(`Error: ${error.message}\n`);
+    } else {
+      console.error(`Error: ${error.message}\n`);
+    }
     hasErrors = true;
     return null;
   }
@@ -51,20 +59,38 @@ function checkSecurityFiles() {
   console.log('📋 Checking security configuration files...');
   
   const requiredFiles = [
-    'src/validators/security-patterns.ts',
-    'src/validators/content-validator.ts',
-    '.github/workflows/security-scan.yml',
-    '.github/dependabot.yml'
+    {
+      path: 'src/validators/security-patterns.ts',
+      description: 'Security pattern definitions',
+      helpUrl: 'https://github.com/DollhouseMCP/collection/blob/main/docs/SECURITY.md'
+    },
+    {
+      path: 'src/validators/content-validator.ts',
+      description: 'Content validation logic',
+      helpUrl: 'https://github.com/DollhouseMCP/collection/blob/main/docs/VALIDATION.md'
+    },
+    {
+      path: '.github/workflows/security-scan.yml',
+      description: 'Automated security scanning workflow',
+      helpUrl: 'https://docs.github.com/en/actions/using-workflows'
+    },
+    {
+      path: '.github/dependabot.yml',
+      description: 'Dependency update configuration',
+      helpUrl: 'https://docs.github.com/en/code-security/dependabot'
+    }
   ];
   
   let allExist = true;
   
   for (const file of requiredFiles) {
-    const fullPath = join(rootDir, file);
+    const fullPath = join(rootDir, file.path);
     if (existsSync(fullPath)) {
-      console.log(`  ✅ ${file}`);
+      console.log(`  ✅ ${file.path}`);
     } else {
-      console.log(`  ❌ ${file} - MISSING`);
+      console.log(`  ❌ ${file.path} - MISSING`);
+      console.log(`     ${file.description}`);
+      console.log(`     Setup guide: ${file.helpUrl}`);
       allExist = false;
       hasErrors = true;
     }
@@ -73,7 +99,8 @@ function checkSecurityFiles() {
   if (allExist) {
     console.log('✅ Security configuration files - PASSED\n');
   } else {
-    console.log('❌ Security configuration files - FAILED\n');
+    console.log('❌ Security configuration files - FAILED');
+    console.log('   These files are required for branch protection and security compliance.\n');
   }
 }
 
@@ -121,21 +148,61 @@ function checkSecurityMisconfigurations() {
   // Check package.json for security issues
   try {
     const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
+    let hasSecurityIssues = false;
     
-    // Check for scripts that might be dangerous
+    // Check for dangerous npm scripts
     const dangerousScripts = ['postinstall', 'preinstall'];
-    const hasDangerousScripts = dangerousScripts.some(script => 
+    const foundDangerousScripts = dangerousScripts.filter(script => 
       packageJson.scripts && packageJson.scripts[script]
     );
     
-    if (hasDangerousScripts) {
-      console.log('  ⚠️  Potentially dangerous npm scripts detected');
-      hasErrors = true;
+    if (foundDangerousScripts.length > 0) {
+      console.log(`  ⚠️  Potentially dangerous npm scripts detected: ${foundDangerousScripts.join(', ')}`);
+      hasSecurityIssues = true;
     } else {
       console.log('  ✅ No dangerous npm scripts found');
     }
     
-    console.log('✅ Security misconfiguration check - PASSED\n');
+    // Check for suspicious script patterns
+    if (packageJson.scripts) {
+      const suspiciousPatterns = [
+        /curl\s+.*\|\s*sh/,
+        /wget\s+.*\|\s*sh/,
+        /rm\s+-rf\s+\/[^/]/, // rm -rf with absolute paths
+        /eval\s*\(/,
+        /exec\s*\(/
+      ];
+      
+      const suspiciousScripts = Object.entries(packageJson.scripts)
+        .filter(([, script]) => 
+          suspiciousPatterns.some(pattern => pattern.test(script))
+        )
+        .map(([name]) => name);
+      
+      if (suspiciousScripts.length > 0) {
+        console.log(`  ⚠️  Scripts with suspicious patterns: ${suspiciousScripts.join(', ')}`);
+        hasSecurityIssues = true;
+      } else {
+        console.log('  ✅ No suspicious script patterns found');
+      }
+    }
+    
+    // Check for missing security-related fields
+    const securityFields = ['bugs', 'repository', 'license'];
+    const missingFields = securityFields.filter(field => !packageJson[field]);
+    
+    if (missingFields.length > 0) {
+      console.log(`  ℹ️  Missing recommended security fields: ${missingFields.join(', ')}`);
+    } else {
+      console.log('  ✅ All recommended security fields present');
+    }
+    
+    if (hasSecurityIssues) {
+      console.log('⚠️  Security misconfiguration issues found\n');
+      hasErrors = true;
+    } else {
+      console.log('✅ Security misconfiguration check - PASSED\n');
+    }
   } catch (error) {
     console.error('❌ Security misconfiguration check - FAILED');
     console.error(`Error: ${error.message}\n`);
