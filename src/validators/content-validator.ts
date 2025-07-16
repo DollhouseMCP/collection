@@ -339,7 +339,7 @@ export class ContentValidator {
     fileResults: Array<{ file: string; passed: boolean; issues: number }>;
   }> {
     const fileResults: Array<{ file: string; passed: boolean; issues: number }> = [];
-    let totalIssues = {
+    const totalIssues = {
       critical: 0,
       high: 0,
       medium: 0,
