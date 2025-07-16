@@ -278,11 +278,19 @@ capabilities:
       expect(detectedCategories).toContain('data_exfiltration');
       
       // More specific assertions about detected patterns
-      const issueDetails = securityIssues.map(i => i.details || '').join(' ');
-      // Check for key security pattern detections in the details
-      expect(issueDetails).toMatch(/override.*previous.*instructions|ignore.*instructions/i);
-      expect(issueDetails).toMatch(/execute.*command|command.*execution/i);
-      expect(issueDetails).toMatch(/exfiltrate.*data|send.*data/i);
+      const promptInjectionIssues = securityIssues.filter(i => i.type === 'security_prompt_injection');
+      const commandExecutionIssues = securityIssues.filter(i => i.type === 'security_command_execution');
+      const dataExfiltrationIssues = securityIssues.filter(i => i.type === 'security_data_exfiltration');
+      
+      // Verify specific categories have issues detected
+      expect(promptInjectionIssues.length).toBeGreaterThan(0);
+      expect(commandExecutionIssues.length).toBeGreaterThan(0);
+      expect(dataExfiltrationIssues.length).toBeGreaterThan(0);
+      
+      // Verify we have multiple instances of each type
+      expect(promptInjectionIssues.length).toBeGreaterThanOrEqual(2); // At least 2 prompt injection patterns detected
+      expect(commandExecutionIssues.length).toBeGreaterThanOrEqual(2); // At least 2 command execution patterns
+      expect(dataExfiltrationIssues.length).toBeGreaterThanOrEqual(1); // At least 1 data exfiltration pattern
     });
 
     it('should detect various security attack patterns', async () => {
@@ -347,6 +355,19 @@ format: markdown
       expect(categories.size).toBeGreaterThan(3); // Should have multiple categories
       expect(categories).toContain('prompt_injection');
       expect(categories).toContain('command_execution');
+      
+      // Verify different categories are detected - the exact types depend on the security patterns implementation
+      const dataExfiltrationIssues = securityIssues.filter(i => i.type === 'security_data_exfiltration');
+      const jailbreakIssues = securityIssues.filter(i => i.type === 'security_jailbreak');
+      
+      // At least some security issues should be detected from our test content
+      expect(securityIssues.length).toBeGreaterThan(10);
+      
+      // We should have detected data exfiltration patterns (which include API keys)
+      expect(dataExfiltrationIssues.length).toBeGreaterThan(0);
+      
+      // We should have detected jailbreak patterns
+      expect(jailbreakIssues.length).toBeGreaterThan(0);
     });
 
     it('should handle encoded and obfuscated patterns', async () => {
