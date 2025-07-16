@@ -8,16 +8,17 @@ import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
 
-async function main() {
-  const args = process.argv.slice(2);
+export async function main(args?: string[]): Promise<number> {
+  // Use provided args or get from process.argv
+  const cliArgs = args || process.argv.slice(2);
   
-  if (args.length === 0) {
+  if (cliArgs.length === 0) {
     console.error('Usage: validate-content <file-or-pattern> [file-or-pattern...]');
     console.error('Examples:');
     console.error('  validate-content persona.md');
     console.error('  validate-content library/personas/**/*.md');
     console.error('  validate-content "library/**/*.md" "showcase/**/*.md"');
-    process.exit(1);
+    return 1;
   }
 
   const validator = new ContentValidator();
@@ -26,7 +27,7 @@ async function main() {
 
   // Expand glob patterns and collect all files
   const allFiles: string[] = [];
-  for (const pattern of args) {
+  for (const pattern of cliArgs) {
     if (pattern.includes('*')) {
       // It's a glob pattern
       const files = await glob(pattern);
@@ -39,7 +40,7 @@ async function main() {
 
   if (allFiles.length === 0) {
     console.error('No files found matching the provided patterns');
-    process.exit(1);
+    return 1;
   }
 
   console.log(`\n🔍 Validating ${allFiles.length} file(s)...\n`);
@@ -56,13 +57,16 @@ async function main() {
       
       // Print result
       const status = result.passed ? '✅ PASSED' : '❌ FAILED';
-      console.log(`${status} - ${file}`);
+      // Normalize path separators to forward slashes for consistent output
+      const normalizedPath = file.replace(/\\/g, '/');
+      console.log(`${status} - ${normalizedPath}`);
       
       if (!result.passed) {
         console.log(`   Critical: ${result.summary.critical}, High: ${result.summary.high}`);
       }
     } catch (error) {
-      console.error(`❌ ERROR - ${file}: ${error}`);
+      const normalizedPath = file.replace(/\\/g, '/');
+      console.error(`❌ ERROR - ${normalizedPath}: ${error}`);
       allPassed = false;
     }
   }
@@ -100,9 +104,10 @@ async function main() {
   }
 
   // Write detailed report if requested
-  const outputPath = process.env.OUTPUT_FILE || process.env.GITHUB_WORKSPACE 
-    ? path.join(process.env.GITHUB_WORKSPACE || '.', 'validation-report.json')
-    : null;
+  const outputPath = process.env.OUTPUT_FILE || 
+    (process.env.GITHUB_WORKSPACE 
+      ? path.join(process.env.GITHUB_WORKSPACE, 'validation-report.json')
+      : null);
     
   if (outputPath) {
     fs.writeFileSync(outputPath, JSON.stringify(allReports, null, 2));
@@ -114,20 +119,23 @@ async function main() {
     console.log('\n❌ Failed validations:');
     for (const { file, report } of allReports) {
       if (!report.passed) {
-        console.log(`\n${file}:`);
+        const normalizedPath = file.replace(/\\/g, '/');
+        console.log(`\n${normalizedPath}:`);
         console.log(report.markdown.split('\n').map((line: string) => '  ' + line).join('\n'));
       }
     }
   }
 
   // Exit with appropriate code
-  process.exit(allPassed ? 0 : 1);
+  return allPassed ? 0 : 1;
 }
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
+  main()
+    .then(exitCode => process.exit(exitCode))
+    .catch(error => {
+      console.error('Fatal error:', error);
+      process.exit(1);
+    });
 }
