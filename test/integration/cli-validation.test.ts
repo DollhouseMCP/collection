@@ -3,10 +3,10 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { spawn } from 'child_process';
 import { writeFile, mkdir, rm } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { main as validateContent } from '../../dist/src/cli/validate-content.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,77 +17,80 @@ const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
 
 describe('CLI Validation Tool Integration Tests', () => {
   const testDir = join(__dirname, '../../.test-tmp/cli-integration');
-  const cliPath = join(__dirname, '../../dist/src/cli/validate-content.js');
+  
+  // Console mocking utilities
+  let originalLog: typeof console.log;
+  let originalError: typeof console.error;
+  let capturedStdout: string[] = [];
+  let capturedStderr: string[] = [];
 
   beforeAll(async () => {
     await mkdir(testDir, { recursive: true });
+    
+    // Save original console methods
+    originalLog = console.log;
+    originalError = console.error;
   });
 
   afterAll(async () => {
     await rm(testDir, { recursive: true, force: true });
+    
+    // Restore console methods
+    console.log = originalLog;
+    console.error = originalError;
+  });
+
+  beforeEach(() => {
+    // Clear captured output
+    capturedStdout = [];
+    capturedStderr = [];
+    
+    // Mock console methods
+    console.log = (...args: any[]) => {
+      capturedStdout.push(args.join(' '));
+    };
+    console.error = (...args: any[]) => {
+      capturedStderr.push(args.join(' '));
+    };
+  });
+
+  afterEach(() => {
+    // Restore console methods after each test
+    console.log = originalLog;
+    console.error = originalError;
   });
 
   /**
    * Helper function to run CLI command
-   * Uses process.execPath for cross-platform compatibility
+   * Uses direct import instead of spawn for cross-platform compatibility
    */
-  function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
-    return new Promise((resolve) => {
-      // Always use Node.js to run the script, ignoring the shebang
-      // Use normalized paths for cross-platform compatibility
-      const normalizedCliPath = cliPath.replace(/\\/g, '/');
+  async function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+    // Clear captured output
+    capturedStdout = [];
+    capturedStderr = [];
+    
+    // Change to test directory
+    const originalCwd = process.cwd();
+    process.chdir(testDir);
+    
+    try {
+      // Call the CLI main function directly
+      const code = await validateContent(args);
       
-      const proc = spawn(process.execPath, [normalizedCliPath, ...args], {
-        cwd: testDir,
-        env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
-        shell: false, // Explicit no shell for security
-        stdio: ['pipe', 'pipe', 'pipe'] // Change to pipe stdin as well
-      });
-
-      let stdout = '';
-      let stderr = '';
-
-      proc.stdout.on('data', (data: Buffer) => {
-        stdout += data.toString();
-      });
-
-      proc.stderr.on('data', (data: Buffer) => {
-        stderr += data.toString();
-      });
-
-      // Add timeout handler
-      const timeoutId = setTimeout(() => {
-        proc.kill('SIGTERM');
-        stderr += 'Process timed out';
-        resolve({ code: 1, stdout, stderr });
-      }, TEST_TIMEOUT);
-
-      proc.on('error', (error) => {
-        clearTimeout(timeoutId);
-        stderr += `Process error: ${error.message}`;
-        resolve({ code: 1, stdout, stderr });
-      });
-
-      proc.on('close', (code) => {
-        clearTimeout(timeoutId);
-        resolve({ code: code || 0, stdout, stderr });
-      });
-    });
+      return {
+        code,
+        stdout: capturedStdout.join('\n'),
+        stderr: capturedStderr.join('\n')
+      };
+    } finally {
+      // Restore original directory
+      process.chdir(originalCwd);
+    }
   }
 
   describe('Basic CLI Operations', () => {
     it('should show usage when run without arguments', async () => {
-      // Debug: Log the paths being used
-      console.log('CLI Path:', cliPath);
-      console.log('Test Dir:', testDir);
-      console.log('Process:', process.execPath);
-      
-      const { code, stdout, stderr } = await runCLI([]);
-      
-      // Debug: Log what we got back
-      console.log('Exit code:', code);
-      console.log('Stdout:', stdout);
-      console.log('Stderr:', stderr);
+      const { code, stderr } = await runCLI([]);
 
       expect(code).toBe(1);
       expect(stderr).toContain('Usage: validate-content');
