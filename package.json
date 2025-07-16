@@ -39,7 +39,7 @@
     "ai-content",
     "ai-personas",
     "ai-skills",
-    "ai-agents", 
+    "ai-agents",
     "claude",
     "collection",
     "dollhousemcp"
@@ -51,6 +51,7 @@
   },
   "homepage": "https://github.com/DollhouseMCP/collection#readme",
   "devDependencies": {
+    "@jest/globals": "^30.0.4",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.17.14",
@@ -76,7 +77,7 @@
     "dist",
     "library",
     "LICENSE",
-    "LICENSE-CONTENT", 
+    "LICENSE-CONTENT",
     "README.md"
   ]
 }
