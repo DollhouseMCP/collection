@@ -298,7 +298,7 @@ Password: admin123`
       // Check summary section
       expect(stdout).toContain('📊 Summary');
       expect(stdout).toContain('Total files: 4');
-      expect(stdout).toContain('Passed: 3'); // Security file might pass without critical issues
+      expect(stdout).toContain('Passed: 3'); // 3 files pass (including security-issue.md which has warnings but no critical errors)
       expect(stdout).toContain('Failed: 1');
 
       // Check issue breakdown
@@ -309,7 +309,6 @@ Password: admin123`
       // Check failed file details
       expect(stdout).toContain('❌ Failed validations:');
       expect(stdout).toContain('invalid1.md:');
-      expect(stdout).toContain('security-issue.md:');
 
       expect(code).toBe(1);
     });
