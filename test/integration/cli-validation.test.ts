@@ -118,7 +118,7 @@ Valid content for CLI testing.`;
 
       expect(code).toBe(0);
       expect(stdout).toContain('✅ PASSED');
-      expect(stdout).toContain(testFile);
+      expect(stdout).toContain(testFile.replace(/\\/g, '/'));
     });
 
     it('should report errors for invalid files', async () => {
@@ -140,7 +140,7 @@ Invalid skill content.`;
 
       expect(code).toBe(1);
       expect(stdout).toContain('❌ FAILED');
-      expect(stdout).toContain(testFile);
+      expect(stdout).toContain(testFile.replace(/\\/g, '/'));
       expect(stdout).toContain('Critical:');
       expect(stdout).toContain('High:');
     });
