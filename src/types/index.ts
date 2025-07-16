@@ -59,7 +59,7 @@ export interface TemplateMetadata extends BaseMetadata {
 export interface ToolMetadata extends BaseMetadata {
   type: 'tool';
   mcp_version: string;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
   returns?: string;
 }
 
