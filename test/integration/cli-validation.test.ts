@@ -3,7 +3,7 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import spawn from 'cross-spawn';
+import { spawn } from 'child_process';
 import { writeFile, mkdir, rm } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -29,13 +29,15 @@ describe('CLI Validation Tool Integration Tests', () => {
 
   /**
    * Helper function to run CLI command
-   * Uses cross-spawn for cross-platform compatibility
+   * Uses process.execPath for cross-platform compatibility
    */
   function runCLI(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
     return new Promise((resolve) => {
-      const proc = spawn('node', [cliPath, ...args], {
+      const proc = spawn(process.execPath, [cliPath, ...args], {
         cwd: testDir,
-        env: { ...process.env, NO_COLOR: '1' } // Disable color output for testing
+        env: { ...process.env, NO_COLOR: '1' }, // Disable color output for testing
+        shell: false,
+        windowsHide: true
       });
 
       let stdout = '';
@@ -47,6 +49,11 @@ describe('CLI Validation Tool Integration Tests', () => {
 
       proc.stderr.on('data', (data: Buffer) => {
         stderr += data.toString();
+      });
+
+      proc.on('error', (error) => {
+        stderr += `Process error: ${error.message}`;
+        resolve({ code: 1, stdout, stderr });
       });
 
       proc.on('close', (code) => {
