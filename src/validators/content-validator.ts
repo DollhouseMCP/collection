@@ -233,10 +233,20 @@ export class ContentValidator {
       ContentMetadataSchema.parse(metadata);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        error.issues.forEach((err: any) => {
-          const isMissingField = err.code === 'invalid_type' && 
-            (('received' in err && err.received === 'undefined') || 
-             (!('received' in err) && err.message.includes('received undefined')));
+        error.issues.forEach((err) => {
+          // Handle both Zod v3 and v4 error formats
+          let isMissingField = false;
+          if (err.code === 'invalid_type') {
+            // Zod v4 uses 'received' property
+            const errWithReceived = err as z.ZodIssue & { received?: unknown };
+            if ('received' in errWithReceived && errWithReceived.received === 'undefined') {
+              isMissingField = true;
+            } else if (err.message.includes('received undefined')) {
+              // Zod v3 fallback - check message
+              isMissingField = true;
+            }
+          }
+          
           issues.push({
             severity: 'high',
             type: isMissingField ? 'missing_field' : 'invalid_metadata',
