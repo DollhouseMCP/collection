@@ -80,7 +80,7 @@ const TemplateMetadataSchema = BaseMetadataSchema.extend({
 const ToolMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('tool'),
   mcp_version: z.string(),
-  parameters: z.record(z.any()).optional(),
+  parameters: z.record(z.string(), z.any()).optional(),
   returns: z.string().optional()
 });
 
@@ -233,8 +233,10 @@ export class ContentValidator {
       ContentMetadataSchema.parse(metadata);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        error.errors.forEach(err => {
-          const isMissingField = err.code === 'invalid_type' && err.received === 'undefined';
+        error.issues.forEach((err: any) => {
+          const isMissingField = err.code === 'invalid_type' && 
+            (('received' in err && err.received === 'undefined') || 
+             (!('received' in err) && err.message.includes('received undefined')));
           issues.push({
             severity: 'high',
             type: isMissingField ? 'missing_field' : 'invalid_metadata',
