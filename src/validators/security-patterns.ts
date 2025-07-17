@@ -189,7 +189,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'api_key_pattern',
-    pattern: /(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*["']?[a-zA-Z0-9_\-\.]{20,}/i,
+    pattern: /(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*["']?[a-zA-Z0-9_\-.]{20,}/i,
     severity: 'high',
     description: 'Contains potential API keys or secrets',
     category: 'sensitive_data'
