@@ -113,13 +113,15 @@ This content has multiple validation errors.`;
       // Check for specific field errors
       const issueDetails = result.issues.map(i => i.details).join(' ');
       expect(issueDetails).toContain('name:');
-      expect(issueDetails).toContain('String must contain at least 3 character(s)');
+      // Zod v4 changed error messages
+      expect(issueDetails.toLowerCase()).toMatch(/too small|at least 3 character/);
       expect(issueDetails).toContain('description:');
-      expect(issueDetails).toContain('String must contain at least 10 character(s)');
+      expect(issueDetails.toLowerCase()).toMatch(/too small|at least 10 character/);
       expect(issueDetails).toContain('unique_id:');
       expect(issueDetails).toContain('author:');
       expect(issueDetails).toContain('category:');
-      expect(issueDetails).toContain('Invalid enum value');
+      // Zod v4 changed enum error messages too
+      expect(issueDetails.toLowerCase()).toMatch(/invalid.*enum|invalid.*option/);
     });
 
     it('should handle all content types correctly', async () => {
