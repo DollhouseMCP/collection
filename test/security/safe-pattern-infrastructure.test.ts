@@ -164,7 +164,8 @@ Line 3: EXECUTE_SHELL_COMMAND`;
         'prompt_injection': 'PI',
         'jailbreaking': 'JB',
         'command_execution': 'CE',
-        'data_exfiltration': 'DE'
+        'data_exfiltration': 'DE',
+        'context_awareness': 'CA'
       };
       
       getAllTestCases().forEach(({ category, testCase }) => {
