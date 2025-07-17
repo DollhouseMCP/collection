@@ -6,6 +6,12 @@
  */
 
 import { ScanMetrics } from './security-scanner-optimized.js';
+import type { SecurityIssue } from './security-patterns.js';
+
+export interface ScannerResult {
+  issues: SecurityIssue[];
+  metrics?: ScanMetrics;
+}
 
 export interface PerformanceReport {
   summary: {
@@ -203,7 +209,7 @@ export const globalMonitor = new PerformanceMonitor();
  * Benchmark utility for comparing scanner implementations
  */
 export async function benchmarkComparison(
-  scanners: Array<{ name: string; fn: (content: string) => any }>,
+  scanners: Array<{ name: string; fn: (content: string) => ScannerResult | SecurityIssue[] }>,
   testContent: string[],
   iterations: number = 100
 ): Promise<Map<string, PerformanceReport>> {
@@ -225,14 +231,25 @@ export async function benchmarkComparison(
       const end = performance.now();
       
       // Create synthetic metrics if scanner doesn't return them
-      const metrics: ScanMetrics = result.metrics || {
-        totalTime: end - start,
-        patternTime: (end - start) * 0.8, // Estimate
-        lineDetectionTime: (end - start) * 0.15, // Estimate
-        patternsChecked: 48, // Default pattern count
-        contentLength: content.length,
-        issueCount: result.issues?.length || result.length || 0
-      };
+      let metrics: ScanMetrics;
+      
+      if ('metrics' in result && result.metrics) {
+        metrics = result.metrics;
+      } else {
+        // Create synthetic metrics
+        const issueCount = Array.isArray(result) 
+          ? result.length 
+          : result.issues.length;
+          
+        metrics = {
+          totalTime: end - start,
+          patternTime: (end - start) * 0.8, // Estimate
+          lineDetectionTime: (end - start) * 0.15, // Estimate
+          patternsChecked: 48, // Default pattern count
+          contentLength: content.length,
+          issueCount
+        };
+      }
       
       monitor.addMetric(metrics);
     }

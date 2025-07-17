@@ -224,7 +224,7 @@ describe('Security Scanner Performance Optimization', () => {
       const scanners = [
         { 
           name: 'Original', 
-          fn: (content: string) => ({ issues: scanForSecurityPatterns(content) })
+          fn: (content: string) => ({ issues: scanForSecurityPatterns(content) } as const)
         },
         { 
           name: 'Optimized (Full)', 

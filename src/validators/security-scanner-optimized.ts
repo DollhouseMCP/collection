@@ -70,12 +70,16 @@ function getOrderedPatternIndices(): number[] {
     patterns.sort((a, b) => {
       // First by severity
       const severityDiff = severityOrder[b.pattern.severity] - severityOrder[a.pattern.severity];
-      if (severityDiff !== 0) return severityDiff;
+      if (severityDiff !== 0) {
+        return severityDiff;
+      }
       
       // Then by category priority
       const aPriority = categoryPriority[a.pattern.category] || 0;
       const bPriority = categoryPriority[b.pattern.category] || 0;
-      if (aPriority !== bPriority) return bPriority - aPriority;
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
+      }
       
       // Finally by pattern complexity (simpler first)
       const aComplexity = a.pattern.pattern.source.length;
@@ -109,7 +113,9 @@ function getLines(content: string): string[] {
     if (lineCache.size >= MAX_CACHE_SIZE) {
       // Remove oldest entry (first in map)
       const firstKey = lineCache.keys().next().value;
-      if (firstKey) lineCache.delete(firstKey);
+      if (firstKey) {
+        lineCache.delete(firstKey);
+      }
     }
     lineCache.set(content, lines);
   }
