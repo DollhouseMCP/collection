@@ -165,7 +165,12 @@ Line 3: EXECUTE_SHELL_COMMAND`;
         'jailbreaking': 'JB',
         'command_execution': 'CE',
         'data_exfiltration': 'DE',
-        'context_awareness': 'CA'
+        'context_awareness': 'CA',
+        'obfuscation': 'OB',
+        'yaml_security': 'YS',
+        'resource_exhaustion': 'RE',
+        'role_privilege': 'RP',
+        'misc_security': 'MS'
       };
       
       getAllTestCases().forEach(({ category, testCase }) => {

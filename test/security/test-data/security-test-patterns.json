@@ -258,6 +258,143 @@
           "expectedSeverity": "critical"
         }
       ]
+    },
+    "obfuscation": {
+      "description": "Patterns that use obfuscation techniques to hide malicious intent",
+      "testCases": [
+        {
+          "id": "OB001",
+          "description": "Base64 decoding attempt",
+          "placeholder": "BASE_SIXTY_FOUR_DECODE_ATTEMPT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "obfuscation",
+          "expectedSeverity": "medium"
+        },
+        {
+          "id": "OB002",
+          "description": "Hex-encoded characters",
+          "placeholder": "HEX_ENCODED_CHARS",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "obfuscation",
+          "expectedSeverity": "low"
+        },
+        {
+          "id": "OB003",
+          "description": "Unicode RTL override",
+          "placeholder": "UNICODE_RTL_OVERRIDE",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "obfuscation",
+          "expectedSeverity": "medium"
+        }
+      ]
+    },
+    "yaml_security": {
+      "description": "YAML-specific security vulnerabilities",
+      "testCases": [
+        {
+          "id": "YS001",
+          "description": "YAML merge key exploitation",
+          "placeholder": "YAML_MERGE_KEY",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "yaml_security",
+          "expectedSeverity": "medium"
+        },
+        {
+          "id": "YS002",
+          "description": "Python object instantiation in YAML",
+          "placeholder": "YAML_PYTHON_OBJECT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "yaml_security",
+          "expectedSeverity": "critical"
+        }
+      ]
+    },
+    "resource_exhaustion": {
+      "description": "Patterns that could cause resource exhaustion",
+      "testCases": [
+        {
+          "id": "RE001",
+          "description": "Excessive character repetition",
+          "placeholder": "EXCESSIVE_REPETITION",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "resource_exhaustion",
+          "expectedSeverity": "low"
+        },
+        {
+          "id": "RE002",
+          "description": "Extremely large numbers",
+          "placeholder": "LARGE_NUMBERS",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "resource_exhaustion",
+          "expectedSeverity": "low"
+        }
+      ]
+    },
+    "role_privilege": {
+      "description": "Role hijacking and privilege escalation attempts",
+      "testCases": [
+        {
+          "id": "RP001",
+          "description": "Act as different AI",
+          "placeholder": "ACT_AS_DIFFERENT_AI",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "role_hijacking",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "RP002",
+          "description": "You are now different",
+          "placeholder": "YOU_ARE_NOW_DIFFERENT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "role_hijacking",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "RP003",
+          "description": "Act as root/admin",
+          "placeholder": "ACT_AS_ROOT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "privilege_escalation",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "RP004",
+          "description": "Pretend admin access",
+          "placeholder": "PRETEND_ADMIN",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "privilege_escalation",
+          "expectedSeverity": "high"
+        }
+      ]
+    },
+    "misc_security": {
+      "description": "Miscellaneous security patterns",
+      "testCases": [
+        {
+          "id": "MS001",
+          "description": "Code evaluation attempt",
+          "placeholder": "EVAL_CODE_ATTEMPT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "code_execution",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "MS002",
+          "description": "File system operation",
+          "placeholder": "FILE_SYSTEM_OP",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "file_system",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "MS003",
+          "description": "Sensitive data exposure",
+          "placeholder": "SENSITIVE_DATA_EXPOSURE",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "sensitive_data",
+          "expectedSeverity": "high"
+        }
+      ]
     }
   }
 }
