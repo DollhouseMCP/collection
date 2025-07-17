@@ -8,6 +8,18 @@
 import { ScanMetrics } from './security-scanner-optimized.js';
 import type { SecurityIssue } from './security-patterns.js';
 
+/**
+ * Safe performance timing with fallback
+ */
+function safePerformanceNow(): number {
+  try {
+    return performance.now();
+  } catch {
+    // Fallback to Date.now() if performance.now() fails
+    return Date.now();
+  }
+}
+
 export interface ScannerResult {
   issues: SecurityIssue[];
   metrics?: ScanMetrics;
@@ -226,9 +238,9 @@ export async function benchmarkComparison(
     // Actual benchmark
     for (let i = 0; i < iterations; i++) {
       const content = testContent[i % testContent.length];
-      const start = performance.now();
+      const start = safePerformanceNow();
       const result = scanner.fn(content);
-      const end = performance.now();
+      const end = safePerformanceNow();
       
       // Create synthetic metrics if scanner doesn't return them
       let metrics: ScanMetrics;

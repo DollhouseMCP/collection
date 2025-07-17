@@ -64,30 +64,40 @@ let ORDERED_PATTERN_INDICES: number[] | null = null;
 
 function getOrderedPatternIndices(): number[] {
   if (ORDERED_PATTERN_INDICES === null) {
-    const patterns = SECURITY_PATTERNS.map((p, i) => ({ pattern: p, index: i }));
-    
-    // Sort patterns by priority
-    patterns.sort((a, b) => {
-      // First by severity
-      const severityDiff = severityOrder[b.pattern.severity] - severityOrder[a.pattern.severity];
-      if (severityDiff !== 0) {
-        return severityDiff;
-      }
+    try {
+      const patterns = SECURITY_PATTERNS.map((p, i) => ({ pattern: p, index: i }));
       
-      // Then by category priority
-      const aPriority = categoryPriority[a.pattern.category] || 0;
-      const bPriority = categoryPriority[b.pattern.category] || 0;
-      if (aPriority !== bPriority) {
-        return bPriority - aPriority;
-      }
+      // Sort patterns by priority
+      patterns.sort((a, b) => {
+        try {
+          // First by severity
+          const severityDiff = severityOrder[b.pattern.severity] - severityOrder[a.pattern.severity];
+          if (severityDiff !== 0) {
+            return severityDiff;
+          }
+          
+          // Then by category priority
+          const aPriority = categoryPriority[a.pattern.category] || 0;
+          const bPriority = categoryPriority[b.pattern.category] || 0;
+          if (aPriority !== bPriority) {
+            return bPriority - aPriority;
+          }
+          
+          // Finally by pattern complexity (simpler first)
+          const aComplexity = a.pattern.pattern.source.length;
+          const bComplexity = b.pattern.pattern.source.length;
+          return aComplexity - bComplexity;
+        } catch {
+          // Fallback to index order if comparison fails
+          return a.index - b.index;
+        }
+      });
       
-      // Finally by pattern complexity (simpler first)
-      const aComplexity = a.pattern.pattern.source.length;
-      const bComplexity = b.pattern.pattern.source.length;
-      return aComplexity - bComplexity;
-    });
-    
-    ORDERED_PATTERN_INDICES = patterns.map(p => p.index);
+      ORDERED_PATTERN_INDICES = patterns.map(p => p.index);
+    } catch {
+      // Fallback to original order if pattern ordering fails
+      ORDERED_PATTERN_INDICES = SECURITY_PATTERNS.map((_, i) => i);
+    }
   }
   
   return ORDERED_PATTERN_INDICES;
@@ -125,11 +135,23 @@ function getLines(content: string): string[] {
 /**
  * Optimized security pattern scanner
  */
+/**
+ * Safe performance timing with fallback
+ */
+function safePerformanceNow(): number {
+  try {
+    return performance.now();
+  } catch {
+    // Fallback to Date.now() if performance.now() fails
+    return Date.now();
+  }
+}
+
 export function scanForSecurityPatternsOptimized(
   content: string,
   options: ScanOptions = {}
 ): { issues: SecurityIssue[], metrics?: ScanMetrics } {
-  const startTime = options.collectMetrics ? performance.now() : 0;
+  const startTime = options.collectMetrics ? safePerformanceNow() : 0;
   let patternTime = 0;
   let lineDetectionTime = 0;
   let patternsChecked = 0;
@@ -167,10 +189,10 @@ export function scanForSecurityPatternsOptimized(
     patternsChecked++;
     
     // Pattern matching with timing
-    const patternStart = options.collectMetrics ? performance.now() : 0;
+    const patternStart = options.collectMetrics ? safePerformanceNow() : 0;
     const matches = pattern.pattern.test(content);
     if (options.collectMetrics) {
-      patternTime += performance.now() - patternStart;
+      patternTime += safePerformanceNow() - patternStart;
     }
     
     if (matches) {
@@ -178,7 +200,7 @@ export function scanForSecurityPatternsOptimized(
       
       // Line number detection with timing
       if (!skipLineNumbers && lines.length > 0) {
-        const lineStart = options.collectMetrics ? performance.now() : 0;
+        const lineStart = options.collectMetrics ? safePerformanceNow() : 0;
         
         // Optimized line search: start from middle for better average case
         const midPoint = Math.floor(lines.length / 2);
@@ -198,7 +220,7 @@ export function scanForSecurityPatternsOptimized(
         }
         
         if (options.collectMetrics) {
-          lineDetectionTime += performance.now() - lineStart;
+          lineDetectionTime += safePerformanceNow() - lineStart;
         }
       }
       
@@ -219,7 +241,7 @@ export function scanForSecurityPatternsOptimized(
   
   // Collect final metrics
   const metrics: ScanMetrics | undefined = options.collectMetrics ? {
-    totalTime: performance.now() - startTime,
+    totalTime: safePerformanceNow() - startTime,
     patternTime,
     lineDetectionTime,
     patternsChecked,
