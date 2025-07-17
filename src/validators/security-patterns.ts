@@ -197,6 +197,27 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     description: 'Known jailbreak attempt pattern',
     category: 'jailbreak'
   },
+  {
+    name: 'remove_restrictions',
+    pattern: /remove\s+all\s+restrictions|operate\s+without\s+any?\s+restrictions|you\s+have\s+no\s+restrictions/i,
+    severity: 'critical',
+    description: 'Attempts to remove all restrictions',
+    category: 'jailbreak'
+  },
+  {
+    name: 'hypothetical_bypass',
+    pattern: /hypothetical(ly)?\s+.{0,40}(no\s+restrictions|unrestricted|without\s+limits)/i,
+    severity: 'high',
+    description: 'Hypothetical scenario to bypass restrictions',
+    category: 'jailbreak'
+  },
+  {
+    name: 'roleplay_unrestricted',
+    pattern: /(roleplay|role-play|pretend|act\s+as)\s+.{0,20}(unrestricted|no\s+limits|no\s+rules)/i,
+    severity: 'high',
+    description: 'Role-play as unrestricted AI',
+    category: 'jailbreak'
+  },
 
   // YAML Security
   {
