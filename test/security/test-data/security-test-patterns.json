@@ -131,6 +131,22 @@
           "realPattern": "[REDACTED - See documentation]",
           "expectedCategory": "credential_phishing",
           "expectedSeverity": "high"
+        },
+        {
+          "id": "DE003",
+          "description": "API key exposure",
+          "placeholder": "EXPOSED_API_KEY",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "sensitive_data",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE004",
+          "description": "HTTP data transmission",
+          "placeholder": "POST_DATA_TO_URL",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "network_access",
+          "expectedSeverity": "medium"
         }
       ]
     }
