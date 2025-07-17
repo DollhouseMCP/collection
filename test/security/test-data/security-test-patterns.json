@@ -94,6 +94,22 @@
           "realPattern": "[REDACTED - See documentation]",
           "expectedCategory": "file_system",
           "expectedSeverity": "critical"
+        },
+        {
+          "id": "CE003",
+          "description": "Code evaluation attempt",
+          "placeholder": "EVALUATE_ARBITRARY_CODE",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "code_execution",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "CE004",
+          "description": "Network download command",
+          "placeholder": "DOWNLOAD_EXTERNAL_CONTENT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "network_access",
+          "expectedSeverity": "high"
         }
       ]
     },
