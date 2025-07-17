@@ -109,7 +109,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'file_operations',
-    pattern: /\b(rm|del|delete|format|fdisk|dd)\s+(-rf\s+)?\/|\\\\|C:/i,
+    pattern: /\b(rm|del|delete|format|fdisk|dd)(\s+(-rf|-r|-f|\/F|\/Q)\s*)*\s*(\/|\\\\|[A-Z]:|if=|of=|\.)/i,
     severity: 'critical',
     description: 'Dangerous file system operations',
     category: 'file_system'
@@ -120,6 +120,27 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     severity: 'high',
     description: 'Attempts to download external content',
     category: 'network_access'
+  },
+  {
+    name: 'os_command',
+    pattern: /\b(os\.system|subprocess\.(call|run|Popen)|popen|spawn|execFile)\s*\(/i,
+    severity: 'critical',
+    description: 'Operating system command execution',
+    category: 'command_execution'
+  },
+  {
+    name: 'sql_command',
+    pattern: /\b(xp_cmdshell|sp_execute_external_script)\s*\(/i,
+    severity: 'critical',
+    description: 'SQL Server command execution',
+    category: 'command_execution'
+  },
+  {
+    name: 'reverse_shell',
+    pattern: /\b(nc|netcat|socat)\s+.{0,30}(-e|--exec|-c)\s+/i,
+    severity: 'critical',
+    description: 'Reverse shell attempt',
+    category: 'command_execution'
   },
 
   // Data Exfiltration
