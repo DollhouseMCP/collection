@@ -6,6 +6,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import Ajv from 'ajv';
 import { SecurityIssue } from '../../../src/validators/security-patterns.js';
 
 // Type for severity levels matching the SecurityIssue interface
@@ -23,9 +24,37 @@ interface TestPatternsData {
   }>;
 }
 
-// Load test patterns from JSON file
+// Load and validate test patterns from JSON file
 const testPatternsPath = join(__dirname, '../test-data/security-test-patterns.json');
-const testPatterns = JSON.parse(readFileSync(testPatternsPath, 'utf-8')) as TestPatternsData;
+const schemaPath = join(__dirname, '../test-data/test-patterns-schema.json');
+let testPatterns: TestPatternsData;
+
+// Initialize AJV for JSON schema validation
+const ajv = new Ajv({ allErrors: true });
+
+try {
+  // Load the schema
+  const schemaContent = readFileSync(schemaPath, 'utf-8');
+  const schema = JSON.parse(schemaContent) as Record<string, unknown>;
+  
+  // Load the test patterns
+  const fileContent = readFileSync(testPatternsPath, 'utf-8');
+  const data = JSON.parse(fileContent) as unknown;
+  
+  // Validate against schema
+  const validate = ajv.compile(schema);
+  const valid = validate(data);
+  
+  if (!valid) {
+    const errors = validate.errors?.map(err => `${err.dataPath || err.schemaPath} ${err.message}`).join(', ');
+    throw new Error(`Schema validation failed: ${errors}`);
+  }
+  
+  testPatterns = data as TestPatternsData;
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  throw new Error(`Failed to load test patterns from ${testPatternsPath}: ${errorMessage}`);
+}
 
 export interface TestCase {
   id: string;

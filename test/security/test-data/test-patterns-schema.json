@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Security Test Patterns Schema",
+  "type": "object",
+  "required": ["comment", "version", "categories"],
+  "properties": {
+    "comment": {
+      "type": "string",
+      "description": "Description of the test patterns file"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the test patterns"
+    },
+    "categories": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "object",
+          "required": ["description", "testCases"],
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "testCases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "description", "placeholder", "realPattern", "expectedCategory", "expectedSeverity"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}\\d{3}$"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "placeholder": {
+                    "type": "string",
+                    "pattern": "^[A-Z_]+$"
+                  },
+                  "realPattern": {
+                    "type": "string",
+                    "pattern": "^\\[REDACTED"
+                  },
+                  "expectedCategory": {
+                    "type": "string"
+                  },
+                  "expectedSeverity": {
+                    "type": "string",
+                    "enum": ["critical", "high", "medium", "low"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
