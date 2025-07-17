@@ -61,6 +61,14 @@ describe('Data Exfiltration Pattern Detection (Safe)', () => {
       ];
       
       const actualIds = exfiltrationTestCases.map(tc => tc.id);
+      
+      // Debug output for CI
+      if (actualIds.length === 0) {
+        console.error('No test cases loaded for data_exfiltration category');
+      } else if (actualIds.length < requiredIds.length) {
+        console.error(`Only ${actualIds.length} test cases loaded: ${actualIds.join(', ')}`);
+      }
+      
       requiredIds.forEach(id => {
         expect(actualIds).toContain(id);
       });
