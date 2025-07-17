@@ -30,7 +30,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'disregard_instructions',
-    pattern: /disregard\s+(all\s+)?(previous|prior|above|preceding)\s+(instructions?|commands?|directives?|rules?)/i,
+    pattern: /disregard\s+(all\s+|the\s+|everything\s+)?(previous|prior|above|preceding)\s*(instructions?|commands?|directives?|rules?)?/i,
     severity: 'critical',
     description: 'Attempts to disregard system instructions',
     category: 'prompt_injection'
