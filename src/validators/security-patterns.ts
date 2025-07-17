@@ -109,7 +109,9 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'file_operations',
-    pattern: /\b(rm|del|delete|format|fdisk|dd)(\s+(-rf|-r|-f|\/F|\/Q)\s*)*\s*(\/|\\\\|[A-Z]:|if=|of=|\.)/i,
+    // Pattern: command + optional flags + path/target
+    // Fixed to prevent ReDoS by limiting repetition and using non-capturing groups
+    pattern: /\b(rm|del|delete|format|fdisk|dd)(?:\s+(?:-rf?|-[rf]|\/[FQ])){0,2}\s+(?:\/|\\\\|[A-Z]:|if=|of=|\.)/i,
     severity: 'critical',
     description: 'Dangerous file system operations',
     category: 'file_system'
@@ -123,23 +125,34 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'os_command',
+    // Pattern: OS-specific command execution methods
+    // Python: os.system, subprocess.call/run/Popen
+    // Node.js: spawn, execFile  
+    // Generic: popen
     pattern: /\b(os\.system|subprocess\.(call|run|Popen)|popen|spawn|execFile)\s*\(/i,
     severity: 'critical',
-    description: 'Operating system command execution',
+    description: 'Operating system command execution via language-specific APIs',
     category: 'command_execution'
   },
   {
     name: 'sql_command',
+    // Pattern: SQL Server command execution stored procedures
+    // xp_cmdshell: Direct OS command execution
+    // sp_execute_external_script: External script execution (Python/R)
     pattern: /\b(xp_cmdshell|sp_execute_external_script)\s*\(/i,
     severity: 'critical',
-    description: 'SQL Server command execution',
+    description: 'SQL Server command execution via stored procedures',
     category: 'command_execution'
   },
   {
     name: 'reverse_shell',
+    // Pattern: Common reverse shell tools with execution flags
+    // Tools: nc/netcat/socat
+    // Flags: -e/--exec (execute), -c (command)
+    // Limited to 30 chars between tool and flag to reduce false positives
     pattern: /\b(nc|netcat|socat)\s+.{0,30}(-e|--exec|-c)\s+/i,
     severity: 'critical',
-    description: 'Reverse shell attempt',
+    description: 'Reverse shell connection attempt using netcat/socat',
     category: 'command_execution'
   },
 

@@ -174,19 +174,30 @@ Line 3: More content`;
     });
 
     it('should detect obfuscated command patterns', () => {
+      // Note: This test documents current limitations with obfuscation detection
+      // Future enhancement: Consider adding patterns for common obfuscation techniques:
+      // - Base64 encoded commands (atob, Buffer.from)
+      // - String concatenation patterns
+      // - Unicode/hex escape sequences
+      // - Dynamic property access (window['ev' + 'al'])
+      
       const testPhrases = [
-        'ex' + 'ec("command")', // String concatenation
-        'e\\x76al("code")',    // Hex encoding
-        'sy\\u0073tem("cmd")'  // Unicode encoding
+        'ex' + 'ec("command")', // String concatenation - NOT detected
+        'e\\x76al("code")',    // Hex encoding - NOT detected
+        'sy\\u0073tem("cmd")'  // Unicode encoding - NOT detected
       ];
       
       testPhrases.forEach(phrase => {
-        // Note: Current patterns may not catch all obfuscation
-        // This test documents current behavior
         const issues = scanForSecurityPatterns(phrase);
-        // Some obfuscation may bypass detection
+        // Current implementation does not detect obfuscated patterns
+        // This is expected behavior - documenting for future enhancement
         console.log(`Testing "${phrase}": ${issues.length} issues found`);
       });
+      
+      // Verify that non-obfuscated versions ARE detected
+      expect(scanForSecurityPatterns('exec("command")').length).toBeGreaterThan(0);
+      expect(scanForSecurityPatterns('eval("code")').length).toBeGreaterThan(0);
+      expect(scanForSecurityPatterns('system("cmd")').length).toBeGreaterThan(0);
     });
 
     it('should detect command injection in various contexts', () => {
