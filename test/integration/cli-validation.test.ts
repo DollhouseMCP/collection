@@ -8,6 +8,9 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { main as validateContent } from '../../dist/src/cli/validate-content.js';
 
+// Type assertion to help ESLint understand this is a function
+const validateContentFn = validateContent as (args?: string[]) => Promise<number>;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -75,10 +78,10 @@ describe('CLI Validation Tool Integration Tests', () => {
     
     try {
       // Call the CLI main function directly
-      const code = await validateContent(args);
+      const code = await validateContentFn(args as string[]);
       
       return {
-        code,
+        code: code as number,
         stdout: capturedStdout.join('\n'),
         stderr: capturedStderr.join('\n')
       };
