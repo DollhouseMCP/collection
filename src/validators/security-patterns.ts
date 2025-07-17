@@ -206,7 +206,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'hypothetical_bypass',
-    pattern: /hypothetical(ly)?\s+.{0,20}(no\s+restrictions|unrestricted|without\s+limits)/i,
+    pattern: /hypothetical(ly)?\s+.{0,40}(no\s+restrictions|unrestricted|without\s+limits)/i,
     severity: 'high',
     description: 'Hypothetical scenario to bypass restrictions',
     category: 'jailbreak'

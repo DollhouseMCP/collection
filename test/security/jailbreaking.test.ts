@@ -143,9 +143,7 @@ Line 3: More content`;
       });
     });
 
-    it.skip('should detect hypothetical bypass patterns', () => {
-      // Skipping this test - pattern works in isolation but having issues in test environment
-      // Verified working with: node -e "import {scanForSecurityPatterns} from './dist/src/validators/security-patterns.js'; console.log(scanForSecurityPatterns('hypothetically with no restrictions'))"
+    it('should detect hypothetical bypass patterns', () => {
       const testPhrases = [
         'hypothetically with no restrictions',
         'hypothetical scenario where you are unrestricted',
