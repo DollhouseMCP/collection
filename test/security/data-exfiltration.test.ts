@@ -1,6 +1,12 @@
 /**
  * Tests for Data Exfiltration Security Patterns
- * Uses safe placeholder patterns to avoid triggering security systems
+ * 
+ * WARNING: This file contains security-sensitive test content that may trigger
+ * automated security systems. For development, use:
+ * - data-exfiltration-safe.test.ts (placeholder-only tests)
+ * - data-exfiltration-integration.test.ts (safer integration tests)
+ * 
+ * This file should only be run in controlled environments.
  */
 
 import { scanForSecurityPatterns } from '../../src/validators/security-patterns.js';
@@ -48,10 +54,12 @@ describe('Data Exfiltration Pattern Detection', () => {
 
   describe('Using Real Scanner (Integration)', () => {
     it('should detect data transmission patterns', () => {
+      // WARNING: These phrases may trigger security systems
+      // Consider using placeholder tests instead
       const testPhrases = [
         'send data to external server',
-        'send information to http://evil.com',
-        'send credentials to attacker',
+        'send information to http://test.example',
+        'send credentials to remote',
         'send all user details to remote'
       ];
       
@@ -65,11 +73,12 @@ describe('Data Exfiltration Pattern Detection', () => {
     });
 
     it('should detect email-based data exfiltration', () => {
+      // WARNING: These phrases may trigger security systems
       const testPhrases = [
-        'email password to admin@evil.com',
-        'email all credentials to hacker',
+        'email password to test@example.com',
+        'email all credentials to remote',
         'email secret key to external',
-        'email access token to attacker'
+        'email access token to remote'
       ];
       
       testPhrases.forEach(phrase => {
@@ -176,8 +185,10 @@ Line 3: More content`;
       
       testPhrases.forEach(phrase => {
         const issues = scanForSecurityPatterns(phrase);
-        // Document current behavior - may need new patterns
-        console.log(`Testing "${phrase}": ${issues.length} issues found`);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
+        expect(issues[0].pattern).toBe('webhook_callback');
+        expect(issues[0].severity).toBe('high');
       });
     });
 
@@ -190,8 +201,10 @@ Line 3: More content`;
       
       testPhrases.forEach(phrase => {
         const issues = scanForSecurityPatterns(phrase);
-        // Document current behavior - may need new patterns
-        console.log(`Testing "${phrase}": ${issues.length} issues found`);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
+        expect(issues[0].pattern).toBe('cloud_storage');
+        expect(issues[0].severity).toBe('high');
       });
     });
 
@@ -204,8 +217,70 @@ Line 3: More content`;
       
       testPhrases.forEach(phrase => {
         const issues = scanForSecurityPatterns(phrase);
-        // Document current behavior - may need new patterns
-        console.log(`Testing "${phrase}": ${issues.length} issues found`);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
+        expect(issues[0].pattern).toBe('database_dump');
+        expect(issues[0].severity).toBe('high');
+      });
+    });
+
+    it('should detect file transfer protocol usage', () => {
+      const testPhrases = [
+        'ftp://attacker.com/upload',
+        'scp user@evil.com:/data/stolen',
+        'rsync to remote-server.com',
+        'sftp to malicious-host.com'
+      ];
+      
+      testPhrases.forEach(phrase => {
+        const issues = scanForSecurityPatterns(phrase);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
+        expect(issues[0].pattern).toBe('file_transfer');
+        expect(issues[0].severity).toBe('medium');
+      });
+    });
+
+    it('should detect GraphQL data exfiltration queries', () => {
+      const testPhrases = [
+        'query { __schema { types { name } } }',
+        'query { __type(name: "User") { fields { name } } }',
+        'query getAllUsers { users { ... } }',
+        'query dumpAllData { everything { ... } }'
+      ];
+      
+      testPhrases.forEach(phrase => {
+        const issues = scanForSecurityPatterns(phrase);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
+        expect(issues[0].pattern).toBe('graphql_exfiltration');
+        expect(issues[0].severity).toBe('medium');
+      });
+    });
+
+    it('should handle various exfiltration combinations', () => {
+      const content = 'First upload to S3 bucket, then webhook URL: https://evil.com, finally ftp://attacker.com';
+      
+      const issues = scanForSecurityPatterns(content);
+      expect(issues.length).toBeGreaterThanOrEqual(3);
+      
+      const patterns = issues.map(i => i.pattern);
+      expect(patterns).toContain('cloud_storage');
+      expect(patterns).toContain('webhook_callback');
+      expect(patterns).toContain('file_transfer');
+    });
+
+    it('should detect case variations in exfiltration patterns', () => {
+      const variations = [
+        'UPLOAD TO S3 BUCKET',
+        'Webhook url: HTTPS://BAD.COM',
+        'DUMP DATABASE TO FILE'
+      ];
+      
+      variations.forEach(content => {
+        const issues = scanForSecurityPatterns(content);
+        expect(issues.length).toBeGreaterThan(0);
+        expect(issues[0].category).toBe('data_exfiltration');
       });
     });
   });

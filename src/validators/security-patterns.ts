@@ -166,9 +166,18 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'email_data',
-    pattern: /email\s+.{0,50}(password|credential|secret|key|token)\s+to/i,
+    pattern: /email\s+.{0,50}(password|credentials?|secret|key|token)\s+to/i,
     severity: 'high',
     description: 'Attempts to email sensitive data',
+    category: 'data_exfiltration'
+  },
+  {
+    name: 'send_to_email',
+    // Pattern: "send" followed by content then "to" and an email pattern
+    // Email pattern simplified to avoid ReDoS
+    pattern: /send\s+.{0,50}\s+to\s+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i,
+    severity: 'high',
+    description: 'Attempts to send data to email address',
     category: 'data_exfiltration'
   },
   {
@@ -180,10 +189,59 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'api_key_pattern',
-    pattern: /\b(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*["']?[a-zA-Z0-9]{20,}/i,
+    pattern: /(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*["']?[a-zA-Z0-9_\-\.]{20,}/i,
     severity: 'high',
     description: 'Contains potential API keys or secrets',
     category: 'sensitive_data'
+  },
+  {
+    name: 'webhook_callback',
+    // Pattern: webhook/callback URLs for data exfiltration
+    // Matches: webhook URL, callback to URL, notify URL
+    // Limited to 50 chars between keyword and URL to reduce false positives
+    pattern: /\b(webhook|callback|notify)\s+.{0,50}(https?:\/\/|url:\s*)/i,
+    severity: 'high',
+    description: 'Webhook or callback URL for potential data exfiltration',
+    category: 'data_exfiltration'
+  },
+  {
+    name: 'cloud_storage',
+    // Pattern: Cloud storage services for data exfiltration
+    // Services: S3 bucket, Google Drive, Dropbox, OneDrive
+    // Includes upload/sync/backup verbs
+    pattern: /\b(upload|sync|backup|save)\s+.{0,30}(s3\s+bucket|google\s+drive|dropbox|onedrive|cloud\s+storage)/i,
+    severity: 'high',
+    description: 'Cloud storage exfiltration attempt',
+    category: 'data_exfiltration'
+  },
+  {
+    name: 'database_dump',
+    // Pattern: Database dump/export operations
+    // Commands: dump, export, backup
+    // Targets: database, tables, schema
+    pattern: /\b(dump|export|backup)\s+.{0,20}(database|tables?|schema|all\s+data)/i,
+    severity: 'high',
+    description: 'Database dump or export operation',
+    category: 'data_exfiltration'
+  },
+  {
+    name: 'file_transfer',
+    // Pattern: File transfer protocols
+    // Protocols: FTP, SFTP, SCP, rsync
+    // Matches: ftp://..., scp user@..., rsync to ..., sftp to ...
+    pattern: /\b(ftp|sftp|scp|rsync)(\s+.{0,30})?(@|:\/\/|\s+to\s+)/i,
+    severity: 'medium',
+    description: 'File transfer protocol usage',
+    category: 'data_exfiltration'
+  },
+  {
+    name: 'graphql_exfiltration',
+    // Pattern: GraphQL queries that might exfiltrate data
+    // Looks for introspection queries or bulk data queries
+    pattern: /\b(__schema|__type|query\s*{\s*\w+\s*{\s*\.\.\.)|\bquery\s+.{0,30}(all|dump|export)\w*/i,
+    severity: 'medium',
+    description: 'GraphQL query for potential data exfiltration',
+    category: 'data_exfiltration'
   },
 
   // Obfuscation Attempts
