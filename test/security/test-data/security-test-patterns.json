@@ -1,0 +1,90 @@
+{
+  "comment": "Security test patterns for testing - uses placeholders to avoid triggering security systems",
+  "version": "1.0.0",
+  "categories": {
+    "prompt_injection": {
+      "description": "Patterns that attempt to override or manipulate AI instructions",
+      "testCases": [
+        {
+          "id": "PI001",
+          "description": "Instruction override attempt",
+          "placeholder": "OVERRIDE_PREVIOUS_INSTRUCTIONS",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "prompt_injection",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "PI002",
+          "description": "Role switching attempt",
+          "placeholder": "SWITCH_TO_DIFFERENT_ROLE",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "role_hijacking",
+          "expectedSeverity": "high"
+        }
+      ]
+    },
+    "jailbreaking": {
+      "description": "Patterns that attempt to bypass safety restrictions",
+      "testCases": [
+        {
+          "id": "JB001",
+          "description": "Restriction bypass attempt",
+          "placeholder": "REMOVE_ALL_RESTRICTIONS",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "jailbreaking",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "JB002",
+          "description": "Safety feature disable",
+          "placeholder": "DISABLE_SAFETY_FEATURES",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "jailbreaking",
+          "expectedSeverity": "high"
+        }
+      ]
+    },
+    "command_execution": {
+      "description": "Patterns that attempt to execute system commands",
+      "testCases": [
+        {
+          "id": "CE001",
+          "description": "Shell command execution",
+          "placeholder": "EXECUTE_SHELL_COMMAND",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "command_execution",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "CE002",
+          "description": "File system operation",
+          "placeholder": "DANGEROUS_FILE_OPERATION",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "file_system",
+          "expectedSeverity": "critical"
+        }
+      ]
+    },
+    "data_exfiltration": {
+      "description": "Patterns that attempt to extract or leak data",
+      "testCases": [
+        {
+          "id": "DE001",
+          "description": "Data transmission attempt",
+          "placeholder": "SEND_DATA_TO_EXTERNAL",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE002",
+          "description": "Credential phishing",
+          "placeholder": "REQUEST_SENSITIVE_INFO",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "credential_phishing",
+          "expectedSeverity": "high"
+        }
+      ]
+    }
+  }
+}
