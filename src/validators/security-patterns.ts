@@ -470,3 +470,13 @@ export const EMAIL_REGEX = /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{1,63}$/;
 export const SAFE_URL_REGEX = /^https?:\/\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]{1,2000}$/;
 
 // Note: ValidationIssue import removed as we now use SecurityIssue for this function
+
+// Export optimized scanner for performance-critical use cases
+export { 
+  scanForSecurityPatternsOptimized,
+  quickScan,
+  fullScan,
+  metricsScan,
+  type ScanOptions,
+  type ScanMetrics
+} from './security-scanner-optimized.js';
