@@ -131,6 +131,62 @@
           "realPattern": "[REDACTED - See documentation]",
           "expectedCategory": "credential_phishing",
           "expectedSeverity": "high"
+        },
+        {
+          "id": "DE003",
+          "description": "API key exposure",
+          "placeholder": "EXPOSED_API_KEY",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "sensitive_data",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE004",
+          "description": "HTTP data transmission",
+          "placeholder": "POST_DATA_TO_URL",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "network_access",
+          "expectedSeverity": "medium"
+        },
+        {
+          "id": "DE005",
+          "description": "Webhook callback exfiltration",
+          "placeholder": "WEBHOOK_CALLBACK_URL",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE006",
+          "description": "Cloud storage upload",
+          "placeholder": "UPLOAD_TO_CLOUD_STORAGE",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE007",
+          "description": "Database dump operation",
+          "placeholder": "DUMP_DATABASE_CONTENT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "DE008",
+          "description": "File transfer protocol",
+          "placeholder": "FILE_TRANSFER_PROTOCOL",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "medium"
+        },
+        {
+          "id": "DE009",
+          "description": "GraphQL data query",
+          "placeholder": "GRAPHQL_BULK_QUERY",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "data_exfiltration",
+          "expectedSeverity": "medium"
         }
       ]
     }
