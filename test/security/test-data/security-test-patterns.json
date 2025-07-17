@@ -189,6 +189,75 @@
           "expectedSeverity": "medium"
         }
       ]
+    },
+    "context_awareness": {
+      "description": "Patterns that attempt to extract or manipulate conversation context",
+      "testCases": [
+        {
+          "id": "CA001",
+          "description": "System prompt extraction",
+          "placeholder": "REVEAL_SYSTEM_PROMPT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "CA002",
+          "description": "Conversation history probe",
+          "placeholder": "SHOW_CONVERSATION_HISTORY",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "CA003",
+          "description": "Previous message access",
+          "placeholder": "ACCESS_PREVIOUS_MESSAGES",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "CA004",
+          "description": "Context manipulation",
+          "placeholder": "MANIPULATE_CONTEXT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "critical"
+        },
+        {
+          "id": "CA005",
+          "description": "Memory extraction attempt",
+          "placeholder": "EXTRACT_MEMORY_CONTENT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "CA006",
+          "description": "Session data probe",
+          "placeholder": "PROBE_SESSION_DATA",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "medium"
+        },
+        {
+          "id": "CA007",
+          "description": "Hidden context reveal",
+          "placeholder": "REVEAL_HIDDEN_CONTEXT",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "high"
+        },
+        {
+          "id": "CA008",
+          "description": "Training data extraction",
+          "placeholder": "EXTRACT_TRAINING_DATA",
+          "realPattern": "[REDACTED - See documentation]",
+          "expectedCategory": "context_awareness",
+          "expectedSeverity": "critical"
+        }
+      ]
     }
   }
 }

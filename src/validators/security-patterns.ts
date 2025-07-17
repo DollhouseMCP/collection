@@ -327,6 +327,80 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'yaml_security'
   },
 
+  // Context Awareness & Information Extraction
+  {
+    name: 'system_prompt_extraction',
+    // Pattern: Attempts to reveal system prompt or instructions
+    // Matches: show/reveal/display + system prompt/instructions
+    pattern: /\b(show|reveal|display|what\s+is|tell\s+me)\s+.{0,30}(system\s+prompt|initial\s+instructions?|original\s+prompt)/i,
+    severity: 'high',
+    description: 'Attempts to extract system prompt',
+    category: 'context_awareness'
+  },
+  {
+    name: 'conversation_history',
+    // Pattern: Attempts to access conversation history
+    // Matches: show/list/display + conversation/chat history
+    pattern: /\b(show|list|display|print|output)\s+.{0,30}(conversation|chat|message)\s+history/i,
+    severity: 'high',
+    description: 'Attempts to access conversation history',
+    category: 'context_awareness'
+  },
+  {
+    name: 'previous_messages',
+    // Pattern: Attempts to access previous messages
+    // Matches: what did I/you say, previous message/response
+    pattern: /\b(what\s+did\s+(i|you)\s+say|show\s+previous\s+(message|response)|repeat\s+my\s+last)/i,
+    severity: 'high',
+    description: 'Attempts to access previous messages',
+    category: 'context_awareness'
+  },
+  {
+    name: 'context_manipulation',
+    // Pattern: Attempts to manipulate conversation context
+    // Matches: forget what I said, erase context, reset conversation
+    pattern: /\b(forget\s+what\s+i\s+said|erase\s+.{0,20}context|reset\s+.{0,20}conversation|clear\s+.{0,20}memory)/i,
+    severity: 'critical',
+    description: 'Attempts to manipulate conversation context',
+    category: 'context_awareness'
+  },
+  {
+    name: 'memory_extraction',
+    // Pattern: Attempts to extract memory or stored information
+    // Matches: what do you remember (about X), show your memory, access stored
+    pattern: /\b(what\s+do\s+you\s+remember(\s+about)?|show\s+.{0,20}(memory|stored\s+(data|information))|access\s+.{0,20}stored\s+(data|information))/i,
+    severity: 'high',
+    description: 'Attempts to extract memory content',
+    category: 'context_awareness'
+  },
+  {
+    name: 'session_data_probe',
+    // Pattern: Attempts to probe session metadata
+    // Matches: session ID, user ID, metadata, internal state
+    pattern: /\b(session\s+id|user\s+id|show\s+.{0,20}metadata|internal\s+state|debug\s+info)/i,
+    severity: 'medium',
+    description: 'Attempts to access session data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'hidden_context_reveal',
+    // Pattern: Attempts to reveal hidden or system context
+    // Matches: hidden instructions, secret prompt, behind the scenes
+    pattern: /\b(hidden\s+instructions?|secret\s+prompt|behind\s+the\s+scenes|what\s+are\s+you\s+hiding)/i,
+    severity: 'high',
+    description: 'Attempts to reveal hidden context',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Attempts to extract training data
+    // Matches: training data, dataset, learned from, trained on
+    pattern: /\b(training\s+data|dataset|what\s+.{0,20}learned\s+from|trained\s+on|training\s+examples?)/i,
+    severity: 'critical',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+
   // Resource Exhaustion
   {
     name: 'excessive_repetition',
