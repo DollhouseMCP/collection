@@ -104,14 +104,14 @@ export class PerformanceMonitor {
         maxTime: times[times.length - 1]
       },
       throughput: {
-        charactersPerMs: totalChars / totalTime,
-        patternsPerMs: totalPatterns / totalTime,
-        issuesPerMs: totalIssues / totalTime
+        charactersPerMs: totalTime > 0 ? totalChars / totalTime : 0,
+        patternsPerMs: totalTime > 0 ? totalPatterns / totalTime : 0,
+        issuesPerMs: totalTime > 0 ? totalIssues / totalTime : 0
       },
       breakdown: {
-        patternMatchingPercent: (totalPatternTime / totalTime) * 100,
-        lineDetectionPercent: (totalLineTime / totalTime) * 100,
-        overheadPercent: (totalOverhead / totalTime) * 100
+        patternMatchingPercent: totalTime > 0 ? (totalPatternTime / totalTime) * 100 : 0,
+        lineDetectionPercent: totalTime > 0 ? (totalLineTime / totalTime) * 100 : 0,
+        overheadPercent: totalTime > 0 ? (totalOverhead / totalTime) * 100 : 0
       },
       samples: this.metrics.length
     };
@@ -132,19 +132,31 @@ export class PerformanceMonitor {
     const failures: string[] = [];
     
     if (thresholds.maxAverageTime && report.summary.averageTime > thresholds.maxAverageTime) {
-      failures.push(`Average time ${report.summary.averageTime.toFixed(2)}ms exceeds threshold ${thresholds.maxAverageTime}ms`);
+      failures.push(
+        `Average time ${report.summary.averageTime.toFixed(2)}ms exceeds threshold ${thresholds.maxAverageTime}ms. ` +
+        `Consider using quickScan for real-time validation or reducing pattern count.`
+      );
     }
     
     if (thresholds.maxP95Time && report.summary.p95Time > thresholds.maxP95Time) {
-      failures.push(`P95 time ${report.summary.p95Time.toFixed(2)}ms exceeds threshold ${thresholds.maxP95Time}ms`);
+      failures.push(
+        `P95 time ${report.summary.p95Time.toFixed(2)}ms exceeds threshold ${thresholds.maxP95Time}ms. ` +
+        `Check for complex patterns or consider skipLineNumbers option.`
+      );
     }
     
     if (thresholds.maxP99Time && report.summary.p99Time > thresholds.maxP99Time) {
-      failures.push(`P99 time ${report.summary.p99Time.toFixed(2)}ms exceeds threshold ${thresholds.maxP99Time}ms`);
+      failures.push(
+        `P99 time ${report.summary.p99Time.toFixed(2)}ms exceeds threshold ${thresholds.maxP99Time}ms. ` +
+        `Investigate outliers - possible ReDoS patterns or very large content.`
+      );
     }
     
     if (thresholds.minThroughput && report.throughput.charactersPerMs < thresholds.minThroughput) {
-      failures.push(`Throughput ${report.throughput.charactersPerMs.toFixed(2)} chars/ms below threshold ${thresholds.minThroughput} chars/ms`);
+      failures.push(
+        `Throughput ${report.throughput.charactersPerMs.toFixed(2)} chars/ms below threshold ${thresholds.minThroughput} chars/ms. ` +
+        `Consider pattern optimization or parallel processing for large files.`
+      );
     }
     
     return {

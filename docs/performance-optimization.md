@@ -73,9 +73,9 @@ const result = scanForSecurityPatternsOptimized(content, {
 
 ### 4. Caching and Memoization
 
-- Line splitting cached using WeakMap
+- Line splitting cached using Map with size limit (MAX_CACHE_SIZE = 100)
 - Avoids repeated string operations
-- Automatic garbage collection
+- FIFO eviction when cache limit reached
 
 ## Usage Patterns
 
