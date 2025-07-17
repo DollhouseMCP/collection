@@ -8,11 +8,24 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { SecurityIssue } from '../../../src/validators/security-patterns.js';
 
+// Type for severity levels matching the SecurityIssue interface
+type SeverityLevel = 'critical' | 'high' | 'medium' | 'low';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Define the structure of our test patterns JSON
+interface TestPatternsData {
+  comment: string;
+  version: string;
+  categories: Record<string, {
+    description: string;
+    testCases: TestCase[];
+  }>;
+}
 
 // Load test patterns from JSON file
 const testPatternsPath = join(__dirname, '../test-data/security-test-patterns.json');
-const testPatterns = JSON.parse(readFileSync(testPatternsPath, 'utf-8'));
+const testPatterns = JSON.parse(readFileSync(testPatternsPath, 'utf-8')) as TestPatternsData;
 
 export interface TestCase {
   id: string;
@@ -20,7 +33,7 @@ export interface TestCase {
   placeholder: string;
   realPattern: string;
   expectedCategory: string;
-  expectedSeverity: string;
+  expectedSeverity: SeverityLevel;
 }
 
 export interface TestResult {
@@ -43,8 +56,8 @@ export function getTestCases(category: string): TestCase[] {
 export function getAllTestCases(): { category: string; testCase: TestCase }[] {
   const allCases: { category: string; testCase: TestCase }[] = [];
   
-  Object.entries(testPatterns.categories).forEach(([category, data]: [string, any]) => {
-    data.testCases.forEach((testCase: TestCase) => {
+  Object.entries(testPatterns.categories).forEach(([category, data]) => {
+    data.testCases.forEach((testCase) => {
       allCases.push({ category, testCase });
     });
   });
@@ -57,7 +70,7 @@ export function getAllTestCases(): { category: string; testCase: TestCase }[] {
  * This allows us to test the test infrastructure without real patterns
  */
 export function createMockScanner() {
-  const mockPatterns = new Map<string, { category: string; severity: string }>();
+  const mockPatterns = new Map<string, { category: string; severity: SeverityLevel }>();
   
   // Register mock patterns
   getAllTestCases().forEach(({ testCase }) => {
@@ -77,7 +90,7 @@ export function createMockScanner() {
           if (line.includes(placeholder)) {
             issues.push({
               pattern: placeholder.toLowerCase(),
-              severity: pattern.severity as any,
+              severity: pattern.severity,
               line: index + 1,
               category: pattern.category,
               description: `Mock detection of ${placeholder}`
