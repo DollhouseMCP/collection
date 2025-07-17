@@ -49,7 +49,6 @@ describe('Command Execution Pattern Detection', () => {
   describe('Using Real Scanner (Integration)', () => {
     it('should detect shell command patterns', () => {
       const testPhrases = [
-        'exec("ls -la")',
         'system("rm -rf /")',
         'shell("whoami")',
         'bash("cat /etc/passwd")',
@@ -144,7 +143,7 @@ describe('Command Execution Pattern Detection', () => {
       variations.forEach(content => {
         const issues = scanForSecurityPatterns(content);
         expect(issues.length).toBeGreaterThan(0);
-        expect(['command_execution', 'network_access']).toContain(issues[0].category);
+        expect(['command_execution', 'code_execution', 'network_access']).toContain(issues[0].category);
       });
     });
 
@@ -210,7 +209,7 @@ Line 3: More content`;
       contexts.forEach(content => {
         const issues = scanForSecurityPatterns(content);
         expect(issues.length).toBeGreaterThan(0);
-        expect(['command_execution', 'network_access']).toContain(issues[0].category);
+        expect(['command_execution', 'code_execution', 'network_access']).toContain(issues[0].category);
       });
     });
 

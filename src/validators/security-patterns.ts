@@ -88,7 +88,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   // System Command Execution
   {
     name: 'shell_command',
-    pattern: /\b(exec|system|shell|bash|sh|cmd|powershell)\s*\(/i,
+    pattern: /\b(system|shell|bash|sh|cmd|powershell)\s*\(/i,
     severity: 'critical',
     description: 'Attempts to execute shell commands',
     category: 'command_execution'
@@ -321,7 +321,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'yaml_python_tag',
-    pattern: /!![a-z]+\/[a-z]+\s+python\//i,
+    pattern: /!!python\/(object|module|name)/i,
     severity: 'critical',
     description: 'Python object instantiation in YAML',
     category: 'yaml_security'
