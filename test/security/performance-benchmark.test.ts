@@ -7,16 +7,35 @@
 
 import { scanForSecurityPatterns, SECURITY_PATTERNS } from '../../src/validators/security-patterns.js';
 
+interface SizeResult {
+  size: number;
+  cleanTime?: string;
+  patternTime?: string;
+  issueCount?: number;
+}
+
+interface BaselineResult {
+  apiTime: string;
+  docTime: string;
+  avgTimePerPattern: string;
+  patternCount: number;
+}
+
+interface BenchmarkResults {
+  contentSizes?: SizeResult[];
+  baseline?: BaselineResult;
+}
+
 describe('Security Scanner Performance Benchmarks', () => {
   // Store all benchmark results for summary
-  const benchmarkResults: Record<string, any> = {};
+  const benchmarkResults: BenchmarkResults = {};
   
   afterAll(() => {
     console.log('\n\n========== PERFORMANCE BENCHMARK SUMMARY ==========');
     console.log(`Total Patterns: ${SECURITY_PATTERNS.length}`);
     console.log('\nContent Size Performance:');
     if (benchmarkResults.contentSizes) {
-      benchmarkResults.contentSizes.forEach((result: any) => {
+      benchmarkResults.contentSizes.forEach((result) => {
         console.log(`  ${result.size}KB: ${result.cleanTime}ms (clean), ${result.patternTime}ms (with patterns)`);
       });
     }
@@ -64,7 +83,7 @@ describe('Security Scanner Performance Benchmarks', () => {
     benchmarkResults.contentSizes = [];
     
     sizes.forEach(sizeKB => {
-      const sizeResult: any = { size: sizeKB };
+      const sizeResult: SizeResult = { size: sizeKB };
       
       it(`should scan ${sizeKB}KB of clean content efficiently`, () => {
         const content = generateContent(sizeKB, false);
@@ -84,7 +103,7 @@ describe('Security Scanner Performance Benchmarks', () => {
         
         sizeResult.patternTime = time.toFixed(2);
         sizeResult.issueCount = issues.length;
-        benchmarkResults.contentSizes.push(sizeResult);
+        benchmarkResults.contentSizes!.push(sizeResult);
         
         // Performance expectations
         const maxTime = sizeKB < 100 ? 200 : sizeKB * 4; // Allow more time for pattern matching
