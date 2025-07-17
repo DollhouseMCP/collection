@@ -234,18 +234,7 @@ export class ContentValidator {
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.issues.forEach((err) => {
-          // Handle both Zod v3 and v4 error formats
-          let isMissingField = false;
-          if (err.code === 'invalid_type') {
-            // Zod v4 uses 'received' property
-            const errWithReceived = err as z.ZodIssue & { received?: unknown };
-            if ('received' in errWithReceived && errWithReceived.received === 'undefined') {
-              isMissingField = true;
-            } else if (err.message.includes('received undefined')) {
-              // Zod v3 fallback - check message
-              isMissingField = true;
-            }
-          }
+          const isMissingField = this.checkIfMissingField(err);
           
           issues.push({
             severity: 'high',
@@ -459,6 +448,42 @@ export class ContentValidator {
     }
 
     return report;
+  }
+
+  /**
+   * Checks if a Zod error represents a missing field.
+   * 
+   * This method provides backward compatibility between Zod v3 and v4 error formats:
+   * - Zod v3: Uses error message text to detect undefined values
+   * - Zod v4: Uses the 'received' property on the error object
+   * 
+   * @param err - The Zod issue to check
+   * @returns true if the error represents a missing/undefined field, false otherwise
+   * 
+   * @example
+   * // Zod v3 error format:
+   * // { code: 'invalid_type', message: 'Required, received undefined' }
+   * 
+   * // Zod v4 error format:
+   * // { code: 'invalid_type', received: 'undefined', expected: 'string' }
+   */
+  private checkIfMissingField(err: z.ZodIssue): boolean {
+    if (err.code !== 'invalid_type') {
+      return false;
+    }
+
+    // Zod v4: Check for 'received' property
+    const errWithReceived = err as z.ZodIssue & { received?: unknown };
+    if ('received' in errWithReceived && errWithReceived.received === 'undefined') {
+      return true;
+    }
+
+    // Zod v3 fallback: Check error message
+    if (err.message.includes('received undefined')) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
