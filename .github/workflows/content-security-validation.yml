@@ -84,7 +84,7 @@ jobs:
           
           # Run validation
           if [ -n "$FILES" ]; then
-            if npm run validate -- $FILES; then
+            if node dist/src/cli/validate-content.js $FILES; then
               echo "validation_passed=true" >> $GITHUB_OUTPUT
             else
               echo "validation_passed=false" >> $GITHUB_OUTPUT

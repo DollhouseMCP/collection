@@ -9,6 +9,11 @@ version: 1.0.0
 created_date: 2025-07-15
 tags: [debugging, programming, troubleshooting, code-analysis]
 license: MIT
+capabilities:
+  - error_analysis
+  - code_review
+  - debugging_strategies
+  - multi_language_support
 ---
 
 # Debugging Assistant Skill

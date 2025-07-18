@@ -9,6 +9,7 @@ version: 1.0.0
 created_date: 2025-07-15
 tags: [business, project-management, proposals, documentation]
 license: MIT
+format: markdown
 variables:
   - project_name
   - client_name
