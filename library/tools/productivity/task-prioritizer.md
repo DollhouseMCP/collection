@@ -9,6 +9,7 @@ version: 1.0.0
 created_date: 2025-07-15
 tags: [productivity, task-management, prioritization, planning]
 license: MIT
+mcp_version: 1.0.0
 mcp_config:
   tool_name: prioritize_tasks
   parameters:
