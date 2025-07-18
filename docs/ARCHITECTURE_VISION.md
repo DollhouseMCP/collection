@@ -59,6 +59,11 @@ The DollhouseMCP Server is the active component that users install and run. It h
 - `/docs/CONTENT_SPEC.md` - Content format specifications
 - `/REGISTRY.md` - Auto-generated content registry
 
+**Content Identification**:
+- Unique ID format: `{type}_{name}_{author}_{YYYYMMDD}-{HHMMSS}`
+- Example: `persona_creative-writer_johndoe_20250718-143025`
+- Server-generated timestamps prevent manipulation
+
 ### DollhouseMCP Server (MCP Runtime)
 
 **Purpose**: Local/cloud runtime for content interaction and creation
