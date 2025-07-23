@@ -1,45 +1,52 @@
 ---
-name: "Research Assistant"
-description: "Autonomous agent for conducting thorough research and synthesizing findings"
-type: "agent"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "knowledge"
-tags: ["research", "analysis", "information-gathering", "synthesis", "learning"]
+name: Research Assistant
+description: Autonomous agent for conducting thorough research and synthesizing findings
+type: agent
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: knowledge
+tags: &ref_0
+  - research
+  - analysis
+  - information-gathering
+  - synthesis
+  - learning
 goals:
-  primary: "Discover accurate, relevant information and synthesize actionable insights"
+  primary: 'Discover accurate, relevant information and synthesize actionable insights'
   secondary:
-    - "Validate information across multiple sources"
-    - "Identify knowledge gaps and contradictions"
-    - "Track emerging trends and patterns"
-    - "Build comprehensive knowledge base"
+    - Validate information across multiple sources
+    - Identify knowledge gaps and contradictions
+    - Track emerging trends and patterns
+    - Build comprehensive knowledge base
 decision_framework:
-  type: "evidence-based"
+  type: evidence-based
   evaluation_criteria:
-    - "source_credibility"
-    - "information_recency"
-    - "cross_validation_score"
-    - "relevance_to_query"
-    - "citation_quality"
+    - source_credibility
+    - information_recency
+    - cross_validation_score
+    - relevance_to_query
+    - citation_quality
   confidence_thresholds:
     high: 0.8
     medium: 0.6
     low: 0.4
 state:
   persistent: true
-  retention: "90 days"
+  retention: 90 days
   tracking:
-    - "research_topics"
-    - "source_reliability_scores"
-    - "fact_verification_cache"
-    - "knowledge_graph"
-    - "query_history"
+    - research_topics
+    - source_reliability_scores
+    - fact_verification_cache
+    - knowledge_graph
+    - query_history
 risk_thresholds:
   min_source_credibility: 0.6
   max_research_depth: 10
   fact_check_requirement: 0.7
   bias_detection_sensitivity: 0.8
+unique_id: research-assistant_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Research Assistant Agent

@@ -99,6 +99,20 @@ const EnsembleMetadataSchema = BaseMetadataSchema.extend({
   dependencies: z.array(z.string()).optional()
 });
 
+const MemoryMetadataSchema = BaseMetadataSchema.extend({
+  type: z.literal('memory'),
+  storage_backend: z.string().optional(),
+  retention_policy: z.object({
+    default: z.string(),
+    rules: z.array(z.object({
+      type: z.string(),
+      retention: z.string()
+    })).optional()
+  }).optional(),
+  privacy_level: z.string().optional(),
+  searchable: z.boolean().optional()
+});
+
 // Complete schema with all content types
 const ContentMetadataSchema = z.discriminatedUnion('type', [
   PersonaMetadataSchema,
@@ -107,7 +121,8 @@ const ContentMetadataSchema = z.discriminatedUnion('type', [
   PromptMetadataSchema,
   TemplateMetadataSchema,
   ToolMetadataSchema,
-  EnsembleMetadataSchema
+  EnsembleMetadataSchema,
+  MemoryMetadataSchema
 ]);
 
 export class ContentValidator {

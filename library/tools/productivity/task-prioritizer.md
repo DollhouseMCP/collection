@@ -6,8 +6,11 @@ unique_id: task-prioritizer_20250715-100400_dollhousemcp
 author: dollhousemcp
 category: personal
 version: 1.0.0
-created_date: 2025-07-15
-tags: [productivity, task-management, prioritization, planning]
+tags:
+  - productivity
+  - task-management
+  - prioritization
+  - planning
 license: MIT
 mcp_version: 1.0.0
 mcp_config:
@@ -19,12 +22,13 @@ mcp_config:
       required: true
     - name: method
       type: string
-      description: Prioritization method (eisenhower, moscow, rice, value-effort)
+      description: 'Prioritization method (eisenhower, moscow, rice, value-effort)'
       default: eisenhower
     - name: context
       type: object
-      description: Additional context (deadlines, resources, goals)
+      description: 'Additional context (deadlines, resources, goals)'
       required: false
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Task Prioritizer Tool
