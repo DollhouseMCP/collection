@@ -286,7 +286,7 @@ const result = await instance
 - `{{name}}`: {{description}}
 {{/each}}
 {{else}}
-- `{{MODULE_NAME}}_DEBUG`: Enable debug mode
+- `{{MODULE_NAME}}_DEBUG`: Enable diagnostic logging
 - `{{MODULE_NAME}}_TIMEOUT`: Override default timeout
 {{/if}}
 
