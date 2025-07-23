@@ -5,8 +5,8 @@ type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: knowledge
-tags: &ref_0
+category: professional
+tags:
   - research
   - analysis
   - synthesis
@@ -49,7 +49,12 @@ parameters:
     description: Verify claims and cross-reference
     default: true
 unique_id: research_20250723-165719_dollhousemcp
-capabilities: *ref_0
+capabilities:
+  - research
+  - analysis
+  - synthesis
+  - investigation
+  - fact-checking
 ---
 
 # Research Skill

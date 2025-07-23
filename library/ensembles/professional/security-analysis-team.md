@@ -295,7 +295,7 @@ Stage 3 - Persistence (Security Analyst + Threat Modeling):
 
 Stage 4 - Data Exfiltration (All Elements):
 • Sensitive data identification and classification
-• Covert data extraction simulation
+• Covert data analysis simulation
 • Impact assessment and business consequence analysis
 ```
 

@@ -5,8 +5,8 @@ type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: communication
-tags: &ref_0
+category: professional
+tags:
   - translation
   - languages
   - localization
@@ -43,7 +43,11 @@ parameters:
     description: Adapt content for target culture
     default: false
 unique_id: translation_20250723-165719_dollhousemcp
-capabilities: *ref_0
+capabilities:
+  - translation
+  - languages
+  - localization
+  - culture
 ---
 
 # Translation Skill
