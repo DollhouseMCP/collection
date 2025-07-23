@@ -1,37 +1,72 @@
 ---
-name: "Creative Writing"
-description: "Storytelling, narrative construction, and creative content generation"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "creative"
-tags: ["writing", "storytelling", "creativity", "narrative", "fiction"]
+name: Creative Writing
+description: 'Storytelling, narrative construction, and creative content generation'
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: creative
+tags: &ref_0
+  - writing
+  - storytelling
+  - creativity
+  - narrative
+  - fiction
 proficiency_levels:
-  beginner: "Basic story structure and character creation"
-  intermediate: "Complex plots and engaging dialogue"
-  advanced: "Literary techniques and genre mastery"
+  beginner: Basic story structure and character creation
+  intermediate: Complex plots and engaging dialogue
+  advanced: Literary techniques and genre mastery
 parameters:
   genre:
-    type: "string"
-    description: "Writing genre"
-    default: "general"
-    enum: ["general", "fantasy", "sci-fi", "mystery", "romance", "thriller", "literary", "comedy"]
+    type: string
+    description: Writing genre
+    default: general
+    enum:
+      - general
+      - fantasy
+      - sci-fi
+      - mystery
+      - romance
+      - thriller
+      - literary
+      - comedy
   tone:
-    type: "string"
-    description: "Overall tone"
-    default: "balanced"
-    enum: ["lighthearted", "serious", "dramatic", "comedic", "dark", "inspirational", "balanced"]
+    type: string
+    description: Overall tone
+    default: balanced
+    enum:
+      - lighthearted
+      - serious
+      - dramatic
+      - comedic
+      - dark
+      - inspirational
+      - balanced
   perspective:
-    type: "string"
-    description: "Narrative perspective"
-    default: "third-person"
-    enum: ["first-person", "second-person", "third-person", "omniscient"]
+    type: string
+    description: Narrative perspective
+    default: third-person
+    enum:
+      - first-person
+      - second-person
+      - third-person
+      - omniscient
   style_elements:
-    type: "array"
-    description: "Stylistic elements to include"
-    default: ["dialogue", "description"]
-    enum: ["dialogue", "description", "action", "introspection", "humor", "metaphor", "symbolism"]
+    type: array
+    description: Stylistic elements to include
+    default:
+      - dialogue
+      - description
+    enum:
+      - dialogue
+      - description
+      - action
+      - introspection
+      - humor
+      - metaphor
+      - symbolism
+unique_id: creative-writing_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Creative Writing Skill

@@ -1,70 +1,76 @@
 ---
-name: "Business Advisor"
-description: "Strategic business advisory ensemble for analysis, planning, and decision-making"
-type: "ensemble"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "business"
-tags: ["business", "strategy", "analysis", "consulting", "advisory"]
-activation_strategy: "conditional"
-conflict_resolution: "priority"
-context_sharing: "selective"
+name: Business Advisor
+description: >-
+  Strategic business advisory ensemble for analysis, planning, and
+  decision-making
+type: ensemble
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags:
+  - business
+  - strategy
+  - analysis
+  - consulting
+  - advisory
+activation_strategy: conditional
+conflict_resolution: priority
+context_sharing: selective
 resource_limits:
   max_active_elements: 7
   max_memory_mb: 384
   max_execution_time_ms: 25000
 elements:
-  - name: "business-consultant"
-    type: "persona"
-    role: "primary"
+  - name: business-consultant
+    type: persona
+    role: primary
     priority: 100
-    activation: "always"
-    purpose: "Strategic business analysis and recommendations"
-    
-  - name: "data-analysis"
-    type: "skill"
-    role: "core"
+    activation: always
+    purpose: Strategic business analysis and recommendations
+  - name: data-analysis
+    type: skill
+    role: core
     priority: 90
-    activation: "conditional"
-    condition: "data_available || metrics_requested"
-    purpose: "Quantitative analysis and insights"
-    
-  - name: "research"
-    type: "skill"
-    role: "foundation"
+    activation: conditional
+    condition: data_available || metrics_requested
+    purpose: Quantitative analysis and insights
+  - name: research
+    type: skill
+    role: foundation
     priority: 85
-    activation: "on-demand"
-    purpose: "Market research and competitive analysis"
-    
-  - name: "project-brief"
-    type: "template"
-    role: "support"
+    activation: on-demand
+    purpose: Market research and competitive analysis
+  - name: project-brief
+    type: template
+    role: support
     priority: 70
-    activation: "on-demand"
-    purpose: "Structured project planning documents"
-    
-  - name: "report-executive"
-    type: "template"
-    role: "support"
+    activation: on-demand
+    purpose: Structured project planning documents
+  - name: report-executive
+    type: template
+    role: support
     priority: 75
-    activation: "on-demand"
-    purpose: "Executive-level reporting and summaries"
-    
-  - name: "project-context"
-    type: "memory"
-    role: "foundation"
+    activation: on-demand
+    purpose: Executive-level reporting and summaries
+  - name: project-context
+    type: memory
+    role: foundation
     priority: 95
-    activation: "always"
-    purpose: "Maintain business context and decisions"
-    
-  - name: "task-manager"
-    type: "agent"
-    role: "coordinator"
+    activation: always
+    purpose: Maintain business context and decisions
+  - name: task-manager
+    type: agent
+    role: coordinator
     priority: 80
-    activation: "conditional"
-    condition: "project_planning || implementation_phase"
-    purpose: "Project execution and resource management"
+    activation: conditional
+    condition: project_planning || implementation_phase
+    purpose: Project execution and resource management
+unique_id: business-advisor_20250723-165719_dollhousemcp
+components:
+  personas: []
+  skills: []
+  agents: []
 ---
 
 # Business Advisor Ensemble

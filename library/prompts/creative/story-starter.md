@@ -6,22 +6,40 @@ unique_id: story-starter_20250715-100200_dollhousemcp
 author: dollhousemcp
 category: creative
 version: 1.0.0
-created_date: 2025-07-15
-tags: [creative-writing, storytelling, fiction, prompts]
+tags:
+  - creative-writing
+  - storytelling
+  - fiction
+  - prompts
 license: MIT
 parameters:
   - name: genre
     type: string
-    options: [fantasy, sci-fi, mystery, romance, horror, literary]
+    options:
+      - fantasy
+      - sci-fi
+      - mystery
+      - romance
+      - horror
+      - literary
     default: fantasy
   - name: perspective
     type: string
-    options: [first-person, third-person, omniscient]
+    options:
+      - first-person
+      - third-person
+      - omniscient
     default: third-person
   - name: tone
     type: string
-    options: [serious, humorous, dark, whimsical, dramatic]
+    options:
+      - serious
+      - humorous
+      - dark
+      - whimsical
+      - dramatic
     default: serious
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Story Starter Prompt

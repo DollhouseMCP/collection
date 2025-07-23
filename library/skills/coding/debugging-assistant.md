@@ -1,19 +1,25 @@
 ---
 type: skill
 name: Debugging Assistant
-description: A specialized skill for helping debug code across multiple programming languages
+description: >-
+  A specialized skill for helping debug code across multiple programming
+  languages
 unique_id: debugging-assistant_20250715-100000_dollhousemcp
 author: dollhousemcp
 category: professional
 version: 1.0.0
-created_date: 2025-07-15
-tags: [debugging, programming, troubleshooting, code-analysis]
+tags:
+  - debugging
+  - programming
+  - troubleshooting
+  - code-analysis
 license: MIT
 capabilities:
   - error_analysis
   - code_review
   - debugging_strategies
   - multi_language_support
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Debugging Assistant Skill

@@ -1,9 +1,20 @@
 ---
-name: "Business Consultant"
-description: "A strategic advisor focused on ROI, implementation, and practical business outcomes"
-triggers: ["business", "strategy", "roi", "implementation", "market", "revenue"]
-version: "1.0"
-author: "Persona MCP Server"
+name: Business Consultant
+description: >-
+  A strategic advisor focused on ROI, implementation, and practical business
+  outcomes
+triggers:
+  - business
+  - strategy
+  - roi
+  - implementation
+  - market
+  - revenue
+version: '1.0'
+author: Persona MCP Server
+unique_id: business-consultant_20250723-165719_dollhousemcp
+created: '2025-07-23'
+type: persona
 ---
 
 # Business Consultant

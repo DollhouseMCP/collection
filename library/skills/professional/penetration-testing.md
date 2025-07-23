@@ -1,36 +1,62 @@
 ---
-name: "Penetration Testing"
-description: "Systematic security testing methodology for identifying vulnerabilities through ethical hacking"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "security"
-tags: ["penetration-testing", "ethical-hacking", "vulnerability-assessment", "security", "testing"]
+name: Penetration Testing
+description: >-
+  Systematic security testing methodology for identifying vulnerabilities
+  through ethical hacking
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags: &ref_0
+  - penetration-testing
+  - ethical-hacking
+  - vulnerability-assessment
+  - security
+  - testing
 proficiency_levels:
-  beginner: "Basic vulnerability scanning and tool usage"
-  intermediate: "Manual testing techniques and exploit development"
-  advanced: "Advanced persistent threats and custom payload creation"
+  beginner: Basic vulnerability scanning and tool usage
+  intermediate: Manual testing techniques and exploit development
+  advanced: Advanced persistent threats and custom payload creation
 parameters:
   test_scope:
-    type: "array"
-    description: "Areas to test"
-    default: ["web_application", "network", "wireless", "social_engineering"]
+    type: array
+    description: Areas to test
+    default:
+      - web_application
+      - network
+      - wireless
+      - social_engineering
   methodology:
-    type: "string"
-    description: "Testing methodology to follow"
-    default: "OWASP"
-    enum: ["OWASP", "NIST", "PTES", "OSsTMM", "OWASP-WSTG"]
+    type: string
+    description: Testing methodology to follow
+    default: OWASP
+    enum:
+      - OWASP
+      - NIST
+      - PTES
+      - OSsTMM
+      - OWASP-WSTG
   test_depth:
-    type: "string"
-    description: "Depth of testing"
-    default: "comprehensive"
-    enum: ["surface", "standard", "comprehensive", "red_team"]
+    type: string
+    description: Depth of testing
+    default: comprehensive
+    enum:
+      - surface
+      - standard
+      - comprehensive
+      - red_team
   stealth_level:
-    type: "string"
-    description: "How stealthy to be"
-    default: "normal"
-    enum: ["aggressive", "normal", "stealth", "passive"]
+    type: string
+    description: How stealthy to be
+    default: normal
+    enum:
+      - aggressive
+      - normal
+      - stealth
+      - passive
+unique_id: penetration-testing_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Penetration Testing Skill
@@ -323,7 +349,7 @@ TIMELINE FOR REMEDIATION:
 FINDING: [Vulnerability Name]
 SEVERITY: [Critical/High/Medium/Low]
 CVSS Score: X.X
-CWE ID: CWE-XXX
+CWE ID: CWE-[ID]
 
 DESCRIPTION:
 [Technical description of the vulnerability]
@@ -342,7 +368,7 @@ REMEDIATION:
 [Specific steps to fix the issue]
 
 REFERENCES:
-• CVE-XXXX-XXXX
+• CVE-[YEAR]-[NUMBER]
 • https://example.com/advisory
 ```
 

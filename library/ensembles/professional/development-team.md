@@ -1,62 +1,67 @@
 ---
-name: "Development Team"
-description: "Complete development team ensemble for full-stack software projects"
-type: "ensemble"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "development"
-tags: ["development", "full-stack", "team", "software", "collaboration"]
-activation_strategy: "sequential"
-conflict_resolution: "priority"
-context_sharing: "selective"
+name: Development Team
+description: Complete development team ensemble for full-stack software projects
+type: ensemble
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags:
+  - development
+  - full-stack
+  - team
+  - software
+  - collaboration
+activation_strategy: sequential
+conflict_resolution: priority
+context_sharing: selective
 resource_limits:
   max_active_elements: 10
   max_memory_mb: 512
   max_execution_time_ms: 30000
 elements:
-  - name: "technical-analyst"
-    type: "persona"
-    role: "primary"
+  - name: technical-analyst
+    type: persona
+    role: primary
     priority: 100
-    activation: "always"
-    purpose: "Technical architecture and system design"
-  
-  - name: "code-review"
-    type: "skill"
-    role: "support"
+    activation: always
+    purpose: Technical architecture and system design
+  - name: code-review
+    type: skill
+    role: support
     priority: 90
-    activation: "on-demand"
-    purpose: "Code quality and security analysis"
-    
-  - name: "debug-detective"
-    type: "persona"
-    role: "support"
+    activation: on-demand
+    purpose: Code quality and security analysis
+  - name: debug-detective
+    type: persona
+    role: support
     priority: 85
-    activation: "conditional"
-    condition: "errors_detected || debugging_requested"
-    purpose: "Complex problem solving and debugging"
-    
-  - name: "code-documentation"
-    type: "template"
-    role: "support"
+    activation: conditional
+    condition: errors_detected || debugging_requested
+    purpose: Complex problem solving and debugging
+  - name: code-documentation
+    type: template
+    role: support
     priority: 70
-    activation: "on-demand"
-    purpose: "Consistent technical documentation"
-    
-  - name: "project-context"
-    type: "memory"
-    role: "foundation"
+    activation: on-demand
+    purpose: Consistent technical documentation
+  - name: project-context
+    type: memory
+    role: foundation
     priority: 95
-    activation: "always"
-    purpose: "Maintain project knowledge and decisions"
-    
-  - name: "task-manager"
-    type: "agent"
-    role: "coordinator"
+    activation: always
+    purpose: Maintain project knowledge and decisions
+  - name: task-manager
+    type: agent
+    role: coordinator
     priority: 80
-    activation: "always"
-    purpose: "Coordinate tasks and track progress"
+    activation: always
+    purpose: Coordinate tasks and track progress
+unique_id: development-team_20250723-165719_dollhousemcp
+components:
+  personas: []
+  skills: []
+  agents: []
 ---
 
 # Development Team Ensemble

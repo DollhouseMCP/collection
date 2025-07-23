@@ -1,49 +1,55 @@
 ---
-name: "Learning Progress"
-description: "Tracks learning goals, progress, and personalized educational pathways"
-type: "memory"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "education"
-tags: ["learning", "progress", "education", "skills", "knowledge-tracking"]
-storage_backend: "file"
+name: Learning Progress
+description: 'Tracks learning goals, progress, and personalized educational pathways'
+type: memory
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: education
+tags:
+  - learning
+  - progress
+  - education
+  - skills
+  - knowledge-tracking
+storage_backend: file
 retention_policy:
-  default: "perpetual"
+  default: perpetual
   rules:
-    - type: "achievements"
-      retention: "perpetual"
-    - type: "practice_sessions"
-      retention: "1 year"
-    - type: "mistakes"
-      retention: "6 months"
-    - type: "resources"
-      retention: "perpetual"
-privacy_level: "user-private"
+    - type: achievements
+      retention: perpetual
+    - type: practice_sessions
+      retention: 1 year
+    - type: mistakes
+      retention: 6 months
+    - type: resources
+      retention: perpetual
+privacy_level: user-private
 searchable: true
 schema:
   learning_profile:
-    type: "object"
+    type: object
     properties:
-      learner_id: "string"
-      learning_style: "string"
-      goals: "array"
-      current_level: "object"
-      time_investment: "object"
+      learner_id: string
+      learning_style: string
+      goals: array
+      current_level: object
+      time_investment: object
   progress_tracking:
-    type: "object"
+    type: object
     properties:
-      skills: "array"
-      completed_modules: "array"
-      current_module: "object"
-      assessments: "array"
+      skills: array
+      completed_modules: array
+      current_module: object
+      assessments: array
   knowledge_map:
-    type: "object"
+    type: object
     properties:
-      mastered: "array"
-      in_progress: "array"
-      planned: "array"
-      prerequisites: "object"
+      mastered: array
+      in_progress: array
+      planned: array
+      prerequisites: object
+unique_id: learning-progress_20250723-165719_dollhousemcp
 ---
 
 # Learning Progress Memory

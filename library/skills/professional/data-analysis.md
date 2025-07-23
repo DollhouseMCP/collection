@@ -1,38 +1,60 @@
 ---
-name: "Data Analysis"
-description: "Statistical analysis, visualization, and insights extraction from datasets"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "analytics"
-tags: ["data", "statistics", "visualization", "insights", "analytics"]
+name: Data Analysis
+description: 'Statistical analysis, visualization, and insights discovery from datasets'
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: analytics
+tags: &ref_0
+  - data
+  - statistics
+  - visualization
+  - insights
+  - analytics
 proficiency_levels:
-  beginner: "Basic statistics and simple charts"
-  intermediate: "Correlation analysis and trend detection"
-  advanced: "Predictive modeling and complex visualizations"
+  beginner: Basic statistics and simple charts
+  intermediate: Correlation analysis and trend detection
+  advanced: Predictive modeling and complex visualizations
 parameters:
   analysis_type:
-    type: "array"
-    description: "Types of analysis to perform"
-    default: ["descriptive", "diagnostic"]
-    enum: ["descriptive", "diagnostic", "predictive", "prescriptive"]
+    type: array
+    description: Types of analysis to perform
+    default:
+      - descriptive
+      - diagnostic
+    enum:
+      - descriptive
+      - diagnostic
+      - predictive
+      - prescriptive
   visualization_format:
-    type: "string"
-    description: "Preferred visualization format"
-    default: "auto"
-    enum: ["auto", "charts", "tables", "narrative", "dashboard"]
+    type: string
+    description: Preferred visualization format
+    default: auto
+    enum:
+      - auto
+      - charts
+      - tables
+      - narrative
+      - dashboard
   confidence_level:
-    type: "number"
-    description: "Statistical confidence level"
+    type: number
+    description: Statistical confidence level
     default: 0.95
-    min: 0.90
+    min: 0.9
     max: 0.99
   handle_missing_data:
-    type: "string"
-    description: "How to handle missing values"
-    default: "interpolate"
-    enum: ["ignore", "interpolate", "drop", "flag"]
+    type: string
+    description: How to handle missing values
+    default: interpolate
+    enum:
+      - ignore
+      - interpolate
+      - drop
+      - flag
+unique_id: data-analysis_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Data Analysis Skill

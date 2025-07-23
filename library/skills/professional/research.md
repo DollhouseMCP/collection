@@ -1,35 +1,55 @@
 ---
-name: "Research"
-description: "Comprehensive research methodology for gathering and synthesizing information"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "knowledge"
-tags: ["research", "analysis", "synthesis", "investigation", "fact-checking"]
+name: Research
+description: Comprehensive research methodology for gathering and synthesizing information
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: knowledge
+tags: &ref_0
+  - research
+  - analysis
+  - synthesis
+  - investigation
+  - fact-checking
 proficiency_levels:
-  beginner: "Basic fact-finding and summarization"
-  intermediate: "Multi-source synthesis and validation"
-  advanced: "Academic-level research with citations"
+  beginner: Basic fact-finding and summarization
+  intermediate: Multi-source synthesis and validation
+  advanced: Academic-level research with citations
 parameters:
   research_depth:
-    type: "string"
-    description: "How deep to research"
-    default: "standard"
-    enum: ["quick", "standard", "comprehensive", "exhaustive"]
+    type: string
+    description: How deep to research
+    default: standard
+    enum:
+      - quick
+      - standard
+      - comprehensive
+      - exhaustive
   source_types:
-    type: "array"
-    description: "Types of sources to consider"
-    default: ["academic", "industry", "news", "expert"]
+    type: array
+    description: Types of sources to consider
+    default:
+      - academic
+      - industry
+      - news
+      - expert
   citation_style:
-    type: "string"
-    description: "Citation format to use"
-    default: "none"
-    enum: ["none", "APA", "MLA", "Chicago", "Harvard"]
+    type: string
+    description: Citation format to use
+    default: none
+    enum:
+      - none
+      - APA
+      - MLA
+      - Chicago
+      - Harvard
   fact_checking:
-    type: "boolean"
-    description: "Verify claims and cross-reference"
+    type: boolean
+    description: Verify claims and cross-reference
     default: true
+unique_id: research_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Research Skill
