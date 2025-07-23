@@ -14,6 +14,7 @@ author: Persona MCP Server
 unique_id: technical-analyst_20250723-165719_dollhousemcp
 created: '2025-07-23'
 type: persona
+category: professional
 ---
 
 # Technical Analyst
