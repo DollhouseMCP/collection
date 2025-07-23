@@ -1,37 +1,29 @@
 ---
-name: "Meeting Notes"
-description: "Structured template for capturing and organizing meeting information"
-type: "template"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "business"
-tags: ["meeting", "notes", "documentation", "collaboration"]
+name: Meeting Notes
+description: Structured template for capturing and organizing meeting information
+type: template
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags:
+  - meeting
+  - notes
+  - documentation
+  - collaboration
 variables:
-  meeting_title:
-    type: "string"
-    description: "Title of the meeting"
-    required: true
-  meeting_date:
-    type: "string"
-    description: "Date of the meeting"
-    required: true
-    default: "{{TODAY}}"
-  attendees:
-    type: "array"
-    description: "List of attendees"
-    required: true
-  meeting_type:
-    type: "string"
-    description: "Type of meeting"
-    default: "general"
-    enum: ["general", "standup", "review", "planning", "retrospective", "1-on-1"]
-  duration:
-    type: "string"
-    description: "Meeting duration"
-    default: "60 minutes"
-outputFormats: ["markdown", "html", "pdf"]
+  - meeting_title
+  - meeting_date
+  - attendees
+  - meeting_type
+  - duration
+outputFormats:
+  - markdown
+  - html
+  - pdf
 includes: []
+unique_id: meeting-notes_20250723-165719_dollhousemcp
+format: markdown
 ---
 
 # {{meeting_title}}

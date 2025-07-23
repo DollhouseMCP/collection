@@ -1,62 +1,67 @@
 ---
-name: "Creative Studio"
-description: "Multi-disciplinary creative ensemble for content creation and storytelling"
-type: "ensemble"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "creative"
-tags: ["creative", "writing", "content", "storytelling", "multimedia"]
-activation_strategy: "priority"
-conflict_resolution: "merge"
-context_sharing: "full"
+name: Creative Studio
+description: Multi-disciplinary creative ensemble for content creation and storytelling
+type: ensemble
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: creative
+tags:
+  - creative
+  - writing
+  - content
+  - storytelling
+  - multimedia
+activation_strategy: priority
+conflict_resolution: merge
+context_sharing: full
 resource_limits:
   max_active_elements: 8
   max_memory_mb: 256
   max_execution_time_ms: 20000
 elements:
-  - name: "creative-writer"
-    type: "persona"
-    role: "primary"
+  - name: creative-writer
+    type: persona
+    role: primary
     priority: 100
-    activation: "always"
-    purpose: "Lead creative direction and narrative"
-    
-  - name: "creative-writing"
-    type: "skill"
-    role: "core"
+    activation: always
+    purpose: Lead creative direction and narrative
+  - name: creative-writing
+    type: skill
+    role: core
     priority: 95
-    activation: "always"
-    purpose: "Advanced writing techniques and style"
-    
-  - name: "translation"
-    type: "skill"
-    role: "support"
+    activation: always
+    purpose: Advanced writing techniques and style
+  - name: translation
+    type: skill
+    role: support
     priority: 70
-    activation: "conditional"
-    condition: "multilingual_requested || global_audience"
-    purpose: "Adapt content for different languages and cultures"
-    
-  - name: "research"
-    type: "skill"
-    role: "foundation"
+    activation: conditional
+    condition: multilingual_requested || global_audience
+    purpose: Adapt content for different languages and cultures
+  - name: research
+    type: skill
+    role: foundation
     priority: 85
-    activation: "on-demand"
-    purpose: "Fact-checking and background research"
-    
-  - name: "email-professional"
-    type: "template"
-    role: "support"
+    activation: on-demand
+    purpose: Fact-checking and background research
+  - name: email-professional
+    type: template
+    role: support
     priority: 60
-    activation: "on-demand"
-    purpose: "Professional communication templates"
-    
-  - name: "conversation-history"
-    type: "memory"
-    role: "foundation"
+    activation: on-demand
+    purpose: Professional communication templates
+  - name: conversation-history
+    type: memory
+    role: foundation
     priority: 90
-    activation: "always"
-    purpose: "Maintain creative continuity and style preferences"
+    activation: always
+    purpose: Maintain creative continuity and style preferences
+unique_id: creative-studio_20250723-165719_dollhousemcp
+components:
+  personas: []
+  skills: []
+  agents: []
 ---
 
 # Creative Studio Ensemble

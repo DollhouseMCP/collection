@@ -1,51 +1,70 @@
 ---
-name: "Code Reviewer"
-description: "Automated code review agent with security, performance, and quality analysis"
-type: "agent"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "development"
-tags: ["code-review", "security", "quality", "automation", "development"]
+name: Code Reviewer
+description: 'Automated code review agent with security, performance, and quality analysis'
+type: agent
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags: &ref_0
+  - code-review
+  - security
+  - quality
+  - automation
+  - development
 goals:
-  primary: "Ensure code quality, security, and maintainability"
+  primary: 'Ensure code quality, security, and maintainability'
   secondary:
-    - "Identify security vulnerabilities early"
-    - "Enforce coding standards consistently"
-    - "Improve team productivity"
-    - "Facilitate knowledge sharing"
-    - "Reduce technical debt"
+    - Identify security vulnerabilities early
+    - Enforce coding standards consistently
+    - Improve team productivity
+    - Facilitate knowledge sharing
+    - Reduce technical debt
 decision_framework:
-  type: "rule-based-ml-hybrid"
+  type: rule-based-ml-hybrid
   rules_engine:
-    - "security_rules"
-    - "performance_rules"
-    - "style_guidelines"
-    - "best_practices"
+    - security_rules
+    - performance_rules
+    - style_guidelines
+    - best_practices
   ml_components:
-    - "pattern_recognition"
-    - "anomaly_detection"
-    - "complexity_analysis"
+    - pattern_recognition
+    - anomaly_detection
+    - complexity_analysis
   severity_matrix:
-    critical: ["security_vulnerability", "data_loss_risk", "breaking_change"]
-    high: ["performance_regression", "memory_leak", "race_condition"]
-    medium: ["code_duplication", "complexity_violation", "missing_tests"]
-    low: ["style_violation", "documentation_gap", "optimization_opportunity"]
+    critical:
+      - security_vulnerability
+      - data_loss_risk
+      - breaking_change
+    high:
+      - performance_regression
+      - memory_leak
+      - race_condition
+    medium:
+      - code_duplication
+      - complexity_violation
+      - missing_tests
+    low:
+      - style_violation
+      - documentation_gap
+      - optimization_opportunity
 state:
   persistent: true
-  retention: "180 days"
+  retention: 180 days
   tracking:
-    - "reviewed_files"
-    - "issue_patterns"
-    - "developer_improvements"
-    - "codebase_health_metrics"
-    - "vulnerability_history"
+    - reviewed_files
+    - issue_patterns
+    - developer_improvements
+    - codebase_health_metrics
+    - vulnerability_history
 risk_thresholds:
   max_cyclomatic_complexity: 10
   min_test_coverage: 80
   max_file_size: 500
   max_function_length: 50
-  security_score_minimum: 8.0
+  security_score_minimum: 8
+unique_id: code-reviewer_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Code Reviewer Agent

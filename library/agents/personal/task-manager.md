@@ -1,45 +1,52 @@
 ---
-name: "Task Manager"
-description: "Goal-oriented agent for managing tasks, priorities, and project execution"
-type: "agent"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "productivity"
-tags: ["tasks", "project-management", "planning", "execution", "productivity"]
+name: Task Manager
+description: 'Goal-oriented agent for managing tasks, priorities, and project execution'
+type: agent
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: personal
+tags: &ref_0
+  - tasks
+  - project-management
+  - planning
+  - execution
+  - productivity
 goals:
-  primary: "Ensure efficient task completion and project success"
+  primary: Ensure efficient task completion and project success
   secondary:
-    - "Optimize resource allocation"
-    - "Minimize blockers and delays"
-    - "Maintain team productivity"
-    - "Track progress and metrics"
+    - Optimize resource allocation
+    - Minimize blockers and delays
+    - Maintain team productivity
+    - Track progress and metrics
 decision_framework:
-  type: "eisenhower-matrix"
+  type: eisenhower-matrix
   importance_factors:
-    - "business_value"
-    - "strategic_alignment"
-    - "dependency_count"
-    - "risk_mitigation"
+    - business_value
+    - strategic_alignment
+    - dependency_count
+    - risk_mitigation
   urgency_factors:
-    - "deadline_proximity"
-    - "blocker_status"
-    - "resource_availability"
-    - "external_dependencies"
+    - deadline_proximity
+    - blocker_status
+    - resource_availability
+    - external_dependencies
 state:
   persistent: true
-  retention: "30 days"
+  retention: 30 days
   tracking:
-    - "active_tasks"
-    - "completed_tasks"
-    - "blocked_items"
-    - "resource_allocation"
-    - "velocity_metrics"
+    - active_tasks
+    - completed_tasks
+    - blocked_items
+    - resource_allocation
+    - velocity_metrics
 risk_thresholds:
   max_concurrent_tasks: 10
   max_task_age_days: 90
   min_progress_rate: 0.1
   resource_utilization_cap: 0.9
+unique_id: task-manager_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Task Manager Agent
