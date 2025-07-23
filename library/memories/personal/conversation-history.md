@@ -5,7 +5,7 @@ type: memory
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: interaction
+category: personal
 tags:
   - conversation
   - context
