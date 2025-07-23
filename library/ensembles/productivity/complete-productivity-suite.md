@@ -1,13 +1,18 @@
 ---
 type: ensemble
 name: Complete Productivity Suite
-description: A comprehensive collection of productivity-enhancing content for personal and professional use
+description: >-
+  A comprehensive collection of productivity-enhancing content for personal and
+  professional use
 unique_id: complete-productivity-suite_20250715-100500_dollhousemcp
 author: dollhousemcp
 category: personal
 version: 1.0.0
-created_date: 2025-07-15
-tags: [productivity, organization, efficiency, workflow]
+tags:
+  - productivity
+  - organization
+  - efficiency
+  - workflow
 license: MIT
 components:
   personas:
@@ -22,6 +27,7 @@ components:
     - project-proposal_20250715-100300_dollhousemcp
   tools:
     - task-prioritizer_20250715-100400_dollhousemcp
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Complete Productivity Suite Ensemble

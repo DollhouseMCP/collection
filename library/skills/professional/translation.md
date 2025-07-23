@@ -1,39 +1,49 @@
 ---
-name: "Translation"
-description: "Multi-language translation with cultural context and tone preservation"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "communication"
-tags: ["translation", "languages", "localization", "culture"]
+name: Translation
+description: Multi-language translation with cultural context and tone preservation
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: communication
+tags: &ref_0
+  - translation
+  - languages
+  - localization
+  - culture
 proficiency_levels:
-  beginner: "Basic word-for-word translation"
-  intermediate: "Context-aware translation with idioms"
-  advanced: "Cultural adaptation and transcreation"
+  beginner: Basic word-for-word translation
+  intermediate: Context-aware translation with idioms
+  advanced: Cultural adaptation and transcreation
 parameters:
   source_language:
-    type: "string"
-    description: "Language to translate from"
+    type: string
+    description: Language to translate from
     required: false
-    default: "auto-detect"
+    default: auto-detect
   target_language:
-    type: "string"
-    description: "Language to translate to"
+    type: string
+    description: Language to translate to
     required: true
   formality:
-    type: "string"
-    description: "Formality level"
-    default: "neutral"
-    enum: ["casual", "neutral", "formal", "professional"]
+    type: string
+    description: Formality level
+    default: neutral
+    enum:
+      - casual
+      - neutral
+      - formal
+      - professional
   preserve_tone:
-    type: "boolean"
-    description: "Maintain original tone and style"
+    type: boolean
+    description: Maintain original tone and style
     default: true
   cultural_adaptation:
-    type: "boolean"
-    description: "Adapt content for target culture"
+    type: boolean
+    description: Adapt content for target culture
     default: false
+unique_id: translation_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Translation Skill

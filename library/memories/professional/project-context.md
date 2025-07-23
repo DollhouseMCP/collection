@@ -1,50 +1,56 @@
 ---
-name: "Project Context"
-description: "Persistent memory for project-specific information, decisions, and history"
-type: "memory"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "project"
-tags: ["context", "project", "history", "decisions", "knowledge-base"]
-storage_backend: "file"
+name: Project Context
+description: 'Persistent memory for project-specific information, decisions, and history'
+type: memory
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: project
+tags:
+  - context
+  - project
+  - history
+  - decisions
+  - knowledge-base
+storage_backend: file
 retention_policy:
-  default: "perpetual"
+  default: perpetual
   rules:
-    - type: "decisions"
-      retention: "perpetual"
-    - type: "daily_updates"
-      retention: "90 days"
-    - type: "meeting_notes"
-      retention: "1 year"
-    - type: "technical_details"
-      retention: "perpetual"
-privacy_level: "project-internal"
+    - type: decisions
+      retention: perpetual
+    - type: daily_updates
+      retention: 90 days
+    - type: meeting_notes
+      retention: 1 year
+    - type: technical_details
+      retention: perpetual
+privacy_level: project-internal
 searchable: true
 schema:
   project_info:
-    type: "object"
+    type: object
     properties:
-      name: "string"
-      description: "string"
-      start_date: "date"
-      team_members: "array"
-      tech_stack: "array"
-      repositories: "array"
+      name: string
+      description: string
+      start_date: date
+      team_members: array
+      tech_stack: array
+      repositories: array
   decisions:
-    type: "array"
+    type: array
     items:
-      date: "date"
-      decision: "string"
-      rationale: "string"
-      participants: "array"
+      date: date
+      decision: string
+      rationale: string
+      participants: array
   technical_notes:
-    type: "object"
+    type: object
     properties:
-      architecture: "object"
-      dependencies: "array"
-      api_contracts: "object"
-      known_issues: "array"
+      architecture: object
+      dependencies: array
+      api_contracts: object
+      known_issues: array
+unique_id: project-context_20250723-165719_dollhousemcp
 ---
 
 # Project Context Memory

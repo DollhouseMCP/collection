@@ -1,37 +1,67 @@
 ---
-name: "Threat Modeling"
-description: "Systematic approach to identifying, analyzing, and mitigating security threats in systems and applications"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "security"
-tags: ["threat-modeling", "security-analysis", "risk-assessment", "architecture", "security-design"]
+name: Threat Modeling
+description: >-
+  Systematic approach to identifying, analyzing, and mitigating security threats
+  in systems and applications
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags: &ref_0
+  - threat-modeling
+  - security-analysis
+  - risk-assessment
+  - architecture
+  - security-design
 proficiency_levels:
-  beginner: "Basic threat identification using simple frameworks"
-  intermediate: "STRIDE methodology and attack tree analysis"
-  advanced: "Custom frameworks and quantitative risk modeling"
+  beginner: Basic threat identification using simple frameworks
+  intermediate: STRIDE methodology and attack tree analysis
+  advanced: Custom frameworks and quantitative risk modeling
 parameters:
   methodology:
-    type: "string"
-    description: "Threat modeling methodology"
-    default: "STRIDE"
-    enum: ["STRIDE", "PASTA", "OCTAVE", "TRIKE", "VAST", "hybrid"]
+    type: string
+    description: Threat modeling methodology
+    default: STRIDE
+    enum:
+      - STRIDE
+      - PASTA
+      - OCTAVE
+      - TRIKE
+      - VAST
+      - hybrid
   scope:
-    type: "string"
-    description: "Analysis scope"
-    default: "application"
-    enum: ["application", "system", "network", "organization", "supply_chain"]
+    type: string
+    description: Analysis scope
+    default: application
+    enum:
+      - application
+      - system
+      - network
+      - organization
+      - supply_chain
   risk_appetite:
-    type: "string"
-    description: "Organization's risk tolerance"
-    default: "moderate"
-    enum: ["low", "moderate", "high", "very_high"]
+    type: string
+    description: Organization's risk tolerance
+    default: moderate
+    enum:
+      - low
+      - moderate
+      - high
+      - very_high
   compliance_requirements:
-    type: "array"
-    description: "Regulatory requirements to consider"
+    type: array
+    description: Regulatory requirements to consider
     default: []
-    enum: ["PCI-DSS", "HIPAA", "GDPR", "SOX", "ISO27001", "NIST"]
+    enum:
+      - PCI-DSS
+      - HIPAA
+      - GDPR
+      - SOX
+      - ISO27001
+      - NIST
+unique_id: threat-modeling_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Threat Modeling Skill

@@ -1,95 +1,98 @@
 ---
-name: "Security Analysis Team"
-description: "Elite security analysis ensemble combining threat modeling, penetration testing, and comprehensive vulnerability assessment"
-type: "ensemble"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "security"
-tags: ["security", "analysis", "penetration-testing", "threat-modeling", "vulnerability-assessment"]
-activation_strategy: "conditional"
-conflict_resolution: "priority"
-context_sharing: "full"
+name: Security Analysis Team
+description: >-
+  Elite security analysis ensemble combining threat modeling, penetration
+  testing, and comprehensive vulnerability assessment
+type: ensemble
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags:
+  - security
+  - analysis
+  - penetration-testing
+  - threat-modeling
+  - vulnerability-assessment
+activation_strategy: conditional
+conflict_resolution: priority
+context_sharing: full
 resource_limits:
   max_active_elements: 12
   max_memory_mb: 768
   max_execution_time_ms: 45000
 elements:
-  - name: "security-analyst"
-    type: "persona"
-    role: "primary"
+  - name: security-analyst
+    type: persona
+    role: primary
     priority: 100
-    activation: "always"
-    purpose: "Lead security expert with deep vulnerability knowledge"
-    
-  - name: "penetration-testing"
-    type: "skill"
-    role: "core"
+    activation: always
+    purpose: Lead security expert with deep vulnerability knowledge
+  - name: penetration-testing
+    type: skill
+    role: core
     priority: 95
-    activation: "conditional"
-    condition: "pentest_requested || security_validation_needed"
-    purpose: "Ethical hacking and vulnerability validation"
-    
-  - name: "threat-modeling"
-    type: "skill"
-    role: "core"
+    activation: conditional
+    condition: pentest_requested || security_validation_needed
+    purpose: Ethical hacking and vulnerability validation
+  - name: threat-modeling
+    type: skill
+    role: core
     priority: 90
-    activation: "conditional"
-    condition: "architecture_review || threat_analysis_requested"
-    purpose: "Systematic threat identification and risk assessment"
-    
-  - name: "code-review"
-    type: "skill"
-    role: "support"
+    activation: conditional
+    condition: architecture_review || threat_analysis_requested
+    purpose: Systematic threat identification and risk assessment
+  - name: code-review
+    type: skill
+    role: support
     priority: 85
-    activation: "conditional"
-    condition: "code_provided || static_analysis_requested"
-    purpose: "Static code analysis and security review"
-    
-  - name: "research"
-    type: "skill"
-    role: "foundation"
+    activation: conditional
+    condition: code_provided || static_analysis_requested
+    purpose: Static code analysis and security review
+  - name: research
+    type: skill
+    role: foundation
     priority: 80
-    activation: "on-demand"
-    purpose: "CVE research and threat intelligence gathering"
-    
-  - name: "security-vulnerability-report"
-    type: "template"
-    role: "output"
+    activation: on-demand
+    purpose: CVE research and threat intelligence gathering
+  - name: security-vulnerability-report
+    type: template
+    role: output
     priority: 75
-    activation: "on-demand"
-    purpose: "Structured vulnerability reporting"
-    
-  - name: "penetration-test-report"
-    type: "template"
-    role: "output"
+    activation: on-demand
+    purpose: Structured vulnerability reporting
+  - name: penetration-test-report
+    type: template
+    role: output
     priority: 75
-    activation: "conditional"
-    condition: "penetration_test_completed"
-    purpose: "Comprehensive pen test documentation"
-    
-  - name: "threat-assessment-report"
-    type: "template"
-    role: "output"
+    activation: conditional
+    condition: penetration_test_completed
+    purpose: Comprehensive pen test documentation
+  - name: threat-assessment-report
+    type: template
+    role: output
     priority: 70
-    activation: "conditional"
-    condition: "threat_model_completed"
-    purpose: "Threat modeling and risk assessment documentation"
-    
-  - name: "project-context"
-    type: "memory"
-    role: "foundation"
+    activation: conditional
+    condition: threat_model_completed
+    purpose: Threat modeling and risk assessment documentation
+  - name: project-context
+    type: memory
+    role: foundation
     priority: 95
-    activation: "always"
-    purpose: "Maintain security findings and remediation history"
-    
-  - name: "code-reviewer"
-    type: "agent"
-    role: "support"
+    activation: always
+    purpose: Maintain security findings and remediation history
+  - name: code-reviewer
+    type: agent
+    role: support
     priority: 80
-    activation: "conditional"
-    condition: "automated_review_requested || large_codebase"
-    purpose: "Automated security code analysis"
+    activation: conditional
+    condition: automated_review_requested || large_codebase
+    purpose: Automated security code analysis
+unique_id: security-analysis-team_20250723-165719_dollhousemcp
+components:
+  personas: []
+  skills: []
+  agents: []
 ---
 
 # Security Analysis Team Ensemble
@@ -362,7 +365,7 @@ Competitive Advantage:
 ```
 Technical Vulnerability Analysis
 
-Finding: Authentication Bypass (CVE-2024-XXXX correlation)
+Finding: Authentication Bypass (CVE-2024-[NUMBER] correlation)
 Exploit Chain: 7 steps from unauthenticated to admin access
 Business Impact: Complete customer data exposure (2.3M records)
 CVSS Score: 9.8/10 (Critical)

@@ -1,31 +1,45 @@
 ---
-name: "Code Review"
-description: "Systematic code analysis for quality, security, and best practices"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "development"
-tags: ["code-quality", "security", "best-practices", "review"]
+name: Code Review
+description: 'Systematic code analysis for quality, security, and best practices'
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags: &ref_0
+  - code-quality
+  - security
+  - best-practices
+  - review
 proficiency_levels:
-  beginner: "Basic syntax and style checking"
-  intermediate: "Design patterns and architecture review"
-  advanced: "Security vulnerabilities and performance optimization"
+  beginner: Basic syntax and style checking
+  intermediate: Design patterns and architecture review
+  advanced: Security vulnerabilities and performance optimization
 parameters:
   language:
-    type: "string"
-    description: "Programming language to review"
+    type: string
+    description: Programming language to review
     required: false
-    default: "auto-detect"
+    default: auto-detect
   focus_areas:
-    type: "array"
-    description: "Specific areas to focus on"
-    default: ["security", "performance", "maintainability", "testing"]
+    type: array
+    description: Specific areas to focus on
+    default:
+      - security
+      - performance
+      - maintainability
+      - testing
   severity_threshold:
-    type: "string"
-    description: "Minimum severity to report"
-    default: "info"
-    enum: ["error", "warning", "info", "style"]
+    type: string
+    description: Minimum severity to report
+    default: info
+    enum:
+      - error
+      - warning
+      - info
+      - style
+unique_id: code-review_20250723-165719_dollhousemcp
+capabilities: *ref_0
 ---
 
 # Code Review Skill

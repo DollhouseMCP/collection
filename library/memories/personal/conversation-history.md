@@ -1,48 +1,54 @@
 ---
-name: "Conversation History"
-description: "Maintains context and continuity across multiple conversation sessions"
-type: "memory"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "interaction"
-tags: ["conversation", "context", "history", "continuity", "session"]
-storage_backend: "memory"
+name: Conversation History
+description: Maintains context and continuity across multiple conversation sessions
+type: memory
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: interaction
+tags:
+  - conversation
+  - context
+  - history
+  - continuity
+  - session
+storage_backend: memory
 retention_policy:
-  default: "30 days"
+  default: 30 days
   rules:
-    - type: "important_marked"
-      retention: "90 days"
-    - type: "user_preferences"
-      retention: "perpetual"
-    - type: "task_context"
-      retention: "until_complete"
-    - type: "general_chat"
-      retention: "7 days"
-privacy_level: "user-private"
+    - type: important_marked
+      retention: 90 days
+    - type: user_preferences
+      retention: perpetual
+    - type: task_context
+      retention: until_complete
+    - type: general_chat
+      retention: 7 days
+privacy_level: user-private
 searchable: true
 schema:
   conversation:
-    type: "object"
+    type: object
     properties:
-      session_id: "string"
-      timestamp: "datetime"
-      messages: "array"
-      context: "object"
-      summary: "string"
+      session_id: string
+      timestamp: datetime
+      messages: array
+      context: object
+      summary: string
   user_preferences:
-    type: "object"
+    type: object
     properties:
-      communication_style: "string"
-      expertise_level: "string"
-      interests: "array"
-      constraints: "array"
+      communication_style: string
+      expertise_level: string
+      interests: array
+      constraints: array
   topic_tracking:
-    type: "object"
+    type: object
     properties:
-      active_topics: "array"
-      completed_topics: "array"
-      parked_topics: "array"
+      active_topics: array
+      completed_topics: array
+      parked_topics: array
+unique_id: conversation-history_20250723-165719_dollhousemcp
 ---
 
 # Conversation History Memory
