@@ -30,7 +30,7 @@ const BaseMetadataSchema = z.object({
   description: z.string().min(10).max(500),
   unique_id: z.string().regex(/^[a-z0-9-_]+$/),
   author: z.string().min(2).max(100),
-  category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional', 'analytics', 'coding', 'interaction', 'business', 'research']),
+  category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional']),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
   created_date: z.union([z.string(), z.date()]).optional(),
   updated_date: z.union([z.string(), z.date()]).optional(),
@@ -510,7 +510,7 @@ export class ContentValidator {
     const suggestions: Record<string, string> = {
       'unique_id': 'Use lowercase letters, numbers, hyphens, and underscores only',
       'version': 'Use semantic versioning format (e.g., 1.0.0)',
-      'category': 'Choose from: creative, educational, gaming, personal, professional, analytics, coding, interaction, business, research',
+      'category': 'Choose from: creative, educational, gaming, personal, professional',
       'name': 'Use a clear, descriptive name (3-100 characters)',
       'description': 'Provide a brief description (10-500 characters)'
     };
