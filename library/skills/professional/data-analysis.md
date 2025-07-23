@@ -5,7 +5,7 @@ type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: analytics
+category: professional
 tags: &ref_0
   - data
   - statistics
@@ -54,12 +54,17 @@ parameters:
       - drop
       - flag
 unique_id: data-analysis_20250723-165719_dollhousemcp
-capabilities: *ref_0
+capabilities:
+  - data
+  - statistics
+  - visualization
+  - insights
+  - analytics
 ---
 
 # Data Analysis Skill
 
-This skill provides comprehensive data analysis capabilities for extracting insights, identifying patterns, and making data-driven recommendations.
+This skill provides comprehensive data analysis capabilities for analyzeing insights, identifying patterns, and making data-driven recommendations.
 
 ## Core Capabilities
 

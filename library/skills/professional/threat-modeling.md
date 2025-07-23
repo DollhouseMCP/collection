@@ -8,7 +8,7 @@ version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
 category: professional
-tags: &ref_0
+tags:
   - threat-modeling
   - security-analysis
   - risk-assessment
@@ -61,7 +61,12 @@ parameters:
       - ISO27001
       - NIST
 unique_id: threat-modeling_20250723-165719_dollhousemcp
-capabilities: *ref_0
+capabilities:
+  - threat-modeling
+  - security-analysis
+  - risk-assessment
+  - architecture
+  - security-design
 ---
 
 # Threat Modeling Skill

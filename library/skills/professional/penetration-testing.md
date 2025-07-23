@@ -8,7 +8,7 @@ version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
 category: professional
-tags: &ref_0
+tags:
   - penetration-testing
   - ethical-hacking
   - vulnerability-assessment
@@ -56,7 +56,12 @@ parameters:
       - stealth
       - passive
 unique_id: penetration-testing_20250723-165719_dollhousemcp
-capabilities: *ref_0
+capabilities:
+  - penetration-testing
+  - ethical-hacking
+  - vulnerability-assessment
+  - security
+  - testing
 ---
 
 # Penetration Testing Skill
@@ -86,7 +91,7 @@ This skill provides systematic penetration testing capabilities using industry-s
 ### 4. Post-Exploitation Activities
 - **Persistence**: Backdoors, scheduled tasks, registry modifications
 - **Privilege Escalation**: Local/domain admin compromise
-- **Data Exfiltration**: Sensitive data identification and extraction simulation
+- **Data Exfiltration**: Sensitive data identification and analysis simulation
 - **Lateral Movement**: Pivot techniques, credential harvesting
 
 ## Testing Methodologies
