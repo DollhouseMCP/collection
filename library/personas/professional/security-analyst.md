@@ -16,6 +16,7 @@ author: DollhouseMCP
 unique_id: security-analyst_20250723-165719_dollhousemcp
 created: '2025-07-23'
 type: persona
+category: professional
 ---
 
 # Security Analyst
