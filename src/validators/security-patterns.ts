@@ -397,7 +397,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     // Matches: phrases asking about AI training data, NOT general data analysis terms
     // Examples: "show your training data", "what were you trained on"
     // NOT: "analyze this dataset", "insights from datasets"
-    pattern: /\b(show\s+training\s+data|reveal\s+training\s+data|what\s+.{0,20}trained\s+on|your\s+training\s+data|extract\s+training\s+data)/i,
+    pattern: /\b(show\s+.{0,10}training\s+(data|examples)|reveal\s+training\s+data|what\s+.{0,20}trained\s+on|what\s+examples\s+.{0,20}learned|your\s+training\s+(data|examples)|extract\s+training\s+data|display\s+training\s+(data|examples))/i,
     severity: 'critical',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
