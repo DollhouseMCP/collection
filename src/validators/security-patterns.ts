@@ -393,9 +393,9 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'training_data_extraction',
-    // Pattern: Attempts to extract training data
-    // Matches: training data, dataset, learned from, trained on
-    pattern: /\b(training\s+data|dataset|what\s+.{0,20}learned\s+from|trained\s+on|training\s+examples?)/i,
+    // Pattern: Attempts to extract AI's training data
+    // Matches: questions/commands about the AI's own training data
+    pattern: /\b(show\s+me\s+your\s+training\s+(data|examples?)|what\s+(dataset|data)\s+were\s+you\s+trained\s+on|what\s+.{0,20}have\s+you\s+learned\s+from|display\s+training\s+(data|examples?)|reveal\s+your\s+training|your\s+training\s+(data|dataset|examples?))/i,
     severity: 'critical',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
