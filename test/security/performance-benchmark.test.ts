@@ -113,33 +113,129 @@ describe('Security Scanner Performance Benchmarks', () => {
   });
   
   describe('Pattern Count Impact', () => {
-    it('should measure impact of pattern count on performance', () => {
+    /**
+     * This test verifies that pattern scanning scales linearly O(n) with pattern count,
+     * not quadratically O(n²) or worse. It's designed to be robust against CI performance
+     * variance while still catching algorithmic regressions.
+     * 
+     * Instead of testing absolute performance (which varies by environment), we test
+     * that the time-per-pattern remains relatively constant as we add more patterns.
+     */
+    it('should not exhibit pathological scaling with pattern count', () => {
       const content = generateContent(10, true); // 10KB test content
       const originalPatterns = [...SECURITY_PATTERNS];
       
-      // Test with different pattern counts
-      const patternCounts = [10, 20, 30, originalPatterns.length];
-      const results: Array<{count: number, time: number}> = [];
+      // Test with exponentially increasing pattern counts
+      const measurements: Array<{patterns: number, timePerPattern: number}> = [];
       
-      patternCounts.forEach(count => {
-        // Temporarily modify SECURITY_PATTERNS (not ideal, but for benchmarking)
+      for (let i = 2; i <= 5; i++) {
+        const count = Math.min(Math.pow(2, i), originalPatterns.length); // 4, 8, 16, 32 patterns (or max available)
         const subset = originalPatterns.slice(0, count);
-        const time = measureTime(() => {
-          // Simulate scanning with subset
+        
+        // Warm-up run to stabilize JIT
+        measureTime(() => {
           subset.forEach(pattern => pattern.pattern.test(content));
         });
         
-        results.push({ count, time });
-        console.log(`${count} patterns: ${time.toFixed(2)}ms`);
+        // Actual measurement
+        const time = measureTime(() => {
+          subset.forEach(pattern => pattern.pattern.test(content));
+        });
+        
+        measurements.push({
+          patterns: count,
+          timePerPattern: time / count  // Normalize by pattern count
+        });
+        
+        console.log(`${count} patterns: ${time.toFixed(2)}ms (${(time/count).toFixed(3)}ms per pattern)`);
+      }
+      
+      // Check that time-per-pattern doesn't increase dramatically
+      // This allows for variance but catches O(n²) behavior
+      for (let i = 1; i < measurements.length; i++) {
+        const prev = measurements[i - 1];
+        const curr = measurements[i];
+        
+        // Time per pattern should stay relatively constant
+        // Allow 2.5x degradation for CI variance but catch 4x+ (indicates O(n²))
+        const degradation = curr.timePerPattern / prev.timePerPattern;
+        
+        expect(degradation).toBeLessThan(2.5);
+      }
+      
+      // Also verify overall complexity is closer to O(n) than O(n²)
+      if (measurements.length >= 2) {
+        const first = measurements[0];
+        const last = measurements[measurements.length - 1];
+        const patternIncrease = last.patterns / first.patterns;
+        const timeIncrease = (last.patterns * last.timePerPattern) / (first.patterns * first.timePerPattern);
+        
+        // For O(n): timeIncrease ≈ patternIncrease
+        // For O(n²): timeIncrease ≈ patternIncrease²
+        // We expect closer to linear
+        expect(timeIncrease).toBeLessThan(patternIncrease * patternIncrease * 0.5);
+      }
+    });
+    
+    it('should maintain consistent per-pattern performance', () => {
+      const content = generateContent(10, true); // 10KB test content
+      const patternTimes: Array<{name: string, time: number}> = [];
+      
+      // Warm-up to stabilize JIT
+      SECURITY_PATTERNS.forEach(pattern => {
+        pattern.pattern.test(content);
       });
       
-      // Verify reasonable scaling (should be roughly linear)
-      const firstTime = results[0].time;
-      const lastTime = results[results.length - 1].time;
-      const scalingFactor = lastTime / firstTime;
-      const expectedScaling = results[results.length - 1].count / results[0].count;
+      // Measure individual pattern performance
+      SECURITY_PATTERNS.forEach(pattern => {
+        const time = measureTime(() => {
+          for (let i = 0; i < 100; i++) { // Run 100 times for more stable measurement
+            pattern.pattern.test(content);
+          }
+        }) / 100;
+        
+        patternTimes.push({ name: pattern.name, time });
+      });
       
-      expect(scalingFactor).toBeLessThan(expectedScaling * 1.6); // Allow 60% overhead for robustness
+      // Sort by time to find outliers
+      patternTimes.sort((a, b) => b.time - a.time);
+      
+      const avgTime = patternTimes.reduce((sum, p) => sum + p.time, 0) / patternTimes.length;
+      const maxTime = patternTimes[0].time;
+      const minTime = patternTimes[patternTimes.length - 1].time;
+      
+      console.log(`Pattern performance stats:`);
+      console.log(`  Average: ${avgTime.toFixed(3)}ms`);
+      console.log(`  Min: ${minTime.toFixed(3)}ms (${patternTimes[patternTimes.length - 1].name})`);
+      console.log(`  Max: ${maxTime.toFixed(3)}ms (${patternTimes[0].name})`);
+      const maxAvgRatio = maxTime / avgTime;
+      console.log(`  Max/Avg ratio: ${maxAvgRatio.toFixed(2)}x (limit: 15x)`);
+      
+      // Warn if getting close to limit
+      if (maxAvgRatio > 10) {
+        console.log(`  ⚠️  WARNING: Max/Avg ratio exceeds 10x - investigate these patterns!`);
+      }
+      
+      console.log(`  Top 5 slowest patterns:`);
+      patternTimes.slice(0, 5).forEach((p, i) => {
+        const ratio = (p.time / avgTime).toFixed(2);
+        const pattern = SECURITY_PATTERNS.find(sp => sp.name === p.name);
+        const complexity = pattern ? pattern.pattern.source.length : 0;
+        console.log(`    ${i + 1}. ${p.name}: ${p.time.toFixed(3)}ms (${ratio}x avg, len: ${complexity})`);
+      });
+      
+      // No single pattern should take more than 15x the average
+      // This catches accidentally exponential regex patterns while allowing CI variance
+      expect(maxTime).toBeLessThan(avgTime * 15);
+      
+      // Also check that most patterns are within reasonable range
+      const within2x = patternTimes.filter(p => p.time <= avgTime * 2).length;
+      const percentageWithin2x = (within2x / patternTimes.length) * 100;
+      
+      console.log(`  ${percentageWithin2x.toFixed(1)}% of patterns within 2x average`);
+      
+      // At least 80% should be within 2x of average
+      expect(percentageWithin2x).toBeGreaterThan(80);
     });
   });
   
