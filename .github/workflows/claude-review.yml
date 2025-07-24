@@ -104,6 +104,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const core = require('@actions/core');
+            
             // Wait a moment to ensure Claude's comments are posted
             await new Promise(resolve => setTimeout(resolve, 3000));
             
@@ -155,6 +157,11 @@ jobs:
               } else {
                 reviewBody = '✅ **Approved**\n\nClaude has reviewed this PR and found no issues.';
               }
+            }
+            
+            // Fail the workflow if changes are requested
+            if (reviewEvent === 'REQUEST_CHANGES') {
+              core.setFailed('❌ Claude has requested changes. Please address the issues identified in the review above before merging.');
             }
             
             // Create the review
