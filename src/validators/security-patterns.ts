@@ -393,9 +393,40 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'training_data_extraction',
-    // Pattern: Attempts to extract AI's training data
-    // Matches: questions/commands about the AI's own training data
-    pattern: /\b(show\s+me\s+your\s+training\s+(data|examples?)|what\s+(dataset|data)\s+were\s+you\s+trained\s+on|what\s+.{0,20}have\s+you\s+learned\s+from|display\s+training\s+(data|examples?)|reveal\s+your\s+training|your\s+training\s+(data|dataset|examples?))/i,
+    // Pattern: Commands to show/display training data or examples
+    pattern: /\b(show|display|reveal|provide|give|list|output)\s+(me\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|information|details)/i,
+    severity: 'critical',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about what the AI was trained on
+    pattern: /\b(what|which)\s+(dataset|data|examples?|information)\s+(were\s+you|was\s+I|have\s+you\s+been)\s+trained\s+(on|with)/i,
+    severity: 'critical',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about learning sources
+    pattern: /\bwhat\s+.{0,20}(have\s+you|did\s+you)\s+(learned|learn)\s+from/i,
+    severity: 'critical',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Direct references to accessing training data
+    pattern: /\b(access|examine|inspect|view)\s+(to\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|corpus)/i,
+    severity: 'critical',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Possessive references to training data
+    pattern: /\byour\s+(original\s+)?training\s+(data|dataset|examples?|corpus|information)/i,
     severity: 'critical',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
