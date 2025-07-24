@@ -1,6 +1,6 @@
 ---
 name: Data Analysis
-description: 'Statistical analysis, visualization, and insights generation from datasets'
+description: 'Statistical analysis, visualization, and insights generation from data collections'
 type: skill
 version: 1.0.0
 author: DollhouseMCP
