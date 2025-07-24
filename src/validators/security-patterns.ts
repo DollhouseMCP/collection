@@ -396,7 +396,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     // Pattern: Attempts to extract training data
     // Simplified pattern that still avoids false positives on standalone "dataset"
     // Matches: commands/questions about training data, but not simple mentions
-    pattern: /\b(show|give|tell|reveal|display|provide)\s+.{0,20}(training\s+(data|examples?))|what\s+(dataset|data|examples?)\s+.{0,20}(trained|learned)\s+(on|from)|\b(your|my|the)\s+training\s+(data|dataset)|(trained|learned)\s+on\s+what/i,
+    pattern: /\b(show|give|tell|reveal|display|provide)\s+.{0,20}(training\s+(data|examples?))|what\s+(dataset|data|examples?)\s+.{0,20}(trained|learned)\s+(on|from)|what\s+(have\s+you|did\s+you)\s+learn(ed)?\s+from|\b(your|my|the)\s+training\s+(data|dataset)|(trained|learned)\s+on\s+what/i,
     severity: 'high',  // Reduced from critical since not all attempts are critical
     description: 'Attempts to extract training data',
     category: 'context_awareness'
