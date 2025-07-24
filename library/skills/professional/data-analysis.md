@@ -96,7 +96,7 @@ This skill provides comprehensive data analysis capabilities for analyzeing insi
 
 ### Step 1: Data Profiling
 ```
-Dataset Overview:
+Data Overview:
 - Rows: 10,432
 - Columns: 15
 - Missing values: 2.3%
