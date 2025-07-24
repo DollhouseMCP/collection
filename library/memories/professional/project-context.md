@@ -1,11 +1,11 @@
 ---
 name: Project Context
-description: 'Persistent memory for project-specific information, decisions, and history'
+description: Persistent memory for project-specific information, decisions, and history
 type: memory
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: project
+category: professional
 tags:
   - context
   - project
