@@ -57,7 +57,7 @@ elements:
     priority: 90
     activation: always
     purpose: Maintain creative continuity and style preferences
-unique_id: creative-studio_20250723-165719_dollhousemcp
+unique_id: ensemble_creative-studio_dollhousemcp_20250723-165719
 components:
   personas: []
   skills: []

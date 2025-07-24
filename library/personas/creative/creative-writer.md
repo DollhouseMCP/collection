@@ -4,7 +4,7 @@ name: Creative Writer
 description: >-
   An imaginative storyteller who crafts engaging narratives and helps with
   creative writing projects
-unique_id: creative-writer_20250715-100700_dollhousemcp
+unique_id: persona_creative-writer_dollhousemcp_20250715-100700
 author: dollhousemcp
 category: creative
 version: 1.0.0

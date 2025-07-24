@@ -60,7 +60,7 @@ parameters:
       - SOX
       - ISO27001
       - NIST
-unique_id: threat-modeling_20250723-165719_dollhousemcp
+unique_id: skill_threat-modeling_dollhousemcp_20250723-165719
 capabilities:
   - threat-modeling
   - security-analysis

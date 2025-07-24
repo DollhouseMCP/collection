@@ -57,7 +57,7 @@ elements:
     priority: 80
     activation: always
     purpose: Coordinate tasks and track progress
-unique_id: development-team_20250723-165719_dollhousemcp
+unique_id: ensemble_development-team_dollhousemcp_20250723-165719
 components:
   personas: []
   skills: []

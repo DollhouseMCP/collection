@@ -4,7 +4,7 @@ name: Debugging Assistant
 description: >-
   A specialized skill for helping debug code across multiple programming
   languages
-unique_id: debugging-assistant_20250715-100000_dollhousemcp
+unique_id: skill_debugging-assistant_dollhousemcp_20250715-100000
 author: dollhousemcp
 category: professional
 version: 1.0.0

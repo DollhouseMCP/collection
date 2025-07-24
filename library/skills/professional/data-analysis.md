@@ -53,7 +53,7 @@ parameters:
       - interpolate
       - drop
       - flag
-unique_id: data-analysis_20250723-165719_dollhousemcp
+unique_id: skill_data-analysis_dollhousemcp_20250723-165719
 capabilities:
   - data
   - statistics

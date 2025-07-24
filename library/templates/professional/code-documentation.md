@@ -24,7 +24,7 @@ outputFormats:
   - jsdoc
   - typedoc
 includes: []
-unique_id: code-documentation_20250723-165719_dollhousemcp
+unique_id: template_code-documentation_dollhousemcp_20250723-165719
 format: markdown
 ---
 

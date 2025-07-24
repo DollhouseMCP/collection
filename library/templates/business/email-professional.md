@@ -24,7 +24,7 @@ outputFormats:
   - html
   - markdown
 includes: []
-unique_id: professional-email_20250723-165719_dollhousemcp
+unique_id: template_professional-email_dollhousemcp_20250723-165719
 format: markdown
 ---
 

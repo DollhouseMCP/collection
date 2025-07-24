@@ -4,7 +4,7 @@ name: Complete Productivity Suite
 description: >-
   A comprehensive collection of productivity-enhancing content for personal and
   professional use
-unique_id: complete-productivity-suite_20250715-100500_dollhousemcp
+unique_id: ensemble_complete-productivity-suite_dollhousemcp_20250715-100500
 author: dollhousemcp
 category: personal
 version: 1.0.0

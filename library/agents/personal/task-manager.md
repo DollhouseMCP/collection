@@ -45,7 +45,7 @@ risk_thresholds:
   max_task_age_days: 90
   min_progress_rate: 0.1
   resource_utilization_cap: 0.9
-unique_id: task-manager_20250723-165719_dollhousemcp
+unique_id: agent_task-manager_dollhousemcp_20250723-165719
 capabilities: *ref_0
 ---
 

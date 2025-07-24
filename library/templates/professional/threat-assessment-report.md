@@ -26,7 +26,7 @@ outputFormats:
   - markdown
   - docx
 includes: []
-unique_id: threat-assessment-report_20250723-165719_dollhousemcp
+unique_id: template_threat-assessment-report_dollhousemcp_20250723-165719
 format: markdown
 ---
 

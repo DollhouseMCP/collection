@@ -63,7 +63,7 @@ risk_thresholds:
   max_file_size: 500
   max_function_length: 50
   security_score_minimum: 8
-unique_id: code-reviewer_20250723-165719_dollhousemcp
+unique_id: agent_code-reviewer_dollhousemcp_20250723-165719
 capabilities: *ref_0
 ---
 
