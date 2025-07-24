@@ -1,13 +1,18 @@
 ---
 type: ensemble
 name: Full-Stack Developer Ensemble
-description: Complete development environment combining personas, tools, and skills for professional software development
-unique_id: full-stack-developer-ensemble_20250715-100600_dollhousemcp
+description: >-
+  Complete development environment combining personas, tools, and skills for
+  professional software development
+unique_id: ensemble_full-stack-developer-ensemble_dollhousemcp_20250715-100600
 author: dollhousemcp
 category: professional
 version: 1.0.0
-created_date: 2025-07-15
-tags: [development, programming, full-stack, software-engineering]
+tags:
+  - development
+  - programming
+  - full-stack
+  - software-engineering
 license: MIT
 components:
   personas:
@@ -40,6 +45,7 @@ dependencies:
   - Git version control
   - Docker (optional)
   - Node.js or Python runtime
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Full-Stack Developer Ensemble
