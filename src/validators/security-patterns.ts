@@ -394,11 +394,10 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   {
     name: 'training_data_extraction',
     // Pattern: Attempts to extract training data
-    // Matches requests/commands for: your/the training data, what you learned from, etc.
-    // More context-aware: requires possessive or command context
-    // Note: "dataset" alone is NOT matched - it's a common legitimate term in data analysis
-    pattern: /\b((show|give|provide|reveal|expose|tell)\s+.{0,20}(your|the|my)\s+.{0,20}(training\s+data|dataset)|what\s+.{0,20}(were\s+you\s+)?learned\s+from|(were\s+you\s+)?trained\s+on\s+what|(show|provide|give|reveal)\s+.{0,20}training\s+(data|examples?)|what\s+(dataset|data)\s+.{0,20}trained\s+on)/i,
-    severity: 'high',  // Reduced from critical since dataset alone is not malicious
+    // Simplified pattern that still avoids false positives on standalone "dataset"
+    // Matches: commands/questions about training data, but not simple mentions
+    pattern: /\b(show|give|tell|reveal|display|provide)\s+.{0,20}(training\s+(data|examples?))|what\s+(dataset|data|examples?)\s+.{0,20}(trained|learned)\s+(on|from)|\b(your|my|the)\s+training\s+(data|dataset)|(trained|learned)\s+on\s+what/i,
+    severity: 'high',  // Reduced from critical since not all attempts are critical
     description: 'Attempts to extract training data',
     category: 'context_awareness'
   },

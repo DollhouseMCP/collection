@@ -65,7 +65,7 @@ parameters:
       - humor
       - metaphor
       - symbolism
-unique_id: skill_creative-writing_dollhousemcp_20250723-165719
+unique_id: skill_creative-writing_dollhousemcp_20250723-165720
 capabilities:
   - writing
   - storytelling
