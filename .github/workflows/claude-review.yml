@@ -34,6 +34,14 @@ on:
     # Note: We intentionally don't filter paths here because the job condition
     # already filters by authorized users. This ensures maintainer changes
     # always get reviewed while community content submissions are excluded.
+  
+  # Manual trigger for reviewing community PRs
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: 'PR number to review'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -43,11 +51,12 @@ permissions:
 
 jobs:
   claude-review:
-    # Security: Only run automated reviews for authorized maintainers
+    # Security: Only run automated reviews for authorized maintainers OR manual triggers
     # This excludes community content submissions (personas, skills, etc.) which
     # should be reviewed by human maintainers to manage API usage and ensure
     # appropriate content moderation at scale.
     if: |
+      github.event_name == 'workflow_dispatch' ||
       github.event.pull_request.user.login == 'mickdarling' ||
       github.event.pull_request.user.login == 'dependabot[bot]'
     # Add new maintainers here: || github.event.pull_request.user.login == 'username'
@@ -61,11 +70,34 @@ jobs:
       id-token: write          # Write needed: for OIDC authentication
 
     steps:
+      - name: Get PR context for manual trigger
+        if: github.event_name == 'workflow_dispatch'
+        id: get-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr_number = context.payload.inputs.pull_request_number;
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: parseInt(pr_number)
+            });
+            
+            // Set the PR data in the context for later steps
+            core.exportVariable('PR_NUMBER', pr_number);
+            console.log(`Manual review triggered for PR #${pr_number}`);
+            
+            // For manual triggers, we need to checkout the PR branch
+            core.setOutput('pr_head_ref', pr.head.ref);
+            core.setOutput('pr_head_sha', pr.head.sha);
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           # Full git history for comprehensive review context
           fetch-depth: 0
+          # For manual triggers, checkout the PR branch
+          ref: ${{ github.event_name == 'workflow_dispatch' && steps.get-pr.outputs.pr_head_sha || '' }}
 
       - name: Run Claude Code Review
         id: claude-review
