@@ -1,7 +1,12 @@
 # Claude Review Status Check Setup
 
 ## Quick Summary
-Transform Claude reviews from advisory to blocking by making the workflow fail when critical issues are found.
+Transform Claude reviews from advisory to blocking by making the workflow fail when critical issues are found. Also enables manual triggering for community PRs.
+
+## What We Implemented
+1. **Status Check Blocking**: Claude can fail the workflow when issues found
+2. **Manual Trigger**: Comment `@claude review` to review community PRs
+3. **Branch Protection Ready**: Works with 0 required reviewers
 
 ## Step 1: Modify the Workflow
 
@@ -88,8 +93,33 @@ if (reviewEvent === 'REQUEST_CHANGES') {
 
 This uses GitHub Actions' `core.setFailed()` to mark the workflow as failed, which makes the status check fail and blocks merging.
 
+## Manual Review Trigger
+
+For community PRs that don't auto-trigger Claude:
+
+1. **Comment Method**: Type `@claude review` in the PR
+2. **Actions Method**: Actions → Claude Review → Run workflow → Enter PR #
+
+## Community PR Workflow
+
+1. Community creates PR
+2. Required checks pending (blocking merge)
+3. You review content manually
+4. Comment `@claude review` to trigger Claude
+5. If Claude ✅ and you approve → merge
+6. If Claude ❌ → request changes
+
+## Important Notes
+
+- This was implemented in PR #80 (skills PR) but applies repo-wide
+- Created two workflows:
+  - `claude-review.yml` - Auto-runs for authorized users, fails on issues
+  - `claude-review-manual.yml` - Triggered by `@claude review` comment
+- Branch protection needs `claude-review` as required status check
+
 ## Troubleshooting
 
 - If Claude is too strict, adjust the blocking keywords in the workflow
 - If you need to merge anyway, use admin privileges
 - Check workflow logs to see why Claude blocked a PR
+- Community PRs need manual trigger to run Claude
