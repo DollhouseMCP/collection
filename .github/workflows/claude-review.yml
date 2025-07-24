@@ -92,6 +92,80 @@ jobs:
             
             Be constructive and helpful. Consider this is a collection platform for AI content.
 
+      - name: Create PR Review
+        if: steps.claude-review.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Wait a moment to ensure Claude's comments are posted
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            // Get all comments on the PR
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            
+            // Find Claude's review comment (most recent)
+            const claudeComment = comments.data
+              .filter(c => c.user.login === 'github-actions[bot]' && c.body.includes('Claude'))
+              .pop();
+            
+            // Analyze Claude's feedback for critical issues
+            let reviewEvent = 'APPROVE';
+            let reviewBody = '✅ **Automated Review Complete**\n\n';
+            
+            if (claudeComment) {
+              const feedback = claudeComment.body.toLowerCase();
+              
+              // Check for blocking issues in Claude's feedback
+              const hasBlockingIssues = 
+                feedback.includes('security') && (feedback.includes('vulnerability') || feedback.includes('risk')) ||
+                feedback.includes('critical') ||
+                feedback.includes('must fix') ||
+                feedback.includes('blocking') ||
+                feedback.includes('dangerous');
+              
+              const hasSuggestions = 
+                feedback.includes('consider') ||
+                feedback.includes('suggest') ||
+                feedback.includes('could') ||
+                feedback.includes('minor');
+              
+              if (hasBlockingIssues) {
+                reviewEvent = 'REQUEST_CHANGES';
+                reviewBody = '❌ **Changes Requested**\n\nClaude has identified issues that should be addressed. Please review the feedback above.';
+              } else if (hasSuggestions) {
+                reviewEvent = 'APPROVE';
+                reviewBody = '✅ **Approved with Suggestions**\n\nClaude has approved this PR with some non-blocking suggestions. See the feedback above.';
+              } else {
+                reviewBody = '✅ **Approved**\n\nClaude has reviewed this PR and found no issues.';
+              }
+            }
+            
+            // Create the review
+            try {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                body: reviewBody,
+                event: reviewEvent
+              });
+              console.log(`${reviewEvent === 'APPROVE' ? '✅' : '❌'} PR review created: ${reviewEvent}`);
+            } catch (error) {
+              console.error('Failed to create review:', error);
+              // Fallback to comment if review creation fails
+              await github.rest.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ Claude review completed. (Note: Automated approval failed, manual approval may be required)'
+              });
+            }
+
       - name: Handle Claude API Failure
         if: steps.claude-review.outcome == 'failure'
         uses: actions/github-script@v7
