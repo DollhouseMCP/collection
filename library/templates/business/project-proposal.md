@@ -2,12 +2,15 @@
 type: template
 name: Project Proposal Template
 description: Professional template for creating comprehensive project proposals
-unique_id: project-proposal_20250715-100300_dollhousemcp
+unique_id: template_project-proposal_dollhousemcp_20250715-100300
 author: dollhousemcp
 category: professional
 version: 1.0.0
-created_date: 2025-07-15
-tags: [business, project-management, proposals, documentation]
+tags:
+  - business
+  - project-management
+  - proposals
+  - documentation
 license: MIT
 format: markdown
 variables:
@@ -17,6 +20,7 @@ variables:
   - budget_range
   - team_size
   - key_deliverables
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Project Proposal: {project_name}
