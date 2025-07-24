@@ -18,8 +18,15 @@ name: Claude Code Review
 #
 # PERMISSIONS:
 #   - Read-only access to repository content
-#   - Write access to post review comments
+#   - Write access to post review comments and create PR reviews
 #   - Cannot modify repository files (review-only)
+#
+# APPROVAL CAPABILITY:
+#   - Claude can now create formal GitHub PR reviews (APPROVE/REQUEST_CHANGES)
+#   - Analyzes its own feedback to determine review status
+#   - Enables branch protection with Claude as a valid reviewer
+#   - REQUEST_CHANGES if critical issues, security flaws, or errors detected
+#   - APPROVE if no blocking issues found
 
 on:
   pull_request:
@@ -109,8 +116,12 @@ jobs:
             });
             
             // Find Claude's review comment (most recent)
+            // Look for comments from github-actions bot that contain Claude review markers
             const claudeComment = comments.data
-              .filter(c => c.user.login === 'github-actions[bot]' && c.body.includes('Claude'))
+              .filter(c => 
+                c.user.login === 'github-actions[bot]' && 
+                (c.body.includes('## 🤖 Claude') || c.body.includes('Claude Code Review'))
+              )
               .pop();
             
             // Analyze Claude's feedback for critical issues
@@ -120,21 +131,22 @@ jobs:
             if (claudeComment) {
               const feedback = claudeComment.body.toLowerCase();
               
-              // Check for blocking issues in Claude's feedback
-              const hasBlockingIssues = 
-                feedback.includes('security') && (feedback.includes('vulnerability') || feedback.includes('risk')) ||
-                feedback.includes('critical') ||
-                feedback.includes('must fix') ||
-                feedback.includes('blocking') ||
-                feedback.includes('dangerous');
+              // More precise pattern matching with word boundaries
+              const hasBlockingKeywords = 
+                /\b(critical|dangerous|must[\s-]fix|blocking|severe|high[\s-]risk)\b/.test(feedback) ||
+                (/\bsecurity\b/.test(feedback) && /\b(vulnerability|vulnerabilities|risk|issue|flaw|exploit)\b/.test(feedback)) ||
+                /\b(malicious|unsafe|insecure|compromised)\b/.test(feedback);
+              
+              // Check for error indicators
+              const hasErrors = 
+                /\b(error|fail|failure|broken|invalid|incorrect)\b/.test(feedback) &&
+                !/\b(error[\s-]handling|fail[\s-]safe)\b/.test(feedback); // Exclude benign uses
               
               const hasSuggestions = 
-                feedback.includes('consider') ||
-                feedback.includes('suggest') ||
-                feedback.includes('could') ||
-                feedback.includes('minor');
+                /\b(consider|suggest|could|should|recommend|minor|improvement)\b/.test(feedback) &&
+                !hasBlockingKeywords;
               
-              if (hasBlockingIssues) {
+              if (hasBlockingKeywords || hasErrors) {
                 reviewEvent = 'REQUEST_CHANGES';
                 reviewBody = '❌ **Changes Requested**\n\nClaude has identified issues that should be addressed. Please review the feedback above.';
               } else if (hasSuggestions) {
@@ -157,12 +169,21 @@ jobs:
               console.log(`${reviewEvent === 'APPROVE' ? '✅' : '❌'} PR review created: ${reviewEvent}`);
             } catch (error) {
               console.error('Failed to create review:', error);
+              
+              // Check if error is due to permissions
+              if (error.status === 403) {
+                console.error('Permission denied. Ensure the workflow has pull-requests:write permission.');
+              }
+              
               // Fallback to comment if review creation fails
               await github.rest.issues.createComment({
                 issue_number: context.payload.pull_request.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '✅ Claude review completed. (Note: Automated approval failed, manual approval may be required)'
+                body: '⚠️ **Claude Review Status**\n\nClaude completed the review but could not create a formal PR review. ' +
+                      'This may be due to permissions or API limitations.\n\n' +
+                      `Intended review status: **${reviewEvent}**\n\n` +
+                      'Please review Claude\'s feedback above and proceed accordingly.'
               });
             }
 
