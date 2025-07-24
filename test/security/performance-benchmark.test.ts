@@ -157,7 +157,11 @@ describe('Security Scanner Performance Benchmarks', () => {
         const curr = measurements[i];
         
         // Time per pattern should stay relatively constant
-        // Allow 2.5x degradation for CI variance but catch 4x+ (indicates O(n²))
+        // Allow 2.5x degradation between measurements:
+        // - 1.0x would be perfect O(n) scaling
+        // - 2.5x allows for CI variance, JIT optimization differences, CPU throttling
+        // - 4.0x+ would indicate O(n²) or worse algorithmic complexity
+        // This threshold catches algorithmic bugs while tolerating environment noise
         const degradation = curr.timePerPattern / prev.timePerPattern;
         
         expect(degradation).toBeLessThan(2.5);
@@ -220,7 +224,14 @@ describe('Security Scanner Performance Benchmarks', () => {
       patternTimes.slice(0, 5).forEach((p, i) => {
         const ratio = (p.time / avgTime).toFixed(2);
         const pattern = SECURITY_PATTERNS.find(sp => sp.name === p.name);
-        const complexity = pattern ? pattern.pattern.source.length : 0;
+        
+        // Type guard ensures pattern exists before accessing properties
+        if (!pattern) {
+          console.log(`    ${i + 1}. ${p.name}: ${p.time.toFixed(3)}ms (${ratio}x avg, pattern not found)`);
+          return;
+        }
+        
+        const complexity = pattern.pattern.source.length;
         console.log(`    ${i + 1}. ${p.name}: ${p.time.toFixed(3)}ms (${ratio}x avg, len: ${complexity})`);
       });
       
