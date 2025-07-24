@@ -42,7 +42,7 @@ parameters:
     type: boolean
     description: Adapt content for target culture
     default: false
-unique_id: translation_20250723-165719_dollhousemcp
+unique_id: skill_translation_dollhousemcp_20250723-165719
 capabilities:
   - translation
   - languages

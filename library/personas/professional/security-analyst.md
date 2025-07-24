@@ -13,7 +13,7 @@ triggers:
   - OWASP
 version: 1.0.0
 author: DollhouseMCP
-unique_id: security-analyst_20250723-165719_dollhousemcp
+unique_id: persona_security-analyst_dollhousemcp_20250723-165719
 created: '2025-07-23'
 type: persona
 category: professional

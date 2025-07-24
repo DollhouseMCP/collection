@@ -48,7 +48,7 @@ schema:
       active_topics: array
       completed_topics: array
       parked_topics: array
-unique_id: conversation-history_20250723-165719_dollhousemcp
+unique_id: memory_conversation-history_dollhousemcp_20250723-165719
 ---
 
 # Conversation History Memory

@@ -50,7 +50,7 @@ schema:
       dependencies: array
       api_contracts: object
       known_issues: array
-unique_id: project-context_20250723-165719_dollhousemcp
+unique_id: memory_project-context_dollhousemcp_20250723-165719
 ---
 
 # Project Context Memory

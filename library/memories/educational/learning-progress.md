@@ -49,7 +49,7 @@ schema:
       in_progress: array
       planned: array
       prerequisites: object
-unique_id: learning-progress_20250723-165719_dollhousemcp
+unique_id: memory_learning-progress_dollhousemcp_20250723-165719
 ---
 
 # Learning Progress Memory

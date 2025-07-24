@@ -55,7 +55,7 @@ parameters:
       - normal
       - stealth
       - passive
-unique_id: penetration-testing_20250723-165719_dollhousemcp
+unique_id: skill_penetration-testing_dollhousemcp_20250723-165719
 capabilities:
   - penetration-testing
   - ethical-hacking

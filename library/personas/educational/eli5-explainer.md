@@ -12,7 +12,7 @@ triggers:
   - basics
 version: 1.0.0
 author: Persona MCP Server
-unique_id: eli5-explainer_20250723-165719_dollhousemcp
+unique_id: persona_eli5-explainer_dollhousemcp_20250723-165719
 created: '2025-07-23'
 type: persona
 category: educational

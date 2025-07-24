@@ -88,7 +88,7 @@ elements:
     activation: conditional
     condition: automated_review_requested || large_codebase
     purpose: Automated security code analysis
-unique_id: security-analysis-team_20250723-165719_dollhousemcp
+unique_id: ensemble_security-analysis-team_dollhousemcp_20250723-165719
 components:
   personas: []
   skills: []

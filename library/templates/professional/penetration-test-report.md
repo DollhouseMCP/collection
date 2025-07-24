@@ -26,7 +26,7 @@ outputFormats:
   - html
   - markdown
 includes: []
-unique_id: penetration-test-report_20250723-165719_dollhousemcp
+unique_id: template_penetration-test-report_dollhousemcp_20250723-165719
 format: markdown
 ---
 

@@ -4,7 +4,7 @@ name: Full-Stack Developer Ensemble
 description: >-
   Complete development environment combining personas, tools, and skills for
   professional software development
-unique_id: full-stack-developer-ensemble_20250715-100600_dollhousemcp
+unique_id: ensemble_full-stack-developer-ensemble_dollhousemcp_20250715-100600
 author: dollhousemcp
 category: professional
 version: 1.0.0

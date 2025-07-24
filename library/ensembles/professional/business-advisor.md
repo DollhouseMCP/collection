@@ -66,7 +66,7 @@ elements:
     activation: conditional
     condition: project_planning || implementation_phase
     purpose: Project execution and resource management
-unique_id: business-advisor_20250723-165719_dollhousemcp
+unique_id: ensemble_business-advisor_dollhousemcp_20250723-165719
 components:
   personas: []
   skills: []
