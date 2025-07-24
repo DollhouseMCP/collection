@@ -47,42 +47,42 @@ const PersonaMetadataSchema = BaseMetadataSchema.extend({
   generation_method: z.enum(['human', 'ChatGPT', 'Claude', 'hybrid']).optional(),
   price: z.string().optional(),
   revenue_split: z.string().optional()
-});
+}).passthrough();
 
 const SkillMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('skill'),
   capabilities: z.array(z.string()),
   requirements: z.array(z.string()).optional(),
   compatibility: z.array(z.string()).optional()
-});
+}).passthrough();
 
 const AgentMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('agent'),
   capabilities: z.array(z.string()),
   tools_required: z.array(z.string()).optional(),
   model_requirements: z.string().optional()
-});
+}).passthrough();
 
 const PromptMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('prompt'),
   input_variables: z.array(z.string()).optional(),
   output_format: z.string().optional(),
   examples: z.array(z.string()).optional()
-});
+}).passthrough();
 
 const TemplateMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('template'),
   format: z.string(),
   variables: z.array(z.string()).optional(),
   use_cases: z.array(z.string()).optional()
-});
+}).passthrough();
 
 const ToolMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('tool'),
   mcp_version: z.string(),
   parameters: z.record(z.string(), z.any()).optional(),
   returns: z.string().optional()
-});
+}).passthrough();
 
 const EnsembleMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('ensemble'),
@@ -97,7 +97,7 @@ const EnsembleMetadataSchema = BaseMetadataSchema.extend({
   coordination_strategy: z.string().optional(),
   use_cases: z.array(z.string()).optional(),
   dependencies: z.array(z.string()).optional()
-});
+}).passthrough();
 
 const MemoryMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('memory'),
@@ -111,7 +111,7 @@ const MemoryMetadataSchema = BaseMetadataSchema.extend({
   }).optional(),
   privacy_level: z.string().optional(),
   searchable: z.boolean().optional()
-});
+}).passthrough();
 
 // Complete schema with all content types
 const ContentMetadataSchema = z.discriminatedUnion('type', [

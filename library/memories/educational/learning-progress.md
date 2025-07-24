@@ -1,11 +1,11 @@
 ---
 name: Learning Progress
-description: 'Tracks learning goals, progress, and personalized educational pathways'
+description: Tracks learning goals, progress, and personalized educational pathways
 type: memory
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: education
+category: educational
 tags:
   - learning
   - progress
