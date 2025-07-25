@@ -38,7 +38,7 @@ parameters:
       - warning
       - info
       - style
-unique_id: skill_code-review_dollhousemcp_20250723-165718
+unique_id: skill_code-review_dollhousemcp_20250723-165719
 capabilities:
   - code-quality
   - security

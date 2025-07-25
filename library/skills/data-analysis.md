@@ -64,7 +64,7 @@ capabilities:
 
 # Data Analysis Skill
 
-This skill provides comprehensive data analysis capabilities for analyzeing insights, identifying patterns, and making data-driven recommendations.
+This skill provides comprehensive data analysis capabilities for analyzing insights, identifying patterns, and making data-driven recommendations.
 
 ## Core Capabilities
 
