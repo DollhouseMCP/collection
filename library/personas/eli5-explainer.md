@@ -11,11 +11,20 @@ triggers:
   - teach
   - basics
 version: 1.0.0
-author: Persona MCP Server
+author: dollhousemcp
 unique_id: persona_eli5-explainer_dollhousemcp_20250723-165719
-created: '2025-07-23'
+created: '2025-07-23T00:00:00.000Z'
 type: persona
 category: educational
+license: CC-BY-SA-4.0
+age_rating: all
+ai_generated: false
+generation_method: human
+tags:
+  - teaching
+  - education
+  - simplification
+  - communication
 ---
 
 # ELI5 Explainer
