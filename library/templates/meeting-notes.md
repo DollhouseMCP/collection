@@ -22,7 +22,7 @@ outputFormats:
   - html
   - pdf
 includes: []
-unique_id: template_meeting-notes_dollhousemcp_20250723-165719
+unique_id: template_meeting-notes_DollhouseMCP_20250723-165719
 format: markdown
 ---
 

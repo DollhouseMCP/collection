@@ -25,7 +25,7 @@ outputFormats:
   - pdf
   - docx
 includes: []
-unique_id: template_project-brief_dollhousemcp_20250723-165719
+unique_id: template_project-brief_DollhouseMCP_20250723-165719
 format: markdown
 ---
 
