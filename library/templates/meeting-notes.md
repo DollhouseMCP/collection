@@ -4,7 +4,7 @@ description: Structured template for capturing and organizing meeting informatio
 type: template
 version: 1.0.0
 author: dollhousemcp
-created: '2025-07-23'
+created_date: '2025-07-23'
 category: professional
 tags:
   - meeting
