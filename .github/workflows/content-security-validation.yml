@@ -2,16 +2,8 @@ name: Content Security Validation
 
 on:
   pull_request:
-    paths:
-      - 'library/**/*.md'
-      - 'showcase/**/*.md'
-      - 'catalog/**/*.md'
   push:
     branches: [main]
-    paths:
-      - 'library/**/*.md'
-      - 'showcase/**/*.md'
-      - 'catalog/**/*.md'
   workflow_dispatch:
     inputs:
       content_path:
@@ -57,7 +49,18 @@ jobs:
             catalog/**/*.md
           separator: ','
       
+      - name: Check if validation needed
+        id: check-needed
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]] && [[ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No content files changed, skipping validation"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Validate changed content
+        if: steps.check-needed.outputs.skip != 'true'
         id: validate
         shell: bash
         run: |
@@ -95,7 +98,7 @@ jobs:
           fi
       
       - name: Generate security report
-        if: always()
+        if: always() && steps.check-needed.outputs.skip != 'true'
         id: report
         shell: bash
         run: |
@@ -150,8 +153,8 @@ jobs:
             echo "markdown=No validation report generated" >> $GITHUB_OUTPUT
           fi
       
-      - name: Comment PR with results
-        if: github.event_name == 'pull_request'
+      - name: Comment PR with results (validation performed)
+        if: github.event_name == 'pull_request' && steps.check-needed.outputs.skip != 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -203,11 +206,33 @@ jobs:
       - name: Set status check
         if: github.event_name == 'pull_request'
         run: |
-          if [ "${{ steps.validate.outputs.validation_passed }}" != "true" ]; then
+          if [ "${{ steps.check-needed.outputs.skip }}" == "true" ]; then
+            echo "✅ Content security validation skipped - no content files changed"
+          elif [ "${{ steps.validate.outputs.validation_passed }}" != "true" ]; then
             echo "❌ Content security validation failed. Please review the security report above."
             exit 1
+          else
+            echo "✅ Content security validation passed!"
           fi
-          echo "✅ Content security validation passed!"
+      
+      - name: Comment PR with skip notice
+        if: github.event_name == 'pull_request' && steps.check-needed.outputs.skip == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 🔒 Content Security Scan Results
+            
+            ### ✅ Security Scan Skipped
+            
+            No content files (library/showcase/catalog) were modified in this PR, so security validation was skipped.
+            `;
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
       
       - name: Upload security report
         if: always()
