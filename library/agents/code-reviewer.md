@@ -3,8 +3,8 @@ name: Code Reviewer
 description: 'Automated code review agent with security, performance, and quality analysis'
 type: agent
 version: 1.0.0
-author: DollhouseMCP
-created: '2025-07-23'
+author: dollhousemcp
+created_date: '2025-07-23'
 category: professional
 tags: &ref_0
   - code-review
@@ -64,7 +64,12 @@ risk_thresholds:
   max_function_length: 50
   security_score_minimum: 8
 unique_id: agent_code-reviewer_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - security_analysis
+  - code_quality_review
+  - performance_optimization
+  - automated_testing
+  - documentation_review
 ---
 
 # Code Reviewer Agent

@@ -63,6 +63,13 @@
       "path": "library/ensembles/",
       "icon": "👥",
       "categories": ["creative", "educational", "gaming", "personal", "professional"]
+    },
+    "memories": {
+      "name": "Memories",
+      "description": "Persistent context storage for continuity and learning",
+      "path": "library/memories/",
+      "icon": "🧠",
+      "categories": ["creative", "educational", "gaming", "personal", "professional"]
     }
   },
   "categories": {
