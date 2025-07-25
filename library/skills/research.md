@@ -48,7 +48,7 @@ parameters:
     type: boolean
     description: Verify claims and cross-reference
     default: true
-unique_id: skill_research_dollhousemcp_20250723-165719
+unique_id: skill_research_dollhousemcp_20250723-165723
 capabilities:
   - research
   - analysis
