@@ -1,0 +1,608 @@
+[
+  {
+    "file": "library/agents/personal/task-manager.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/agents/professional/code-reviewer.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/agents/research/research-assistant.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/creative/creative-studio.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/professional/business-advisor.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/professional/development-team.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/professional/security-analysis-team.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/memories/educational/learning-progress.md",
+    "report": {
+      "passed": false,
+      "summary": {
+        "critical": 0,
+        "high": 1,
+        "medium": 0,
+        "low": 0,
+        "total": 1
+      },
+      "issues": [
+        {
+          "severity": "high",
+          "type": "invalid_metadata",
+          "details": "category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"",
+          "suggestion": "Choose from: creative, educational, gaming, personal, professional"
+        }
+      ],
+      "markdown": "# Validation Report\n\n**Status**: ❌ FAILED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 1\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 1\n\n## Issues\n\n### 🟠 invalid_metadata\n**Severity**: high\n**Details**: category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"\n**Suggestion**: Choose from: creative, educational, gaming, personal, professional\n\n"
+    }
+  },
+  {
+    "file": "library/memories/personal/conversation-history.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/memories/professional/project-context.md",
+    "report": {
+      "passed": false,
+      "summary": {
+        "critical": 0,
+        "high": 1,
+        "medium": 0,
+        "low": 0,
+        "total": 1
+      },
+      "issues": [
+        {
+          "severity": "high",
+          "type": "invalid_metadata",
+          "details": "category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"",
+          "suggestion": "Choose from: creative, educational, gaming, personal, professional"
+        }
+      ],
+      "markdown": "# Validation Report\n\n**Status**: ❌ FAILED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 1\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 1\n\n## Issues\n\n### 🟠 invalid_metadata\n**Severity**: high\n**Details**: category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"\n**Suggestion**: Choose from: creative, educational, gaming, personal, professional\n\n"
+    }
+  },
+  {
+    "file": "library/personas/educational/eli5-explainer.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/personas/professional/business-consultant.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/personas/professional/debug-detective.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/personas/professional/security-analyst.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/personas/professional/technical-analyst.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/coding/code-review.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/creative/creative-writing.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/professional/data-analysis.md",
+    "report": {
+      "passed": false,
+      "summary": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 1
+      },
+      "issues": [
+        {
+          "severity": "critical",
+          "type": "security_context_awareness",
+          "details": "Attempts to extract training data: Pattern \"training_data_extraction\" detected",
+          "line": 3,
+          "suggestion": "Review and remove potentially unsafe content related to context_awareness."
+        }
+      ],
+      "markdown": "# Validation Report\n\n**Status**: ❌ FAILED\n\n## Summary\n- 🔴 Critical: 1\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 1\n\n## Issues\n\n### 🔴 security_context_awareness\n**Severity**: critical\n**Details**: Attempts to extract training data: Pattern \"training_data_extraction\" detected\n**Line**: 3\n**Suggestion**: Review and remove potentially unsafe content related to context_awareness.\n\n"
+    }
+  },
+  {
+    "file": "library/skills/professional/penetration-testing.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/professional/research.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/professional/threat-modeling.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/professional/translation.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/business/email-professional.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/business/meeting-notes.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/business/project-brief.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/business/report-executive.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/professional/code-documentation.md",
+    "report": {
+      "passed": false,
+      "summary": {
+        "critical": 0,
+        "high": 1,
+        "medium": 0,
+        "low": 0,
+        "total": 1
+      },
+      "issues": [
+        {
+          "severity": "high",
+          "type": "invalid_metadata",
+          "details": "category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"",
+          "suggestion": "Choose from: creative, educational, gaming, personal, professional"
+        }
+      ],
+      "markdown": "# Validation Report\n\n**Status**: ❌ FAILED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 1\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 1\n\n## Issues\n\n### 🟠 invalid_metadata\n**Severity**: high\n**Details**: category: Invalid option: expected one of \"creative\"|\"educational\"|\"gaming\"|\"personal\"|\"professional\"\n**Suggestion**: Choose from: creative, educational, gaming, personal, professional\n\n"
+    }
+  },
+  {
+    "file": "library/templates/professional/penetration-test-report.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/professional/security-vulnerability-report.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "total": 1
+      },
+      "issues": [
+        {
+          "severity": "low",
+          "type": "unsafe_url",
+          "details": "URL may be malformed or too long: https://cwe.mitre.org/data/definitions/{{cwe_id}}....",
+          "suggestion": "Verify URL is correct and necessary"
+        }
+      ],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 1\n- **Total Issues**: 1\n\n## Issues\n\n### 🟢 unsafe_url\n**Severity**: low\n**Details**: URL may be malformed or too long: https://cwe.mitre.org/data/definitions/{{cwe_id}}....\n**Suggestion**: Verify URL is correct and necessary\n\n"
+    }
+  },
+  {
+    "file": "library/templates/professional/threat-assessment-report.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/agents/research/academic-researcher.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/productivity/complete-productivity-suite.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/ensembles/professional/full-stack-developer.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/personas/creative/creative-writer.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/prompts/creative/story-starter.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/skills/coding/debugging-assistant.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/templates/business/project-proposal.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  },
+  {
+    "file": "library/tools/productivity/task-prioritizer.md",
+    "report": {
+      "passed": true,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "total": 0
+      },
+      "issues": [],
+      "markdown": "# Validation Report\n\n**Status**: ✅ PASSED\n\n## Summary\n- 🔴 Critical: 0\n- 🟠 High: 0\n- 🟡 Medium: 0\n- 🟢 Low: 0\n- **Total Issues**: 0\n\n"
+    }
+  }
+]
