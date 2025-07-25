@@ -3,8 +3,8 @@ name: Meeting Notes
 description: Structured template for capturing and organizing meeting information
 type: template
 version: 1.0.0
-author: DollhouseMCP
-created: '2025-07-23'
+author: dollhousemcp
+created_date: '2025-07-23'
 category: professional
 tags:
   - meeting
