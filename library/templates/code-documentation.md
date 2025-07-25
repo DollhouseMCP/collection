@@ -3,7 +3,7 @@ name: Code Documentation
 description: Technical documentation template for code modules, APIs, and functions
 type: template
 version: 1.0.0
-author: DollhouseMCP
+author: dollhousemcp
 created: '2025-07-23'
 category: professional
 tags:
@@ -24,7 +24,7 @@ outputFormats:
   - jsdoc
   - typedoc
 includes: []
-unique_id: template_code-documentation_DollhouseMCP_20250723-165719
+unique_id: template_code-documentation_dollhousemcp_20250723-165719
 format: markdown
 ---
 

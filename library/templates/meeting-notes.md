@@ -3,7 +3,7 @@ name: Meeting Notes
 description: Structured template for capturing and organizing meeting information
 type: template
 version: 1.0.0
-author: DollhouseMCP
+author: dollhousemcp
 created: '2025-07-23'
 category: professional
 tags:
@@ -22,7 +22,7 @@ outputFormats:
   - html
   - pdf
 includes: []
-unique_id: template_meeting-notes_DollhouseMCP_20250723-165719
+unique_id: template_meeting-notes_dollhousemcp_20250723-165719
 format: markdown
 ---
 
