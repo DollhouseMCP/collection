@@ -3,9 +3,9 @@ name: Project Proposal Template
 description: Professional template for creating comprehensive project proposals
 type: template
 version: 1.0.0
-author: DollhouseMCP
+author: dollhousemcp
 created: '2025-07-15'
-unique_id: template_project-proposal_DollhouseMCP_20250715-100300
+unique_id: template_project-proposal_dollhousemcp_20250715-100300
 category: professional
 tags:
   - business

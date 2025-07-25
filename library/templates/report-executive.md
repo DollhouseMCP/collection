@@ -5,7 +5,7 @@ description: >-
   recommendations
 type: template
 version: 1.0.0
-author: DollhouseMCP
+author: dollhousemcp
 created: '2025-07-23'
 category: professional
 tags:
@@ -27,7 +27,7 @@ outputFormats:
   - markdown
   - html
 includes: []
-unique_id: template_executive-report_DollhouseMCP_20250723-165719
+unique_id: template_executive-report_dollhousemcp_20250723-165719
 format: markdown
 ---
 

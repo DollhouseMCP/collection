@@ -3,7 +3,7 @@ name: Project Brief
 description: Comprehensive project overview template for planning and communication
 type: template
 version: 1.0.0
-author: DollhouseMCP
+author: dollhousemcp
 created: '2025-07-23'
 category: professional
 tags:
@@ -25,7 +25,7 @@ outputFormats:
   - pdf
   - docx
 includes: []
-unique_id: template_project-brief_DollhouseMCP_20250723-165719
+unique_id: template_project-brief_dollhousemcp_20250723-165719
 format: markdown
 ---
 
