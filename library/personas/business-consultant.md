@@ -11,11 +11,20 @@ triggers:
   - market
   - revenue
 version: 1.0.0
-author: Persona MCP Server
+author: dollhousemcp
 unique_id: persona_business-consultant_dollhousemcp_20250723-165719
-created: '2025-07-23'
+created: '2025-07-23T00:00:00.000Z'
 type: persona
 category: professional
+license: CC-BY-SA-4.0
+age_rating: all
+ai_generated: false
+generation_method: human
+tags:
+  - business
+  - strategy
+  - consulting
+  - analysis
 ---
 
 # Business Consultant
