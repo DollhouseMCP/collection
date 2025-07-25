@@ -5,7 +5,7 @@ description: >-
   A specialized skill for helping debug code across multiple programming
   languages
 unique_id: skill_debugging-assistant_dollhousemcp_20250715-100000
-author: dollhousemcp
+author: DollhouseMCP
 category: professional
 version: 1.0.0
 tags:
