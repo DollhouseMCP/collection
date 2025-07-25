@@ -393,11 +393,41 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'training_data_extraction',
-    // Pattern: Attempts to extract training data
-    // Simplified pattern that still avoids false positives on standalone "dataset"
-    // Matches: commands/questions about training data, but not simple mentions
-    pattern: /\b(show|give|tell|reveal|display|provide)\s+.{0,20}(training\s+(data|examples?))|what\s+(dataset|data|examples?)\s+.{0,20}(trained|learned)\s+(on|from)|what\s+(have\s+you|did\s+you)\s+learn(ed)?\s+from|\b(your|my|the)\s+training\s+(data|dataset)|(trained|learned)\s+on\s+what/i,
-    severity: 'high',  // Reduced from critical since not all attempts are critical
+    // Pattern: Commands to show/display training data or examples
+    pattern: /\b(show|display|reveal|provide|give|list|output)\s+(me\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|information|details)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about what the AI was trained on
+    pattern: /\b(what|which)\s+(dataset|data|examples?|information)\s+(were\s+you|was\s+I|have\s+you\s+been)\s+trained\s+(on|with)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about learning sources
+    pattern: /\bwhat\s+.{0,20}(have\s+you|did\s+you)\s+(learned|learn)\s+from/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Direct references to accessing training data
+    pattern: /\b(access|examine|inspect|view)\s+(to\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|corpus)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Possessive references to training data
+    pattern: /\byour\s+(original\s+)?training\s+(data|dataset|examples?|corpus|information)/i,
+    severity: 'high',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
   },
