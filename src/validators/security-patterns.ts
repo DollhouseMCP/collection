@@ -393,25 +393,11 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'training_data_extraction',
-    // Simple pattern 1: Direct training data requests
-    pattern: /\b(show|reveal|display|extract)\s+training\s+(data|examples)/i,
-    severity: 'critical',
-    description: 'Attempts to extract training data',
-    category: 'context_awareness'
-  },
-  {
-    name: 'training_data_extraction',
-    // Simple pattern 2: Questions about training
-    pattern: /\bwhat\s+.{0,20}(trained\s+on|learned\s+from)/i,
-    severity: 'critical', 
-    description: 'Attempts to extract training data',
-    category: 'context_awareness'
-  },
-  {
-    name: 'training_data_extraction',
-    // Simple pattern 3: Possessive training data
-    pattern: /\byour\s+training\s+(data|examples)/i,
-    severity: 'critical',
+    // Pattern: Attempts to extract training data
+    // Simplified pattern that still avoids false positives on standalone "dataset"
+    // Matches: commands/questions about training data, but not simple mentions
+    pattern: /\b(show|give|tell|reveal|display|provide)\s+.{0,20}(training\s+(data|examples?))|what\s+(dataset|data|examples?)\s+.{0,20}(trained|learned)\s+(on|from)|what\s+(have\s+you|did\s+you)\s+learn(ed)?\s+from|\b(your|my|the)\s+training\s+(data|dataset)|(trained|learned)\s+on\s+what/i,
+    severity: 'high',  // Reduced from critical since not all attempts are critical
     description: 'Attempts to extract training data',
     category: 'context_awareness'
   },
