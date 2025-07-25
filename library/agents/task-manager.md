@@ -3,8 +3,8 @@ name: Task Manager
 description: 'Goal-oriented agent for managing tasks, priorities, and project execution'
 type: agent
 version: 1.0.0
-author: DollhouseMCP
-created: '2025-07-23'
+author: dollhousemcp
+created_date: '2025-07-23'
 category: personal
 tags: &ref_0
   - tasks
