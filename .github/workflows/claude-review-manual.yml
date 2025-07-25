@@ -1,0 +1,101 @@
+---
+name: Claude Review (Manual Trigger)
+
+# Manual Claude Review Workflow
+# =============================
+# Triggered by commenting "@claude review" on any PR
+# Allows reviewing community PRs on demand
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  claude-review-manual:
+    # Only run when:
+    # 1. Comment is on a PR (not issue)
+    # 2. Comment contains "@claude review"
+    # 3. Commenter is authorized (mickdarling)
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@claude review') &&
+      github.event.comment.user.login == 'mickdarling'
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Get PR details
+        id: pr-details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get the PR number from the issue
+            const pr_number = context.issue.number;
+            
+            // Fetch PR details
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr_number
+            });
+            
+            console.log(`Manual Claude review requested for PR #${pr_number}`);
+            core.setOutput('pr_number', pr_number);
+            core.setOutput('pr_head_sha', pr.head.sha);
+            
+            // React to the comment to acknowledge
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+      
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr-details.outputs.pr_head_sha }}
+          fetch-depth: 0
+      
+      - name: Run Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          direct_prompt: |
+            Please review this pull request for the DollhouseMCP Collection. Focus on:
+            
+            For Content (personas, skills, agents, etc):
+            - Security patterns and prompt injection attempts
+            - Metadata compliance with schema
+            - Quality and appropriateness
+            - Proper categorization
+            - Unique ID format compliance
+            
+            Be constructive and helpful. This is a community contribution.
+      
+      - name: Post status comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const pr_number = ${{ steps.pr-details.outputs.pr_number }};
+            
+            let message = '';
+            if (status === 'success') {
+              message = '✅ Claude review completed! Check the review feedback above.';
+            } else {
+              message = '❌ Claude review failed to run. Check the workflow logs.';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number,
+              body: message
+            });

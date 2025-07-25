@@ -18,8 +18,15 @@ name: Claude Code Review
 #
 # PERMISSIONS:
 #   - Read-only access to repository content
-#   - Write access to post review comments
+#   - Write access to post review comments and create PR reviews
 #   - Cannot modify repository files (review-only)
+#
+# APPROVAL CAPABILITY:
+#   - Claude can now create formal GitHub PR reviews (APPROVE/REQUEST_CHANGES)
+#   - Analyzes its own feedback to determine review status
+#   - Enables branch protection with Claude as a valid reviewer
+#   - REQUEST_CHANGES if critical issues, security flaws, or errors detected
+#   - APPROVE if no blocking issues found
 
 on:
   pull_request:
@@ -27,6 +34,14 @@ on:
     # Note: We intentionally don't filter paths here because the job condition
     # already filters by authorized users. This ensures maintainer changes
     # always get reviewed while community content submissions are excluded.
+  
+  # Manual trigger for reviewing community PRs
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: 'PR number to review'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -36,11 +51,12 @@ permissions:
 
 jobs:
   claude-review:
-    # Security: Only run automated reviews for authorized maintainers
+    # Security: Only run automated reviews for authorized maintainers OR manual triggers
     # This excludes community content submissions (personas, skills, etc.) which
     # should be reviewed by human maintainers to manage API usage and ensure
     # appropriate content moderation at scale.
     if: |
+      github.event_name == 'workflow_dispatch' ||
       github.event.pull_request.user.login == 'mickdarling' ||
       github.event.pull_request.user.login == 'dependabot[bot]'
     # Add new maintainers here: || github.event.pull_request.user.login == 'username'
@@ -54,11 +70,34 @@ jobs:
       id-token: write          # Write needed: for OIDC authentication
 
     steps:
+      - name: Get PR context for manual trigger
+        if: github.event_name == 'workflow_dispatch'
+        id: get-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr_number = context.payload.inputs.pull_request_number;
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: parseInt(pr_number)
+            });
+            
+            // Set the PR data in the context for later steps
+            core.exportVariable('PR_NUMBER', pr_number);
+            console.log(`Manual review triggered for PR #${pr_number}`);
+            
+            // For manual triggers, we need to checkout the PR branch
+            core.setOutput('pr_head_ref', pr.head.ref);
+            core.setOutput('pr_head_sha', pr.head.sha);
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           # Full git history for comprehensive review context
           fetch-depth: 0
+          # For manual triggers, checkout the PR branch
+          ref: ${{ github.event_name == 'workflow_dispatch' && steps.get-pr.outputs.pr_head_sha || '' }}
 
       - name: Run Claude Code Review
         id: claude-review
@@ -91,6 +130,99 @@ jobs:
             - Error handling
             
             Be constructive and helpful. Consider this is a collection platform for AI content.
+
+      - name: Create PR Review
+        if: steps.claude-review.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Wait a moment to ensure Claude's comments are posted
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            // Get all comments on the PR
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            
+            // Find Claude's review comment (most recent)
+            // Look for comments from github-actions bot that contain Claude review markers
+            const claudeComment = comments.data
+              .filter(c => 
+                c.user.login === 'github-actions[bot]' && 
+                (c.body.includes('## 🤖 Claude') || c.body.includes('Claude Code Review'))
+              )
+              .pop();
+            
+            // Analyze Claude's feedback for critical issues
+            let reviewEvent = 'APPROVE';
+            let reviewBody = '✅ **Automated Review Complete**\n\n';
+            
+            if (claudeComment) {
+              const feedback = claudeComment.body.toLowerCase();
+              
+              // More precise pattern matching with word boundaries
+              const hasBlockingKeywords = 
+                /\b(critical|dangerous|must[\s-]fix|blocking|severe|high[\s-]risk)\b/.test(feedback) ||
+                (/\bsecurity\b/.test(feedback) && /\b(vulnerability|vulnerabilities|risk|issue|flaw|exploit)\b/.test(feedback)) ||
+                /\b(malicious|unsafe|insecure|compromised)\b/.test(feedback);
+              
+              // Check for error indicators
+              const hasErrors = 
+                /\b(error|fail|failure|broken|invalid|incorrect)\b/.test(feedback) &&
+                !/\b(error[\s-]handling|fail[\s-]safe)\b/.test(feedback); // Exclude benign uses
+              
+              const hasSuggestions = 
+                /\b(consider|suggest|could|should|recommend|minor|improvement)\b/.test(feedback) &&
+                !hasBlockingKeywords;
+              
+              if (hasBlockingKeywords || hasErrors) {
+                reviewEvent = 'REQUEST_CHANGES';
+                reviewBody = '❌ **Changes Requested**\n\nClaude has identified issues that should be addressed. Please review the feedback above.';
+              } else if (hasSuggestions) {
+                reviewEvent = 'APPROVE';
+                reviewBody = '✅ **Approved with Suggestions**\n\nClaude has approved this PR with some non-blocking suggestions. See the feedback above.';
+              } else {
+                reviewBody = '✅ **Approved**\n\nClaude has reviewed this PR and found no issues.';
+              }
+            }
+            
+            // Fail the workflow if changes are requested
+            if (reviewEvent === 'REQUEST_CHANGES') {
+              core.setFailed('❌ Claude has requested changes. Please address the issues identified in the review above before merging.');
+            }
+            
+            // Create the review
+            try {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                body: reviewBody,
+                event: reviewEvent
+              });
+              console.log(`${reviewEvent === 'APPROVE' ? '✅' : '❌'} PR review created: ${reviewEvent}`);
+            } catch (error) {
+              console.error('Failed to create review:', error);
+              
+              // Check if error is due to permissions
+              if (error.status === 403) {
+                console.error('Permission denied. Ensure the workflow has pull-requests:write permission.');
+              }
+              
+              // Fallback to comment if review creation fails
+              await github.rest.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '⚠️ **Claude Review Status**\n\nClaude completed the review but could not create a formal PR review. ' +
+                      'This may be due to permissions or API limitations.\n\n' +
+                      `Intended review status: **${reviewEvent}**\n\n` +
+                      'Please review Claude\'s feedback above and proceed accordingly.'
+              });
+            }
 
       - name: Handle Claude API Failure
         if: steps.claude-review.outcome == 'failure'
