@@ -22,7 +22,7 @@ tools_required:
   - web_search
   - document_reader
   - citation_manager
-created: 2025-07-15T00:00:00.000Z
+created_date: 2025-07-15T00:00:00.000Z
 ---
 
 # Academic Researcher Agent

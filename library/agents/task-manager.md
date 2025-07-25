@@ -3,8 +3,8 @@ name: Task Manager
 description: 'Goal-oriented agent for managing tasks, priorities, and project execution'
 type: agent
 version: 1.0.0
-author: DollhouseMCP
-created: '2025-07-23'
+author: dollhousemcp
+created_date: '2025-07-23'
 category: personal
 tags: &ref_0
   - tasks
@@ -46,7 +46,12 @@ risk_thresholds:
   min_progress_rate: 0.1
   resource_utilization_cap: 0.9
 unique_id: agent_task-manager_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - task_prioritization
+  - resource_management
+  - progress_tracking
+  - intelligent_scheduling
+  - risk_assessment
 ---
 
 # Task Manager Agent

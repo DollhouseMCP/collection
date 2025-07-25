@@ -3,8 +3,8 @@ name: Research Assistant
 description: Autonomous agent for conducting thorough research and synthesizing findings
 type: agent
 version: 1.0.0
-author: DollhouseMCP
-created: '2025-07-23'
+author: dollhousemcp
+created_date: '2025-07-23'
 category: professional
 tags: &ref_0
   - research
@@ -46,7 +46,12 @@ risk_thresholds:
   fact_check_requirement: 0.7
   bias_detection_sensitivity: 0.8
 unique_id: agent_research-assistant_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - intelligent_research_planning
+  - multi_source_investigation
+  - knowledge_synthesis
+  - quality_assurance
+  - fact_checking
 ---
 
 # Research Assistant Agent
