@@ -27,7 +27,7 @@ outputFormats:
   - markdown
   - html
 includes: []
-unique_id: template_executive-report_dollhousemcp_20250723-165719
+unique_id: template_executive-report_DollhouseMCP_20250723-165719
 format: markdown
 ---
 
