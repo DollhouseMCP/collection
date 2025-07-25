@@ -393,10 +393,41 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
   },
   {
     name: 'training_data_extraction',
-    // Pattern: Attempts to extract training data
-    // Matches: training data, dataset, learned from, trained on
-    pattern: /\b(training\s+data|dataset|what\s+.{0,20}learned\s+from|trained\s+on|training\s+examples?)/i,
-    severity: 'critical',
+    // Pattern: Commands to show/display training data or examples
+    pattern: /\b(show|display|reveal|provide|give|list|output)\s+(me\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|information|details)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about what the AI was trained on
+    pattern: /\b(what|which)\s+(dataset|data|examples?|information)\s+(were\s+you|was\s+I|have\s+you\s+been)\s+trained\s+(on|with)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Questions about learning sources
+    pattern: /\bwhat\s+.{0,20}(have\s+you|did\s+you)\s+(learned|learn)\s+from/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Direct references to accessing training data
+    pattern: /\b(access|examine|inspect|view)\s+(to\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|corpus)/i,
+    severity: 'high',
+    description: 'Attempts to extract training data',
+    category: 'context_awareness'
+  },
+  {
+    name: 'training_data_extraction',
+    // Pattern: Possessive references to training data
+    pattern: /\byour\s+(original\s+)?training\s+(data|dataset|examples?|corpus|information)/i,
+    severity: 'high',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
   },
