@@ -78,6 +78,21 @@ export interface EnsembleMetadata extends BaseMetadata {
   dependencies?: string[];    // External requirements
 }
 
+// Memory-specific metadata
+export interface MemoryMetadata extends BaseMetadata {
+  type: 'memory';
+  storage_backend?: string;
+  retention_policy?: {
+    default: string;
+    rules?: Array<{
+      type: string;
+      retention: string;
+    }>;
+  };
+  privacy_level?: string;
+  searchable?: boolean;
+}
+
 // Union type for all content metadata
 export type ContentMetadata = 
   | PersonaMetadata 
@@ -86,7 +101,8 @@ export type ContentMetadata =
   | PromptMetadata 
   | TemplateMetadata 
   | ToolMetadata 
-  | EnsembleMetadata;
+  | EnsembleMetadata
+  | MemoryMetadata;
 
 // Validation types
 export interface ValidationIssue {

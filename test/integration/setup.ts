@@ -30,7 +30,6 @@ export default async function globalSetup() {
     
     for (const type of contentTypes) {
       await mkdir(join(testLibraryDir, type), { recursive: true });
-      await mkdir(join(testLibraryDir, type, 'test-category'), { recursive: true });
     }
     
     // Create test fixture files
@@ -103,7 +102,7 @@ async function createTestFixtures(libraryDir: string) {
   ];
   
   for (const fixture of fixtures) {
-    const filePath = join(libraryDir, fixture.type, fixture.category, fixture.filename);
+    const filePath = join(libraryDir, fixture.type, fixture.filename);
     await writeFile(filePath, fixture.content, 'utf8');
   }
 }
@@ -114,6 +113,7 @@ unique_id: test-persona-integration
 name: Test Persona for Integration
 description: A test persona used for integration testing
 type: persona
+category: test-category
 version: 1.0.0
 tags:
   - test
@@ -148,6 +148,7 @@ unique_id: test-skill-integration
 name: Test Skill for Integration
 description: A test skill used for integration testing
 type: skill
+category: test-category
 version: 1.0.0
 tags:
   - test
@@ -183,6 +184,7 @@ unique_id: test-agent-integration
 name: Test Agent for Integration
 description: A test agent used for integration testing
 type: agent
+category: test-category
 version: 1.0.0
 tags:
   - test
@@ -221,12 +223,12 @@ unique_id: test-prompt-integration
 name: Test Prompt for Integration
 description: A test prompt used for integration testing
 type: prompt
+category: test-category
 version: 1.0.0
 tags:
   - test
   - integration
   - validation
-category: testing
 use_case: integration-testing
 author: Test Suite
 created_at: ${new Date().toISOString()}
@@ -259,12 +261,12 @@ unique_id: test-template-integration
 name: Test Template for Integration
 description: A test template used for integration testing
 type: template
+category: test-category
 version: 1.0.0
 tags:
   - test
   - integration
   - template
-category: testing
 variables:
   - test_name
   - test_scenario
@@ -306,12 +308,12 @@ unique_id: test-tool-integration
 name: Test Tool for Integration
 description: A test tool used for integration testing
 type: tool
+category: test-category
 version: 1.0.0
 tags:
   - test
   - integration
   - utility
-category: testing
 interfaces:
   - cli
   - api
@@ -354,6 +356,7 @@ unique_id: test-ensemble-integration
 name: Test Ensemble for Integration
 description: A test ensemble combining multiple components for integration testing
 type: ensemble
+category: test-category
 version: 1.0.0
 tags:
   - test
