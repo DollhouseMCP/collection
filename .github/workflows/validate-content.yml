@@ -2,16 +2,8 @@ name: Validate Content
 
 on:
   pull_request:
-    paths:
-      - 'library/**/*.md'
-      - 'showcase/**/*.md'
-      - 'catalog/**/*.md'
   push:
     branches: [main]
-    paths:
-      - 'library/**/*.md'
-      - 'showcase/**/*.md'
-      - 'catalog/**/*.md'
   workflow_dispatch:
 
 permissions:
@@ -51,11 +43,51 @@ jobs:
             catalog/**/*.md
           separator: ' '
       
+      - name: Check if validation needed
+        id: check-needed
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]] && [[ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No content files changed, skipping validation"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Validate changed files
-        if: steps.changed-files.outputs.all_changed_files != ''
+        if: steps.changed-files.outputs.all_changed_files != '' && steps.check-needed.outputs.skip != 'true'
         run: |
           echo "Validating changed files..."
           node dist/src/cli/validate-content.js ${{ steps.changed-files.outputs.all_changed_files }}
+      
+      - name: Comment PR when skipped
+        if: github.event_name == 'pull_request' && steps.check-needed.outputs.skip == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 🔍 Content Validation Report
+            
+            ✅ **Validation Skipped**
+            
+            No content files (library/showcase/catalog) were modified in this PR, so content validation was skipped.`;
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+      
+      - name: Set status
+        if: always()
+        run: |
+          if [[ "${{ steps.check-needed.outputs.skip }}" == "true" ]]; then
+            echo "✅ Content validation skipped - no content files changed"
+          elif [[ "${{ job.status }}" == "success" ]]; then
+            echo "✅ Content validation passed!"
+          else
+            echo "❌ Content validation failed"
+            exit 1
+          fi
       
       - name: Comment PR with results
         if: failure() && github.event_name == 'pull_request'
