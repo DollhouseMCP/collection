@@ -4,7 +4,7 @@ description: Comprehensive project overview template for planning and communicat
 type: template
 version: 1.0.0
 author: dollhousemcp
-created: '2025-07-23'
+created_date: '2025-07-23'
 category: professional
 tags:
   - project

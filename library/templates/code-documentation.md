@@ -4,7 +4,7 @@ description: Technical documentation template for code modules, APIs, and functi
 type: template
 version: 1.0.0
 author: dollhousemcp
-created: '2025-07-23'
+created_date: '2025-07-23'
 category: professional
 tags:
   - documentation
