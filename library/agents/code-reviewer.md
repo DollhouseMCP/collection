@@ -64,7 +64,12 @@ risk_thresholds:
   max_function_length: 50
   security_score_minimum: 8
 unique_id: agent_code-reviewer_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - security_analysis
+  - code_quality_review
+  - performance_optimization
+  - automated_testing
+  - documentation_review
 ---
 
 # Code Reviewer Agent

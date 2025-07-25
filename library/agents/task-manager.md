@@ -46,7 +46,12 @@ risk_thresholds:
   min_progress_rate: 0.1
   resource_utilization_cap: 0.9
 unique_id: agent_task-manager_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - task_prioritization
+  - resource_management
+  - progress_tracking
+  - intelligent_scheduling
+  - risk_assessment
 ---
 
 # Task Manager Agent

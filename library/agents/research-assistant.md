@@ -46,7 +46,12 @@ risk_thresholds:
   fact_check_requirement: 0.7
   bias_detection_sensitivity: 0.8
 unique_id: agent_research-assistant_dollhousemcp_20250723-165719
-capabilities: *ref_0
+capabilities:
+  - intelligent_research_planning
+  - multi_source_investigation
+  - knowledge_synthesis
+  - quality_assurance
+  - fact_checking
 ---
 
 # Research Assistant Agent
