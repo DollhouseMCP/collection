@@ -93,7 +93,7 @@ These parameters can be modified during testing:
 cp library/skills/roundtrip-test-skill.md ~/.dollhouse/portfolio/skills/
 
 # Step 2: Modify locally (add a timestamp)
-echo "Modified: $(date)" >> ~/.dollhouse/portfolio/skills/roundtrip-test-skill.md
+echo "Modified: [current date]" >> ~/.dollhouse/portfolio/skills/roundtrip-test-skill.md
 
 # Step 3: In Claude Desktop, submit to portfolio
 submit_content "Roundtrip Test Skill"
