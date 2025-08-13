@@ -1,0 +1,187 @@
+name: 🤖 Element Submission
+description: Submit a new element to the DollhouseMCP Collection
+title: "[SUBMISSION] "
+labels: ["element-submission", "needs-validation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🤖 Submit an Element to DollhouseMCP Collection
+        
+        Thank you for contributing to the DollhouseMCP Collection! This form will help you submit a new element that will be automatically validated and processed.
+
+        ## What types of elements can I submit?
+        - **Personas**: AI characters with specific roles and personalities
+        - **Skills**: Specialized capabilities for AI assistants
+        - **Agents**: Autonomous AI entities with specific functions
+        - **Prompts**: Reusable prompt templates
+        - **Templates**: Document and communication templates
+        - **Tools**: MCP-compatible tools and integrations
+        - **Ensembles**: Coordinated groups of AI elements
+        - **Memories**: Persistent knowledge and context systems
+
+  - type: input
+    id: element_name
+    attributes:
+      label: Element Name
+      description: What is the name of your element?
+      placeholder: e.g., "Professional Email Writer", "Debug Detective", "Code Reviewer"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: element_type
+    attributes:
+      label: Element Type
+      description: What type of element are you submitting?
+      options:
+        - persona
+        - skill
+        - agent
+        - prompt
+        - template
+        - tool
+        - ensemble
+        - memory
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category best describes your element?
+      options:
+        - creative
+        - educational
+        - gaming
+        - personal
+        - professional
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a clear description of what your element does (10-500 characters)
+      placeholder: e.g., "A professional persona that helps write clear, effective business emails with appropriate tone and structure."
+    validations:
+      required: true
+
+  - type: input
+    id: unique_id
+    attributes:
+      label: Unique ID
+      description: A unique identifier for your element (lowercase, letters, numbers, hyphens, underscores only)
+      placeholder: e.g., "professional-email-writer", "debug-detective-v2"
+    validations:
+      required: true
+
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: Your name or username
+      placeholder: e.g., "Jane Smith" or "jane_dev"
+    validations:
+      required: true
+
+  - type: textarea
+    id: element_content
+    attributes:
+      label: Element Content
+      description: |
+        Paste your complete element content here, including YAML frontmatter.
+        
+        **Format Requirements:**
+        - Must start with YAML frontmatter between `---` markers
+        - Include all the fields specified above
+        - Follow with the main content (instructions, templates, etc.)
+        
+        **Security Note:** Content is automatically scanned for malicious patterns. Do not include:
+        - Code execution commands
+        - System access attempts  
+        - Prompt injection attacks
+        - Placeholder text (TODO, FIXME, etc.)
+      placeholder: |
+        ```yaml
+        ---
+        name: "Professional Email Writer"
+        description: "A persona that helps write clear, effective business emails with appropriate tone and structure."
+        unique_id: "professional-email-writer"
+        author: "Your Name"
+        type: "persona"
+        category: "professional"
+        version: "1.0.0"
+        tags: ["email", "business", "communication"]
+        ---
+
+        You are a professional email writing assistant. Your role is to help users craft clear, effective business emails that maintain appropriate tone and structure.
+
+        ## Your Capabilities:
+        - Write professional emails for various business contexts
+        - Adjust tone from formal to casual as needed
+        - Structure emails with clear subject lines, greetings, body, and closings
+        - Ensure proper grammar and professional language
+
+        ## Guidelines:
+        - Always maintain a professional and respectful tone
+        - Keep emails concise but complete
+        - Use clear subject lines that summarize the purpose
+        - Include appropriate greetings and closings
+
+        When helping with emails, ask about:
+        1. The purpose of the email
+        2. The relationship with the recipient
+        3. The desired tone (formal, casual, etc.)
+        4. Any specific information that must be included
+        ```
+      render: markdown
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: guidelines
+    attributes:
+      label: Submission Guidelines
+      description: Please confirm you've followed our submission guidelines
+      options:
+        - label: "✅ My element includes all required fields (name, description, unique_id, author, type)"
+          required: true
+        - label: "✅ My content is original or properly attributed"
+          required: true
+        - label: "✅ My element doesn't contain malicious code, system commands, or prompt injections"
+          required: true
+        - label: "✅ My element provides clear, helpful instructions or content"
+          required: true
+        - label: "✅ I've tested my element and it works as expected"
+          required: true
+
+  - type: checkboxes
+    id: license
+    attributes:
+      label: Licensing
+      description: By submitting this element, you agree to the licensing terms
+      options:
+        - label: "📝 I agree to license my contribution under the AGPL-3.0 license"
+          required: true
+        - label: "🤝 I understand that approved elements will be publicly available in the collection"
+          required: true
+        - label: "⚖️ I have the right to submit this content and it doesn't violate any copyrights"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## What happens after submission?
+        
+        1. **🔍 Automatic Validation**: Your submission will be automatically validated for security, schema compliance, and quality
+        2. **🤖 PR Creation**: If validation passes, a pull request will be automatically created
+        3. **👥 Human Review**: Our maintainers will review the content for quality and appropriateness  
+        4. **✅ Approval**: Once approved, your element will be merged into the collection
+        5. **🎉 Publication**: Your element becomes available to the community!
+        
+        **Note**: You'll receive automatic updates on this issue as your submission progresses through the process.
+        
+        Thank you for contributing to the DollhouseMCP Collection! 🚀

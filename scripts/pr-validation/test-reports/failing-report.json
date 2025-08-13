@@ -1,0 +1,200 @@
+{
+  "timestamp": "2025-08-13T19:07:34.825Z",
+  "files": [
+    "library/tools/suspicious-tool.md"
+  ],
+  "summary": {
+    "overallStatus": "CRITICAL_ISSUES",
+    "securityLevel": "CRITICAL",
+    "qualityScore": 45,
+    "qualityGrade": "F",
+    "integrationPassing": false,
+    "criticalIssues": 1,
+    "highRiskIssues": 1,
+    "estimatedReviewTime": "40 minutes"
+  },
+  "security": {
+    "riskLevel": "CRITICAL",
+    "issueCount": 2,
+    "riskDistribution": {
+      "critical": 1,
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    },
+    "confidenceScore": 95,
+    "topThreats": [
+      {
+        "category": "code-injection",
+        "description": "Direct code evaluation attempt detected",
+        "severity": "CRITICAL"
+      },
+      {
+        "category": "prompt-injection",
+        "description": "Instruction override attempt",
+        "severity": "HIGH"
+      }
+    ],
+    "mitigationSuggestions": [
+      {
+        "issue": "Direct code evaluation attempt detected",
+        "mitigation": "Remove eval() and Function() calls"
+      },
+      {
+        "issue": "Instruction override attempt",
+        "mitigation": "Remove prompt injection patterns"
+      }
+    ],
+    "falsePositiveRisk": "LOW"
+  },
+  "quality": {
+    "score": 45,
+    "grade": "F",
+    "breakdown": {
+      "documentation": {
+        "score": 8,
+        "maxScore": 25,
+        "percentage": 32
+      },
+      "metadata": {
+        "score": 12,
+        "maxScore": 20,
+        "percentage": 60
+      },
+      "structure": {
+        "score": 10,
+        "maxScore": 20,
+        "percentage": 50
+      },
+      "language": {
+        "score": 6,
+        "maxScore": 15,
+        "percentage": 40
+      },
+      "usability": {
+        "score": 3,
+        "maxScore": 10,
+        "percentage": 30
+      },
+      "bestPractices": {
+        "score": 6,
+        "maxScore": 10,
+        "percentage": 60
+      }
+    },
+    "strengths": [
+      "Well-structured metadata",
+      "Clear documentation"
+    ],
+    "improvements": [
+      "Add more examples",
+      "Improve description length"
+    ],
+    "complianceGaps": [],
+    "benchmarkComparison": {
+      "benchmark": 75,
+      "difference": -30,
+      "comparison": "below"
+    }
+  },
+  "integration": {
+    "allTestsPassing": false,
+    "testSuites": {
+      "elementLoading": {
+        "name": "Element Loading",
+        "status": "FAILED",
+        "testsRun": 4,
+        "testsPassed": 2,
+        "details": {
+          "canParseYaml": "PASSED",
+          "hasValidStructure": "FAILED",
+          "metadataComplete": "FAILED",
+          "contentAccessible": "PASSED"
+        }
+      },
+      "schemaCompliance": {
+        "name": "Schema Compliance",
+        "status": "FAILED",
+        "testsRun": 4,
+        "testsPassed": 1,
+        "details": {
+          "requiredFieldsPresent": "FAILED",
+          "fieldTypesCorrect": "FAILED",
+          "constraintsRespected": "FAILED",
+          "validationPassed": "PASSED"
+        }
+      }
+    },
+    "compatibilityIssues": [],
+    "dependencyChecks": {
+      "resolved": true,
+      "issues": []
+    },
+    "loadingPerformance": {
+      "loadTime": "< 50ms",
+      "acceptable": true
+    }
+  },
+  "autoApproval": {
+    "eligible": false,
+    "confidence": 0,
+    "checks": {
+      "qualityScore": false,
+      "securityLevel": false,
+      "allTestsPassing": false,
+      "criticalIssues": false,
+      "highRiskIssues": true
+    },
+    "reasoning": "Auto-approval blocked by: qualityScore, securityLevel, allTestsPassing, criticalIssues",
+    "fallbackSuggestion": "Recommend manual security review before approval."
+  },
+  "recommendations": {
+    "immediate": [
+      "Address code-injection: Remove eval() and Function() calls",
+      "Address prompt-injection: Remove prompt injection patterns",
+      "Fix integration test failures before approval"
+    ],
+    "suggested": [
+      "Improve documentation completeness",
+      "Add more detailed examples"
+    ],
+    "future": [
+      "Monitor performance impact in production"
+    ]
+  },
+  "reviewerChecklist": {
+    "critical": [
+      "Review and address all critical security issues",
+      "Verify all integration tests pass before approval"
+    ],
+    "important": [
+      "Ensure documentation meets minimum quality standards",
+      "Verify element follows collection naming conventions",
+      "Check that metadata is complete and accurate",
+      "Ensure examples are clear and functional"
+    ],
+    "optional": [
+      "Consider suggesting improvements to enhance quality score",
+      "Look for opportunities to improve documentation",
+      "Check if similar elements exist in the collection"
+    ]
+  },
+  "similarElements": {
+    "found": [],
+    "suggestions": [
+      "Consider referencing similar elements in documentation",
+      "Ensure consistency with existing naming patterns",
+      "Check if functionality overlaps with existing elements"
+    ]
+  },
+  "performanceImpact": {
+    "estimatedLoadTime": "< 100ms",
+    "memoryUsage": "Minimal",
+    "processingComplexity": "Low",
+    "scalabilityImpact": "None",
+    "recommendations": [
+      "No performance concerns identified",
+      "Element follows lightweight design patterns"
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+name: PR Validation Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'library/**/*'
+      - 'showcase/**/*'
+      - 'catalog/**/*'
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'library/**/*'
+      - 'showcase/**/*'
+      - 'catalog/**/*'
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+  statuses: write
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    outputs:
+      security-passed: ${{ steps.scan.outputs.passed }}
+      security-score: ${{ steps.scan.outputs.score }}
+      security-report: ${{ steps.scan.outputs.report }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ','
+
+      - name: Run security scan
+        id: scan
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Running security analysis on changed files..."
+          FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          if [ -n "$FILES" ]; then
+            node scripts/pr-validation/security-scanner.mjs "$FILES"
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "score=0" >> $GITHUB_OUTPUT
+            echo "report=No files to scan" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create security status check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = '${{ steps.scan.outputs.passed }}' === 'true';
+            const score = '${{ steps.scan.outputs.score }}' || '0';
+            
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: passed ? 'success' : 'failure',
+              context: 'pr-validation/security',
+              description: passed ? `Security scan passed (score: ${score})` : `Security issues found (score: ${score})`,
+              target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            });
+
+      - name: Upload security report
+        if: always() && steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-report
+          path: security-report.json
+          retention-days: 30
+
+  schema-check:
+    name: Schema Validation
+    runs-on: ubuntu-latest
+    outputs:
+      schema-passed: ${{ steps.validate.outputs.passed }}
+      schema-errors: ${{ steps.validate.outputs.errors }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ' '
+
+      - name: Validate schemas
+        id: validate
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Validating YAML/JSON schemas..."
+          FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          if [ -n "$FILES" ]; then
+            # Use existing validation infrastructure
+            node dist/src/cli/validate-content.js $FILES
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "errors=0" >> $GITHUB_OUTPUT
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "errors=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create schema status check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = '${{ steps.validate.outputs.passed }}' === 'true';
+            const errors = '${{ steps.validate.outputs.errors }}' || '0';
+            
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: passed ? 'success' : 'failure',
+              context: 'pr-validation/schema',
+              description: passed ? 'Schema validation passed' : `Schema validation failed (${errors} errors)`,
+              target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            });
+
+  content-quality:
+    name: Content Quality Analysis
+    runs-on: ubuntu-latest
+    outputs:
+      quality-passed: ${{ steps.analyze.outputs.passed }}
+      quality-score: ${{ steps.analyze.outputs.score }}
+      quality-report: ${{ steps.analyze.outputs.report }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ','
+
+      - name: Analyze content quality
+        id: analyze
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Analyzing content quality..."
+          FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          if [ -n "$FILES" ]; then
+            node scripts/pr-validation/quality-analyzer.mjs "$FILES"
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "score=100" >> $GITHUB_OUTPUT
+            echo "report=No files to analyze" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create quality status check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = '${{ steps.analyze.outputs.passed }}' === 'true';
+            const score = '${{ steps.analyze.outputs.score }}' || '100';
+            
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: passed ? 'success' : 'failure',
+              context: 'pr-validation/quality',
+              description: passed ? `Quality analysis passed (score: ${score})` : `Quality issues found (score: ${score})`,
+              target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            });
+
+      - name: Upload quality report
+        if: always() && steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-analysis-report
+          path: quality-report.json
+          retention-days: 30
+
+  integration-test:
+    name: Integration Testing
+    runs-on: ubuntu-latest
+    outputs:
+      integration-passed: ${{ steps.test.outputs.passed }}
+      integration-report: ${{ steps.test.outputs.report }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            library/**/*.md
+            showcase/**/*.md
+            catalog/**/*.md
+          separator: ','
+
+      - name: Run integration tests
+        id: test
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Running integration tests..."
+          FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          if [ -n "$FILES" ]; then
+            node scripts/pr-validation/integration-tester.mjs "$FILES"
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "report=No files to test" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create integration status check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = '${{ steps.test.outputs.passed }}' === 'true';
+            
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: passed ? 'success' : 'failure',
+              context: 'pr-validation/integration',
+              description: passed ? 'Integration tests passed' : 'Integration tests failed',
+              target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            });
+
+      - name: Upload integration report
+        if: always() && steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report
+          path: integration-report.json
+          retention-days: 30
+
+  generate-report:
+    name: Generate Validation Report
+    runs-on: ubuntu-latest
+    needs: [security-scan, schema-check, content-quality, integration-test]
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports/
+        continue-on-error: true
+
+      - name: Generate comprehensive report
+        id: report
+        run: |
+          echo "Generating comprehensive validation report..."
+          
+          # Collect results from all jobs
+          SECURITY_PASSED="${{ needs.security-scan.outputs.security-passed }}"
+          SCHEMA_PASSED="${{ needs.schema-check.outputs.schema-passed }}"
+          QUALITY_PASSED="${{ needs.content-quality.outputs.quality-passed }}"
+          INTEGRATION_PASSED="${{ needs.integration-test.outputs.integration-passed }}"
+          
+          # Calculate overall status
+          if [ "$SECURITY_PASSED" = "true" ] && [ "$SCHEMA_PASSED" = "true" ] && [ "$QUALITY_PASSED" = "true" ] && [ "$INTEGRATION_PASSED" = "true" ]; then
+            OVERALL_STATUS="success"
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="All validation checks passed"
+          else
+            OVERALL_STATUS="failure"
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="One or more validation checks failed"
+          fi
+          
+          echo "overall_status=$OVERALL_STATUS" >> $GITHUB_OUTPUT
+          echo "status_emoji=$STATUS_EMOJI" >> $GITHUB_OUTPUT
+          echo "status_text=$STATUS_TEXT" >> $GITHUB_OUTPUT
+
+      - name: Create overall status check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ steps.report.outputs.overall_status }}';
+            const statusText = '${{ steps.report.outputs.status_text }}';
+            
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: status,
+              context: 'pr-validation/overall',
+              description: statusText,
+              target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`
+            });
+
+      - name: Comment PR with comprehensive report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const statusEmoji = '${{ steps.report.outputs.status_emoji }}';
+            const statusText = '${{ steps.report.outputs.status_text }}';
+            
+            // Get job results
+            const securityPassed = '${{ needs.security-scan.outputs.security-passed }}' === 'true';
+            const schemaPassed = '${{ needs.schema-check.outputs.schema-passed }}' === 'true';
+            const qualityPassed = '${{ needs.content-quality.outputs.quality-passed }}' === 'true';
+            const integrationPassed = '${{ needs.integration-test.outputs.integration-passed }}' === 'true';
+            
+            const securityScore = '${{ needs.security-scan.outputs.security-score }}' || 'N/A';
+            const qualityScore = '${{ needs.content-quality.outputs.quality-score }}' || 'N/A';
+            
+            let body = `## ${statusEmoji} PR Validation Results
+            
+            **Overall Status**: ${statusText}
+            
+            ### Validation Checks
+            
+            | Check | Status | Score/Details |
+            |-------|--------|---------------|
+            | 🔒 Security Scan | ${securityPassed ? '✅ Passed' : '❌ Failed'} | ${securityScore} |
+            | 📋 Schema Validation | ${schemaPassed ? '✅ Passed' : '❌ Failed'} | - |
+            | 📝 Content Quality | ${qualityPassed ? '✅ Passed' : '❌ Failed'} | ${qualityScore} |
+            | 🧪 Integration Tests | ${integrationPassed ? '✅ Passed' : '❌ Failed'} | - |
+            
+            ### Next Steps
+            
+            `;
+            
+            if (statusText.includes('failed')) {
+              body += `❌ **Action Required**: Please review and fix the issues identified above before this PR can be merged.
+              
+              - Check the individual job logs for detailed error information
+              - Download the validation reports from the workflow artifacts
+              - Make necessary corrections and push updates to trigger re-validation
+              `;
+            } else {
+              body += `✅ **Ready for Review**: All validation checks have passed! This PR is ready for human review.
+              
+              - All security scans completed successfully
+              - Schema validation passed
+              - Content quality meets standards
+              - Integration tests are working
+              `;
+            }
+            
+            body += `
+            
+            ---
+            <sub>🤖 Automated validation by DollhouseMCP Collection | [View workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId})</sub>`;
+            
+            // Find existing validation comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('PR Validation Results')
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: Upload comprehensive report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-validation-report
+          path: |
+            reports/
+          retention-days: 30
+
+      - name: Set workflow status
+        run: |
+          if [ "${{ steps.report.outputs.overall_status }}" = "failure" ]; then
+            echo "❌ PR validation failed"
+            exit 1
+          else
+            echo "✅ PR validation passed"
+          fi
