@@ -1,0 +1,538 @@
+name: Process Element Submission
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: write
+
+env:
+  NODE_VERSION: '18'
+  VALIDATION_DIR: '.validation'
+  MAX_ISSUE_SIZE: 50000
+  SUBMISSION_LABEL: 'element-submission'
+
+jobs:
+  validate-and-create-pr:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'element-submission')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create validation workspace
+        run: |
+          mkdir -p ${{ env.VALIDATION_DIR }}
+          echo "🔍 Starting element submission validation..." > ${{ env.VALIDATION_DIR }}/log.md
+
+      - name: Extract and validate submission
+        id: validate
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+
+          // Security and validation constants
+          const MAX_CONTENT_LENGTH = 50000;
+          const ALLOWED_TYPES = ['persona', 'skill', 'agent', 'prompt', 'template', 'tool', 'ensemble', 'memory'];
+          const ALLOWED_CATEGORIES = ['creative', 'educational', 'gaming', 'personal', 'professional'];
+          
+          // Validation workspace
+          const validationDir = process.env.VALIDATION_DIR;
+          const logFile = path.join(validationDir, 'log.md');
+
+          function log(message) {
+            console.log(message);
+            fs.appendFileSync(logFile, `${message}\n`);
+          }
+
+          function setOutput(name, value) {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}=${value}\n`);
+          }
+
+          function setMultilineOutput(name, value) {
+            const delimiter = Math.random().toString(36).substring(2, 15);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}<<${delimiter}\n${value}\n${delimiter}\n`);
+          }
+
+          try {
+            log('## Phase 1: Initial Validation');
+            
+            // Extract issue data
+            const issueBody = process.env.ISSUE_BODY;
+            const issueNumber = process.env.ISSUE_NUMBER;
+            const issueTitle = process.env.ISSUE_TITLE;
+            const issueUser = process.env.ISSUE_USER;
+
+            if (!issueBody || issueBody.trim() === '') {
+              throw new Error('Issue body is empty');
+            }
+
+            if (issueBody.length > MAX_CONTENT_LENGTH) {
+              throw new Error(`Issue body exceeds maximum size of ${MAX_CONTENT_LENGTH} characters`);
+            }
+
+            log(`✅ Issue size validation passed (${issueBody.length} characters)`);
+
+            // Extract YAML content between triple backticks
+            const yamlMatch = issueBody.match(/```ya?ml\n([\s\S]*?)\n```/);
+            if (!yamlMatch || !yamlMatch[1]) {
+              throw new Error('No YAML content found. Please include element content between ```yaml and ``` markers');
+            }
+
+            const yamlContent = yamlMatch[1].trim();
+            log(`✅ YAML content extracted (${yamlContent.length} characters)`);
+
+            // Create temporary file for validation
+            const tempFile = path.join(validationDir, 'element.md');
+            fs.writeFileSync(tempFile, yamlContent);
+
+            log('## Phase 2: Security Validation');
+
+            // Basic security checks
+            const securityPatterns = [
+              { pattern: /\beval\s*\(/i, risk: 'CRITICAL', desc: 'Code evaluation attempt' },
+              { pattern: /\bexec\s*\(/i, risk: 'CRITICAL', desc: 'Code execution attempt' },
+              { pattern: /\bsystem\s*\(/i, risk: 'CRITICAL', desc: 'System command attempt' },
+              { pattern: /\brequire\s*\(/i, risk: 'HIGH', desc: 'Node.js require attempt' },
+              { pattern: /\bimport\s+.*\bfs\b/i, risk: 'HIGH', desc: 'File system access attempt' },
+              { pattern: /\bprocess\./i, risk: 'HIGH', desc: 'Process object access' },
+              { pattern: /javascript:/i, risk: 'HIGH', desc: 'JavaScript protocol' },
+              { pattern: /data:.*base64/i, risk: 'MEDIUM', desc: 'Base64 data URL' },
+              { pattern: /\$\{.*\}/i, risk: 'MEDIUM', desc: 'Template literal injection' },
+              { pattern: /<script/i, risk: 'HIGH', desc: 'Script tag injection' },
+              { pattern: /on\w+\s*=/i, risk: 'MEDIUM', desc: 'HTML event handler' }
+            ];
+
+            let criticalIssues = 0;
+            let highIssues = 0;
+            let mediumIssues = 0;
+
+            securityPatterns.forEach(({ pattern, risk, desc }) => {
+              if (pattern.test(yamlContent)) {
+                log(`🔴 ${risk}: ${desc}`);
+                if (risk === 'CRITICAL') criticalIssues++;
+                else if (risk === 'HIGH') highIssues++;
+                else mediumIssues++;
+              }
+            });
+
+            if (criticalIssues > 0 || highIssues > 2) {
+              throw new Error(`Security validation failed: ${criticalIssues} critical and ${highIssues} high-risk patterns detected`);
+            }
+
+            if (mediumIssues > 0 || highIssues > 0) {
+              log(`⚠️ Security warnings: ${highIssues} high-risk and ${mediumIssues} medium-risk patterns detected`);
+            } else {
+              log('✅ Security validation passed - no malicious patterns detected');
+            }
+
+            log('## Phase 3: Schema Validation');
+
+            // Parse frontmatter to extract metadata
+            let metadata;
+            try {
+              // Simple YAML parsing for frontmatter
+              const frontmatterMatch = yamlContent.match(/^---\n([\s\S]*?)\n---/);
+              if (!frontmatterMatch) {
+                throw new Error('No frontmatter found. Element must start with YAML frontmatter between --- markers');
+              }
+
+              const frontmatterYaml = frontmatterMatch[1];
+              
+              // Use Node.js built-in to validate YAML structure (basic validation)
+              // In a real implementation, you'd use the full validation logic from content-validator.ts
+              const lines = frontmatterYaml.split('\n');
+              metadata = {};
+              
+              for (const line of lines) {
+                const match = line.match(/^([^:]+):\s*(.*)$/);
+                if (match) {
+                  const key = match[1].trim();
+                  let value = match[2].trim();
+                  
+                  // Handle quoted strings
+                  if ((value.startsWith('"') && value.endsWith('"')) ||
+                      (value.startsWith("'") && value.endsWith("'"))) {
+                    value = value.slice(1, -1);
+                  }
+                  
+                  // Handle arrays
+                  if (value.startsWith('[') && value.endsWith(']')) {
+                    value = value.slice(1, -1).split(',').map(s => s.trim()).filter(s => s);
+                  }
+                  
+                  metadata[key] = value;
+                }
+              }
+            } catch (error) {
+              throw new Error(`Failed to parse YAML frontmatter: ${error.message}`);
+            }
+
+            log(`✅ Metadata extracted with ${Object.keys(metadata).length} fields`);
+
+            // Validate required fields
+            const requiredFields = ['name', 'description', 'unique_id', 'author', 'type'];
+            for (const field of requiredFields) {
+              if (!metadata[field]) {
+                throw new Error(`Missing required field: ${field}`);
+              }
+            }
+
+            // Validate element type
+            if (!ALLOWED_TYPES.includes(metadata.type)) {
+              throw new Error(`Invalid type: ${metadata.type}. Allowed types: ${ALLOWED_TYPES.join(', ')}`);
+            }
+
+            // Validate category if present
+            if (metadata.category && !ALLOWED_CATEGORIES.includes(metadata.category)) {
+              throw new Error(`Invalid category: ${metadata.category}. Allowed categories: ${ALLOWED_CATEGORIES.join(', ')}`);
+            }
+
+            log('✅ Schema validation passed');
+
+            log('## Phase 4: Quality Validation');
+
+            // Content quality checks
+            const content = yamlContent.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
+            
+            if (content.length < 50) {
+              throw new Error('Content body is too short (minimum 50 characters after frontmatter)');
+            }
+
+            // Check for placeholder content
+            const placeholders = ['TODO', 'FIXME', 'XXX', '[INSERT', '[ADD', 'lorem ipsum'];
+            for (const placeholder of placeholders) {
+              if (content.toLowerCase().includes(placeholder.toLowerCase())) {
+                throw new Error(`Content contains placeholder text: ${placeholder}. Please replace with actual content`);
+              }
+            }
+
+            log('✅ Quality validation passed');
+
+            log('## Phase 5: Duplicate Check');
+
+            // Check for existing elements with same unique_id
+            const searchCmd = `find library showcase catalog -name "*.md" -type f 2>/dev/null || true`;
+            const existingFiles = execSync(searchCmd, { encoding: 'utf8' }).trim().split('\n').filter(f => f);
+            
+            let duplicateFound = false;
+            for (const file of existingFiles) {
+              if (!fs.existsSync(file)) continue;
+              
+              try {
+                const existingContent = fs.readFileSync(file, 'utf8');
+                const existingMatch = existingContent.match(/unique_id:\s*["']?([^"'\n]+)["']?/);
+                if (existingMatch && existingMatch[1] === metadata.unique_id) {
+                  duplicateFound = true;
+                  log(`❌ Duplicate unique_id found in: ${file}`);
+                  break;
+                }
+              } catch (error) {
+                // Skip files that can't be read
+                continue;
+              }
+            }
+
+            if (duplicateFound) {
+              throw new Error(`Element with unique_id "${metadata.unique_id}" already exists. Please use a different unique_id`);
+            }
+
+            log('✅ No duplicates found');
+
+            // Determine target directory and filename
+            const elementType = metadata.type;
+            const category = metadata.category || 'personal';
+            const filename = metadata.unique_id.replace(/[^a-z0-9-_]/g, '-') + '.md';
+            const targetPath = `library/${elementType}s/${filename}`;
+            
+            // Save validation results
+            const validationResult = {
+              passed: true,
+              metadata,
+              content: yamlContent,
+              targetPath,
+              securityWarnings: highIssues + mediumIssues,
+              issueNumber,
+              issueTitle,
+              issueUser
+            };
+
+            fs.writeFileSync(path.join(validationDir, 'result.json'), JSON.stringify(validationResult, null, 2));
+            
+            log('## Validation Complete ✅');
+            log(`Element will be saved to: ${targetPath}`);
+
+            setOutput('validation_passed', 'true');
+            setOutput('target_path', targetPath);
+            setOutput('element_type', elementType);
+            setOutput('element_name', metadata.name);
+            setOutput('security_warnings', highIssues + mediumIssues);
+            setMultilineOutput('element_content', yamlContent);
+
+          } catch (error) {
+            log(`## Validation Failed ❌`);
+            log(`Error: ${error.message}`);
+            
+            setOutput('validation_passed', 'false');
+            setOutput('error_message', error.message);
+            
+            process.exit(1);
+          }
+          EOF
+
+      - name: Create pull request on validation success
+        if: steps.validate.outputs.validation_passed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_PATH: ${{ steps.validate.outputs.target_path }}
+          ELEMENT_CONTENT: ${{ steps.validate.outputs.element_content }}
+          ELEMENT_NAME: ${{ steps.validate.outputs.element_name }}
+          ELEMENT_TYPE: ${{ steps.validate.outputs.element_type }}
+          SECURITY_WARNINGS: ${{ steps.validate.outputs.security_warnings }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+        run: |
+          # Create branch name
+          BRANCH_NAME="element-submission-${ISSUE_NUMBER}-$(echo "$ELEMENT_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')"
+          
+          # Configure git
+          git config --global user.name "Element Processor"
+          git config --global user.email "noreply@dollhousemcp.com"
+          
+          # Create and switch to new branch
+          git checkout -b "$BRANCH_NAME"
+          
+          # Create target directory if it doesn't exist
+          TARGET_DIR=$(dirname "$TARGET_PATH")
+          mkdir -p "$TARGET_DIR"
+          
+          # Write element content to target file
+          echo "$ELEMENT_CONTENT" > "$TARGET_PATH"
+          
+          # Add and commit
+          git add "$TARGET_PATH"
+          git commit -m "Add $ELEMENT_TYPE: $ELEMENT_NAME
+
+          Submitted by: @$ISSUE_USER
+          Issue: #$ISSUE_NUMBER
+          Type: $ELEMENT_TYPE
+          Security warnings: $SECURITY_WARNINGS
+
+          🤖 Automated submission processing"
+          
+          # Push branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR description
+          cat > pr_body.md << EOF
+          ## 🤖 Automated Element Submission
+
+          This PR was automatically created from issue #$ISSUE_NUMBER submitted by @$ISSUE_USER.
+
+          ### Element Details
+          - **Type**: $ELEMENT_TYPE
+          - **Name**: $ELEMENT_NAME
+          - **File**: \`$TARGET_PATH\`
+          - **Security Warnings**: $SECURITY_WARNINGS
+
+          ### Validation Results
+          ✅ **Security**: No critical security issues detected
+          ✅ **Schema**: All required fields present and valid
+          ✅ **Quality**: Content meets minimum quality standards
+          ✅ **Duplicates**: No duplicate unique_id found
+
+          ### Review Checklist
+          - [ ] Manual content review completed
+          - [ ] Element tested in appropriate environment
+          - [ ] Documentation is clear and helpful
+          - [ ] Attribution and licensing is correct
+
+          ### Security Notes
+          $(if [ "$SECURITY_WARNINGS" -gt 0 ]; then echo "⚠️ This submission has $SECURITY_WARNINGS security warning(s). Please review the validation log for details."; else echo "🔒 No security warnings detected."; fi)
+
+          ---
+          **Automated Processing**: This PR was created automatically by the Element Submission workflow.
+          **Original Issue**: #$ISSUE_NUMBER
+          **Submitted By**: @$ISSUE_USER
+
+          /cc @dollhouse-mcp/reviewers
+          EOF
+
+          # Create pull request
+          gh pr create \
+            --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
+            --body-file pr_body.md \
+            --label "automated-submission,needs-review,$ELEMENT_TYPE" \
+            --assignee "${{ github.repository_owner }}"
+
+          # Get PR number
+          PR_NUMBER=$(gh pr view --json number --jq .number)
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Update issue with success status
+        if: steps.validate.outputs.validation_passed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Read validation log
+          VALIDATION_LOG=$(cat ${{ env.VALIDATION_DIR }}/log.md)
+          
+          # Create success comment
+          cat > comment.md << EOF
+          ## ✅ Submission Processing Complete
+
+          Your element submission has been successfully validated and a pull request has been created!
+
+          ### Validation Report
+          \`\`\`
+          $VALIDATION_LOG
+          \`\`\`
+
+          ### Next Steps
+          1. 🔍 Your submission is now under review in the automatically created pull request
+          2. 📝 Our reviewers will check the content quality and security
+          3. ✅ Once approved, your element will be merged into the collection
+          4. 🎉 You'll be notified when it's live!
+
+          ### What Happens Next?
+          - **Human Review**: A maintainer will review the content for quality and appropriateness
+          - **Testing**: The element will be tested in our validation environment
+          - **Approval**: If everything looks good, the PR will be approved and merged
+          - **Publication**: Your element will become available in the collection
+
+          Thank you for contributing to the DollhouseMCP Collection! 🚀
+
+          ---
+          *This comment was generated automatically by the Element Submission workflow.*
+          EOF
+          
+          gh issue comment $ISSUE_NUMBER --body-file comment.md
+          
+          # Add labels
+          gh issue edit $ISSUE_NUMBER --add-label "validated,pr-created"
+
+      - name: Update issue with failure status
+        if: steps.validate.outputs.validation_passed == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ERROR_MESSAGE: ${{ steps.validate.outputs.error_message }}
+        run: |
+          # Read validation log (may be partial)
+          VALIDATION_LOG=""
+          if [ -f "${{ env.VALIDATION_DIR }}/log.md" ]; then
+            VALIDATION_LOG=$(cat ${{ env.VALIDATION_DIR }}/log.md)
+          fi
+          
+          # Create failure comment
+          cat > comment.md << EOF
+          ## ❌ Submission Validation Failed
+
+          Unfortunately, your element submission did not pass our validation checks.
+
+          ### Error
+          \`\`\`
+          $ERROR_MESSAGE
+          \`\`\`
+
+          ### Validation Log
+          \`\`\`
+          $VALIDATION_LOG
+          \`\`\`
+
+          ### How to Fix
+          Please review the error message above and update your submission accordingly. Common issues:
+
+          1. **Missing YAML markers**: Ensure your element is wrapped in \`\`\`yaml and \`\`\` 
+          2. **Missing required fields**: Include name, description, unique_id, author, and type
+          3. **Invalid type**: Use one of: persona, skill, agent, prompt, template, tool, ensemble, memory
+          4. **Security concerns**: Remove any code execution, system commands, or suspicious patterns
+          5. **Quality issues**: Ensure content is complete and not placeholder text
+
+          ### Submission Format
+          Your submission should look like this:
+          \`\`\`yaml
+          ---
+          name: "Your Element Name"
+          description: "A clear description of what this element does"
+          unique_id: "your-unique-element-id"
+          author: "Your Name"
+          type: "persona"  # or skill, agent, prompt, template, tool, ensemble, memory
+          category: "professional"  # optional: creative, educational, gaming, personal, professional
+          ---
+
+          Your element content goes here...
+          \`\`\`
+
+          Please update your issue with the corrected submission and we'll automatically reprocess it.
+
+          ---
+          *This comment was generated automatically by the Element Submission workflow.*
+          EOF
+          
+          gh issue comment $ISSUE_NUMBER --body-file comment.md
+          
+          # Add labels
+          gh issue edit $ISSUE_NUMBER --add-label "validation-failed,needs-fix"
+
+      - name: Clean up validation workspace
+        if: always()
+        run: |
+          rm -rf ${{ env.VALIDATION_DIR }}
+
+  # Additional job for manual processing fallback
+  manual-review-needed:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'element-submission') && contains(github.event.issue.labels.*.name, 'manual-review')
+    
+    steps:
+      - name: Notify maintainers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          cat > comment.md << EOF
+          ## 👥 Manual Review Required
+
+          This submission has been flagged for manual review by a maintainer.
+
+          @dollhouse-mcp/reviewers - Please review this submission manually as it may require special handling.
+
+          **Reasons for manual review:**
+          - Complex element structure
+          - Special licensing requirements  
+          - Technical complexity
+          - Policy considerations
+
+          ---
+          *This comment was generated automatically.*
+          EOF
+          
+          gh issue comment $ISSUE_NUMBER --body-file comment.md
