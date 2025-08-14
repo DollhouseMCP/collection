@@ -42,17 +42,17 @@ function logSection(title) {
   console.log('='.repeat(60));
 }
 
-// Import the MCP server components
-async function loadMCPServer() {
-  try {
-    const serverPath = '/Users/mick/Developer/Organizations/DollhouseMCP/active/mcp-server/dist/index.js';
-    const { DollhouseMCPServer } = await import(serverPath);
-    return DollhouseMCPServer;
-  } catch (error) {
-    console.error('Failed to load MCP server:', error);
-    throw error;
-  }
-}
+// Import the MCP server components - currently unused but kept for future use
+// async function loadMCPServer() {
+//   try {
+//     const serverPath = '/Users/mick/Developer/Organizations/DollhouseMCP/active/mcp-server/dist/index.js';
+//     const { DollhouseMCPServer } = await import(serverPath);
+//     return DollhouseMCPServer;
+//   } catch (error) {
+//     console.error('Failed to load MCP server:', error);
+//     throw error;
+//   }
+// }
 
 async function main() {
   logSection('🚀 ACTUAL ROUNDTRIP WORKFLOW TEST');

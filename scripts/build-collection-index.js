@@ -300,7 +300,7 @@ async function main() {
   // Verify library directory exists
   try {
     await fs.access(LIBRARY_DIR);
-  } catch (error) {
+  } catch {
     console.error(`❌ Library directory not found: ${LIBRARY_DIR}`);
     process.exit(1);
   }
@@ -309,7 +309,7 @@ async function main() {
   const outputDir = path.dirname(OUTPUT_FILE);
   try {
     await fs.mkdir(outputDir, { recursive: true });
-  } catch (error) {
+  } catch {
     console.error(`❌ Failed to create output directory: ${outputDir}`);
     process.exit(1);
   }

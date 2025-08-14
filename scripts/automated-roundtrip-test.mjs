@@ -5,7 +5,7 @@
  * Executes complete MCP roundtrip workflow tests and generates reports
  */
 
-import { execSync } from 'child_process';
+// import { execSync } from 'child_process'; // Unused - removed to fix ESLint
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
