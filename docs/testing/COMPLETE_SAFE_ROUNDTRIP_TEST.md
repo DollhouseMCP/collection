@@ -13,22 +13,33 @@ This is the comprehensive, security-safe test of the entire collection workflow 
 
 ## PART 1: Claude Desktop Setup (Start Here)
 
-Start in Claude Desktop with these exact prompts:
+Start in Claude Desktop with these exact prompts. Copy and paste each one exactly as shown:
 
 ### Prompt 1: Browse and Install from Collection
+
+```
 First, browse the skills available in the collection using: browse_collection "skills"
 
 Then install the Safe Roundtrip Tester using: install_collection_element "skills/safe-roundtrip-tester.md"
 
 Tell me if it downloaded successfully and what version it shows.
+```
 
 ### Prompt 2: Verify Installation
+
+```
 Please list all skills in my portfolio using list_elements --type skills and tell me if you see "Safe Roundtrip Tester" in the list. Also tell me what version number it shows.
+```
 
 ### Prompt 3: Check Current Configuration
+
+```
 Show me my current collection submission configuration using get_collection_submission_config and tell me if auto-submit is enabled or disabled.
+```
 
 ### Prompt 4: Test WITHOUT Auto-Submit
+
+```
 First disable auto-submit by running: configure_collection_submission autoSubmit: false
 
 Then verify it's disabled with: get_collection_submission_config
@@ -40,18 +51,27 @@ Tell me:
 2. What's the portfolio URL?
 3. Was a collection issue created? (Should be NO)
 4. Did you get a manual submission link?
+```
 
 ### Prompt 5: Verify Portfolio Upload
+
+```
 Please check my GitHub portfolio and tell me if you can see the safe-roundtrip-tester.md file in the skills folder. What version does it show?
+```
 
 ### Prompt 6: Make a Modification
+
+```
 Please modify the Safe Roundtrip Tester by using: edit_element "Safe Roundtrip Tester" --type skills version "1.0.1"
 
-Also add a note at the end saying "Modified via Claude Desktop test on [today's date]"
+Also add a note at the end saying "Modified via Claude Desktop test on August 14, 2025"
 
 Then verify the changes were saved by showing me the updated version.
+```
 
 ### Prompt 7: Test WITH Auto-Submit
+
+```
 Now enable auto-submit by running: configure_collection_submission autoSubmit: true
 
 Verify it's enabled with: get_collection_submission_config
@@ -63,35 +83,51 @@ Tell me:
 2. Was a collection issue created this time?
 3. What's the issue URL?
 4. What labels were applied to the issue?
+```
 
 ### Prompt 8: Test Error Handling
+
+```
 Try submitting a skill that doesn't exist: submit_content "This Skill Does Not Exist"
 
 What error message did you get? Was it helpful?
+```
 
 ### Prompt 9: Browse Collection Directly
+
+```
 Browse the skills in the collection using: browse_collection "skills"
 
 Can you see other skills available? List the first 3 you see. Do you see the Safe Roundtrip Tester?
+```
 
 ### Prompt 10: Search Collection
+
+```
 Search for test-related content in the collection using: search_collection "safe" or search_collection "roundtrip"
 
 What results do you find? Do you see the Safe Roundtrip Tester skill?
+```
 
 ### Prompt 11: Clean Install from Collection
+
+```
 Let's test installing a fresh skill from the collection. First, delete the local Safe Roundtrip Tester if it exists.
 
 Then install it fresh using: install_collection_element "skills/safe-roundtrip-tester.md"
 
 Did it download successfully? What version did you get?
+```
 
 ### Prompt 12: Reset Configuration
+
+```
 Please disable auto-submit for normal use by running: configure_collection_submission autoSubmit: false
 
 Then verify with: get_collection_submission_config
 
 The test is complete. Please summarize what worked and what didn't.
+```
 
 ---
 
