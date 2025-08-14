@@ -823,6 +823,7 @@ class IntegrationTester {
     
     // Simulate memory operations
     const largeCopy = content.repeat(10);
+    // Parse content to simulate memory usage (result intentionally unused)
     const _parsed = matter(largeCopy);
     
     const currentMemory = process.memoryUsage().heapUsed;
