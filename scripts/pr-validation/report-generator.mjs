@@ -280,7 +280,7 @@ class ReportGenerator {
   /**
    * Find similar elements in the collection
    */
-  findSimilarElements(files) {
+  findSimilarElements(_files) {
     // This would typically analyze existing collection content
     // For now, return placeholder data structure
     return {
@@ -296,7 +296,7 @@ class ReportGenerator {
   /**
    * Assess performance impact of changes
    */
-  assessPerformanceImpact(results) {
+  assessPerformanceImpact(_results) {
     return {
       estimatedLoadTime: '< 100ms',
       memoryUsage: 'Minimal',
@@ -578,7 +578,7 @@ class ReportGenerator {
     };
   }
 
-  calculateConfidenceScore(securityResults) {
+  calculateConfidenceScore(_securityResults) {
     // Placeholder implementation
     return 95;
   }
@@ -598,19 +598,19 @@ class ReportGenerator {
     }));
   }
 
-  assessFalsePositiveRisk(securityResults) {
+  assessFalsePositiveRisk(_securityResults) {
     return 'LOW';
   }
 
-  identifyQualityStrengths(breakdown) {
+  identifyQualityStrengths(_breakdown) {
     return ['Well-structured metadata', 'Clear documentation'];
   }
 
-  identifyQualityImprovements(breakdown) {
+  identifyQualityImprovements(_breakdown) {
     return ['Add more examples', 'Improve description length'];
   }
 
-  identifyComplianceGaps(qualityResults) {
+  identifyComplianceGaps(_qualityResults) {
     return [];
   }
 
@@ -624,15 +624,15 @@ class ReportGenerator {
     };
   }
 
-  identifyCompatibilityIssues(integrationResults) {
+  identifyCompatibilityIssues(_integrationResults) {
     return [];
   }
 
-  analyzeDependencies(integrationResults) {
+  analyzeDependencies(_integrationResults) {
     return { resolved: true, issues: [] };
   }
 
-  analyzeLoadingPerformance(integrationResults) {
+  analyzeLoadingPerformance(_integrationResults) {
     return { loadTime: '< 50ms', acceptable: true };
   }
 
@@ -667,11 +667,11 @@ class ReportGenerator {
     return recommendations;
   }
 
-  generateIntegrationRecommendations(integrationResults) {
+  generateIntegrationRecommendations(_integrationResults) {
     return ['Fix integration test failures before approval'];
   }
 
-  generatePerformanceRecommendations(results) {
+  generatePerformanceRecommendations(_results) {
     return ['Monitor performance impact in production'];
   }
 

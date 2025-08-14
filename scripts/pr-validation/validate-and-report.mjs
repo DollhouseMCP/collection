@@ -20,7 +20,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import { ReportGenerator } from './report-generator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -198,7 +198,7 @@ class ValidationPipeline {
             // Try to parse JSON output
             const result = JSON.parse(stdout);
             resolve(result);
-          } catch (parseError) {
+          } catch {
             // If not JSON, return raw output
             resolve({
               output: stdout,
@@ -397,7 +397,7 @@ class ValidationPipeline {
   /**
    * Generate PR comment with validation summary
    */
-  generatePRComment(results, reports) {
+  generatePRComment(results, _reports) {
     const summary = results.summary || {};
     const autoApproval = results.autoApproval || {};
 

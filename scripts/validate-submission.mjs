@@ -330,7 +330,7 @@ class SubmissionValidator {
             if (fileParsed.data.unique_id === uniqueId) {
               throw new Error(`Element with unique_id "${uniqueId}" already exists in: ${path.relative(rootDir, file)}`);
             }
-          } catch (parseError) {
+          } catch {
             // Skip files that can't be parsed
             continue;
           }
