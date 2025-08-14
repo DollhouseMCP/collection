@@ -26,6 +26,8 @@
     "validate:all": "npm run lint && npm run test:all",
     "validate:content": "node dist/src/cli/validate.js library/**/*.md",
     "security:check": "node scripts/security-check.js",
+    "build:index": "node scripts/build-collection-index.js",
+    "index": "npm run build:index",
     "setup": "npm install && npm run build",
     "prepare": "npm run build"
   },
