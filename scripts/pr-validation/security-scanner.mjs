@@ -18,7 +18,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
-import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +37,7 @@ const SECURITY_PATTERNS = {
     },
     {
       id: 'system-command-execution',
-      pattern: /\b(exec|spawn|system|shell|cmd|powershell|bash|sh)\s*[\(\[]/gi,
+      pattern: /\b(exec|spawn|system|shell|cmd|powershell|bash|sh)\s*[([]/gi,
       category: 'command-injection',
       description: 'System command execution attempt',
       mitigation: 'Remove system command execution patterns',
@@ -65,7 +64,7 @@ const SECURITY_PATTERNS = {
   HIGH: [
     {
       id: 'file-system-access',
-      pattern: /\b(?:require|import)\s*\(\s*['"](?:fs|path|child_process|os|crypto)['"]|process\./gi,
+      pattern: /\b(?:require|import)\s*\([^)]*['"](?:fs|path|child_process|os|crypto)['"][^)]*\)|process\./gi,
       category: 'file-system',
       description: 'File system or process access attempt',
       mitigation: 'Avoid file system access patterns in user content',
@@ -108,7 +107,7 @@ const SECURITY_PATTERNS = {
   MEDIUM: [
     {
       id: 'base64-data-url',
-      pattern: /data:[^;]+;base64,[A-Za-z0-9+\/]+=*/gi,
+      pattern: /data:[^;]+;base64,[A-Za-z0-9+/]+=*/gi,
       category: 'data-exfiltration',
       description: 'Base64 encoded data URL',
       mitigation: 'Review base64 content for malicious payloads',
@@ -221,7 +220,7 @@ class SecurityScanner {
         const parsed = matter(content);
         fileResult.metadata = parsed.data;
         fileResult.bodyContent = parsed.content;
-      } catch (e) {
+      } catch {
         fileResult.bodyContent = content;
       }
 
@@ -328,7 +327,7 @@ class SecurityScanner {
    */
   checkDataExfiltrationPatterns(content, fileResult) {
     // Large base64 blobs
-    const base64Pattern = /[A-Za-z0-9+\/]{100,}={0,2}/g;
+    const base64Pattern = /[A-Za-z0-9+/]{100,}={0,2}/g;
     const base64Matches = content.match(base64Pattern);
     
     if (base64Matches && base64Matches.length > 0) {
@@ -349,7 +348,8 @@ class SecurityScanner {
    */
   checkObfuscationPatterns(content, fileResult) {
     // Unicode obfuscation
-    const unicodePattern = /[^\x00-\x7F]{10,}/g;
+    // Use explicit Unicode ranges to avoid control characters
+    const unicodePattern = /[\u0080-\uffff]{10,}/g;
     const unicodeMatches = content.match(unicodePattern);
     
     if (unicodeMatches && unicodeMatches.length > 2) {

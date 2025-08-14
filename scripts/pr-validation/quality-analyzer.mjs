@@ -152,7 +152,7 @@ class QualityAnalyzer {
         const parsed = matter(content);
         fileResult.metadata = parsed.data;
         fileResult.contentBody = parsed.content;
-      } catch (e) {
+      } catch {
         fileResult.contentBody = content;
         fileResult.issues.push({
           category: 'structure',

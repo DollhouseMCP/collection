@@ -147,7 +147,7 @@ class IntegrationTester {
                 metadata: parsed.data
               });
             }
-          } catch (e) {
+          } catch {
             // Skip files that can't be parsed
             continue;
           }
@@ -349,7 +349,7 @@ class IntegrationTester {
     return { passed: true, message: 'Valid file structure' };
   }
 
-  async test_ELEMENT_LOADING_metadataComplete(fileResult, content) {
+  async test_ELEMENT_LOADING_metadataComplete(fileResult, _content) {
     const metadata = fileResult.metadata;
     if (!metadata) {
       return { passed: false, message: 'No metadata available', severity: 'critical' };
@@ -370,7 +370,7 @@ class IntegrationTester {
     return { passed: true, message: 'All required metadata fields present' };
   }
 
-  async test_ELEMENT_LOADING_contentAccessible(fileResult, content) {
+  async test_ELEMENT_LOADING_contentAccessible(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody || contentBody.trim().length < 10) {
       return {
@@ -384,7 +384,7 @@ class IntegrationTester {
   }
 
   // Schema Compliance Tests
-  async test_SCHEMA_COMPLIANCE_requiredFieldsPresent(fileResult, content) {
+  async test_SCHEMA_COMPLIANCE_requiredFieldsPresent(fileResult, _content) {
     // This is similar to metadata complete but more comprehensive
     const metadata = fileResult.metadata;
     if (!metadata) return { passed: false, message: 'No metadata', severity: 'critical' };
@@ -415,7 +415,7 @@ class IntegrationTester {
     return { passed: true, message: `All required fields present for ${elementType}` };
   }
 
-  async test_SCHEMA_COMPLIANCE_fieldTypesCorrect(fileResult, content) {
+  async test_SCHEMA_COMPLIANCE_fieldTypesCorrect(fileResult, _content) {
     const metadata = fileResult.metadata;
     if (!metadata) return { passed: false, message: 'No metadata', severity: 'critical' };
 
@@ -459,7 +459,7 @@ class IntegrationTester {
     return { passed: true, message: 'All field types are correct' };
   }
 
-  async test_SCHEMA_COMPLIANCE_constraintsRespected(fileResult, content) {
+  async test_SCHEMA_COMPLIANCE_constraintsRespected(fileResult, _content) {
     const metadata = fileResult.metadata;
     if (!metadata) return { passed: false, message: 'No metadata', severity: 'critical' };
 
@@ -497,7 +497,7 @@ class IntegrationTester {
     return { passed: true, message: 'All constraints respected' };
   }
 
-  async test_SCHEMA_COMPLIANCE_enumValuesValid(fileResult, content) {
+  async test_SCHEMA_COMPLIANCE_enumValuesValid(fileResult, _content) {
     const metadata = fileResult.metadata;
     if (!metadata) return { passed: false, message: 'No metadata', severity: 'critical' };
 
@@ -527,7 +527,7 @@ class IntegrationTester {
   }
 
   // Collection Integration Tests
-  async test_COLLECTION_INTEGRATION_uniqueIdUnique(fileResult, content) {
+  async test_COLLECTION_INTEGRATION_uniqueIdUnique(fileResult, _content) {
     const metadata = fileResult.metadata;
     if (!metadata?.unique_id) {
       return { passed: false, message: 'No unique_id to check', severity: 'high' };
@@ -546,7 +546,7 @@ class IntegrationTester {
     return { passed: true, message: 'unique_id is unique' };
   }
 
-  async test_COLLECTION_INTEGRATION_noCircularReferences(fileResult, content) {
+  async test_COLLECTION_INTEGRATION_noCircularReferences(fileResult, _content) {
     const metadata = fileResult.metadata;
     
     // Check for ensemble circular references
@@ -563,7 +563,7 @@ class IntegrationTester {
     return { passed: true, message: 'No circular references detected' };
   }
 
-  async test_COLLECTION_INTEGRATION_validCategories(fileResult, content) {
+  async test_COLLECTION_INTEGRATION_validCategories(fileResult, _content) {
     // This overlaps with enum validation but adds integration context
     const metadata = fileResult.metadata;
     if (!metadata?.category) {
@@ -583,7 +583,7 @@ class IntegrationTester {
     return { passed: true, message: 'Category is valid for collection' };
   }
 
-  async test_COLLECTION_INTEGRATION_properNaming(fileResult, content) {
+  async test_COLLECTION_INTEGRATION_properNaming(fileResult, _content) {
     const fileName = path.basename(fileResult.path, '.md');
     const metadata = fileResult.metadata;
     
@@ -611,7 +611,7 @@ class IntegrationTester {
   }
 
   // Functional Validation Tests
-  async test_FUNCTIONAL_VALIDATION_templateVariablesValid(fileResult, content) {
+  async test_FUNCTIONAL_VALIDATION_templateVariablesValid(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
@@ -652,7 +652,7 @@ class IntegrationTester {
     };
   }
 
-  async test_FUNCTIONAL_VALIDATION_linksResolvable(fileResult, content) {
+  async test_FUNCTIONAL_VALIDATION_linksResolvable(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
@@ -701,7 +701,7 @@ class IntegrationTester {
     };
   }
 
-  async test_FUNCTIONAL_VALIDATION_codeBlocksValid(fileResult, content) {
+  async test_FUNCTIONAL_VALIDATION_codeBlocksValid(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
@@ -741,7 +741,7 @@ class IntegrationTester {
     };
   }
 
-  async test_FUNCTIONAL_VALIDATION_examplesWorking(fileResult, content) {
+  async test_FUNCTIONAL_VALIDATION_examplesWorking(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
@@ -823,7 +823,7 @@ class IntegrationTester {
     
     // Simulate memory operations
     const largeCopy = content.repeat(10);
-    const parsed = matter(largeCopy);
+    const _parsed = matter(largeCopy);
     
     const currentMemory = process.memoryUsage().heapUsed;
     const memoryIncreaseMB = (currentMemory - initialMemory) / 1024 / 1024;
