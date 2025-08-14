@@ -221,7 +221,7 @@ class RoundtripWorkflowTester {
       const securityScript = path.join(rootDir, 'scripts/pr-validation/security-scanner.mjs');
       
       log(`\n🔒 Running security scanner...`, colors.cyan);
-      await runCommand('node', [securityScript, this.testFile], { 
+      const _securityOutput = await runCommand('node', [securityScript, this.testFile], { 
         silent: true, 
         cwd: rootDir 
       });
@@ -255,7 +255,7 @@ class RoundtripWorkflowTester {
       const qualityScript = path.join(rootDir, 'scripts/pr-validation/quality-analyzer.mjs');
       
       log(`\n✨ Running quality analyzer...`, colors.cyan);
-      await runCommand('node', [qualityScript, this.testFile], { 
+      const _qualityOutput = await runCommand('node', [qualityScript, this.testFile], { 
         silent: true, 
         cwd: rootDir 
       });
@@ -290,7 +290,7 @@ class RoundtripWorkflowTester {
       const integrationScript = path.join(rootDir, 'scripts/pr-validation/integration-tester.mjs');
       
       log(`\n🧪 Running integration tests...`, colors.cyan);
-      await runCommand('node', [integrationScript, this.testFile], { 
+      const _integrationOutput = await runCommand('node', [integrationScript, this.testFile], { 
         silent: true, 
         cwd: rootDir 
       });
@@ -320,7 +320,7 @@ class RoundtripWorkflowTester {
 
     try {
       // Report script path for future use
-      // const reportScript = path.join(rootDir, 'scripts/pr-validation/report-generator.mjs');
+      // Future: implement report-generator.mjs integration
       
       log(`\n📝 Generating unified report...`, colors.cyan);
       
