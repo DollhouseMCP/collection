@@ -18,6 +18,7 @@ import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 import matter from 'gray-matter';
 import { glob } from 'glob';
+import sanitizeHtml from 'sanitize-html';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,31 +45,31 @@ const VALID_TYPES = [
 /**
  * Sanitize and validate string fields
  * 
- * SECURITY FIX (PR #123): Complete HTML sanitization implementation
- * Previously: Regex pattern /<[^>]*>/g could be bypassed with nested tags
- * Now: Simpler, more secure approach that removes ALL angle brackets
+ * SECURITY FIX (PR #123): Using industry-standard HTML sanitization library
+ * Previously: Custom regex patterns were vulnerable to bypass attacks
+ * Now: Using sanitize-html library as recommended by GitHub Copilot autofix
  * 
- * CodeQL Alert #14 Resolution: Instead of trying to match HTML tags,
- * we now remove all angle brackets entirely, which is more secure and
- * prevents any possibility of HTML injection.
+ * CodeQL Alert #14 Resolution: Following security best practices by using
+ * a well-tested, maintained library that handles all edge cases and attack vectors.
+ * This is the recommended approach for production applications.
  */
 function sanitizeField(value, limit) {
   if (typeof value !== 'string') return '';
   
-  // CRITICAL SECURITY FIX: Remove ALL angle brackets and quotes
-  // This is the most secure approach - rather than trying to parse HTML tags
-  // (which can be bypassed), we simply remove all characters that could
-  // form HTML tags or attributes.
-  //
-  // This prevents ALL of these attack vectors:
-  // - <<script>alert(1)</script> 
-  // - <scrip<script>t>alert(1)</script>
-  // - <img src=x onerror="alert(1)">
-  // - Any other HTML-based injection
-  let sanitized = value
-    .replace(/[<>]/g, '')  // Remove ALL angle brackets (no HTML possible)
-    .replace(/['"]/g, '')  // Remove quotes (no attribute injection)
-    .trim();
+  // CRITICAL SECURITY FIX: Use sanitize-html library for proper sanitization
+  // As recommended by GitHub Copilot autofix for CodeQL Alert #14
+  // This library handles all edge cases including:
+  // - Nested tags: <<script>alert(1)</script>
+  // - Incomplete tags: <scrip<script>t>
+  // - Event handlers: <img onerror="alert(1)">
+  // - And many other attack vectors
+  
+  // Remove ALL HTML tags and attributes - we want plain text only
+  const sanitized = sanitizeHtml(value, {
+    allowedTags: [],        // No HTML tags allowed
+    allowedAttributes: {},  // No attributes allowed
+    disallowedTagsMode: 'recursiveEscape'  // Escape any HTML found
+  }).trim();
   
   // Apply length limit
   return sanitized.length > limit ? sanitized.slice(0, limit) : sanitized;
