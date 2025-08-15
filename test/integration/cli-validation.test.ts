@@ -3,7 +3,7 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { writeFile, mkdir, rm, readFile, mkdtemp } from 'fs/promises';
+import { writeFile, mkdir, rm, readFile, mkdtemp, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'os';
@@ -153,9 +153,11 @@ Invalid skill content.`;
 
   describe('Glob Pattern Support', () => {
     beforeEach(async () => {
-      // Clean up test directory to ensure consistent state
-      await rm(testDir, { recursive: true, force: true });
-      await mkdir(testDir, { recursive: true });
+      // Clean contents of test directory to ensure consistent state
+      const existingFiles = await readdir(testDir).catch(() => []);
+      for (const file of existingFiles) {
+        await rm(join(testDir, file), { recursive: true, force: true });
+      }
       
       // Create test directory structure
       const dirs = ['personas', 'skills', 'agents'];
