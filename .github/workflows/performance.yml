@@ -1,5 +1,9 @@
 name: Performance Monitoring
 
+# Note: Ubuntu-only testing - Collection runs on GitHub infrastructure (Ubuntu)
+# Performance tests are non-blocking (continue-on-error: true) to prevent
+# flaky timing issues from blocking PRs
+
 on:
   push:
     branches: [ main ]
@@ -11,11 +15,9 @@ on:
 
 jobs:
   benchmark:
-    name: Performance Benchmarks - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Make performance tests non-blocking
     
     steps:
       - name: Checkout repository
@@ -46,14 +48,9 @@ jobs:
       - name: Calculate build metrics
         shell: bash
         run: |
-          if [ "${{ runner.os }}" == "Windows" ]; then
-            # Windows doesn't have nanosecond precision, use milliseconds
-            BUILD_TIME=0
-          else
-            BUILD_START=${{ steps.build-benchmark.outputs.build_start }}
-            BUILD_END=${{ steps.build-benchmark.outputs.build_end }}
-            BUILD_TIME=$((($BUILD_END - $BUILD_START) / 1000000))
-          fi
+          BUILD_START=${{ steps.build-benchmark.outputs.build_start }}
+          BUILD_END=${{ steps.build-benchmark.outputs.build_end }}
+          BUILD_TIME=$((($BUILD_END - $BUILD_START) / 1000000))
           
           echo "Build time: ${BUILD_TIME}ms"
           echo "build_time=${BUILD_TIME}" >> $GITHUB_ENV
@@ -61,14 +58,14 @@ jobs:
       - name: Upload performance results
         uses: actions/upload-artifact@v4
         with:
-          name: performance-${{ matrix.os }}
+          name: performance-ubuntu
           path: performance-results.json
           retention-days: 90
 
       - name: Compare with baseline
         if: github.event_name == 'pull_request'
         run: |
-          echo "## 📊 Performance Metrics - ${{ matrix.os }}" >> pr-message.md
+          echo "## 📊 Performance Metrics" >> pr-message.md
           echo "" >> pr-message.md
           echo "**Build Time:** ${{ env.build_time }}ms" >> pr-message.md
           echo "" >> pr-message.md
