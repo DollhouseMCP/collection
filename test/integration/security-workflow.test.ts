@@ -4,9 +4,10 @@
  */
 
 import { ContentValidator } from '../../src/validators/content-validator.js';
-import { writeFile, mkdir, rm } from 'fs/promises';
+import { writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { tmpdir } from 'os';
 import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,11 +17,11 @@ const __dirname = dirname(__filename);
 const PERFORMANCE_TIMEOUT = 1000; // 1 second for performance tests
 
 describe('Security Workflow Integration Tests', () => {
-  const testDir = join(__dirname, '../../.test-tmp/security-integration');
+  let testDir: string;
   const validator = new ContentValidator();
 
   beforeAll(async () => {
-    await mkdir(testDir, { recursive: true });
+    testDir = await mkdtemp(join(tmpdir(), 'security-integration-'));
   });
 
   afterAll(async () => {

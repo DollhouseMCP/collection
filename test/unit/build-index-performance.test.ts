@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
-import { writeFile, mkdir, rm } from 'fs/promises';
+import { writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { performance } from 'perf_hooks';
@@ -33,9 +33,8 @@ describe('Build Index Performance Tests', () => {
   }[] = [];
 
   beforeAll(async () => {
-    testDir = join(tmpdir(), `build-perf-test-${Date.now()}`);
+    testDir = await mkdtemp(join(tmpdir(), 'build-perf-test-'));
     testLibraryDir = join(testDir, 'library');
-    await mkdir(testDir, { recursive: true });
     await mkdir(testLibraryDir, { recursive: true });
   });
 

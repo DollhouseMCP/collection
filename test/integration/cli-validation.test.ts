@@ -3,9 +3,10 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { writeFile, mkdir, rm, readFile } from 'fs/promises';
+import { writeFile, mkdir, rm, readFile, mkdtemp } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { tmpdir } from 'os';
 import { main as validateContent } from '../../dist/src/cli/validate-content.js';
 
 // Type assertion to help ESLint understand this is a function
@@ -19,7 +20,7 @@ const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
 const LARGE_BATCH_SIZE = 50; // Number of files for performance testing
 
 describe('CLI Validation Tool Integration Tests', () => {
-  const testDir = join(__dirname, '../../.test-tmp/cli-integration');
+  let testDir: string;
   
   // Console mocking utilities
   let originalLog: typeof console.log;
@@ -28,7 +29,7 @@ describe('CLI Validation Tool Integration Tests', () => {
   let capturedStderr: string[] = [];
 
   beforeAll(async () => {
-    await mkdir(testDir, { recursive: true });
+    testDir = await mkdtemp(join(tmpdir(), 'cli-integration-'));
     
     // Save original console methods
     originalLog = console.log;
