@@ -9,7 +9,7 @@ on:
       node_versions:
         description: 'Node.js versions to test (comma-separated)'
         required: false
-        default: '20.x,22.x'
+        default: '22.x,24.x'
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096 --experimental-vm-modules
@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: ['20.x', '22.x']
+        node-version: ['22.x', '24.x']
     
     steps:
       - name: Checkout repository
