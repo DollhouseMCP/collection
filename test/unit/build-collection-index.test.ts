@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
-import { readFile, writeFile, mkdir, rm } from 'fs/promises';
+import { readFile, writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
 import { join, relative, basename } from 'path';
 import { tmpdir } from 'os';
 import { createHash } from 'crypto';
@@ -155,12 +155,10 @@ describe('TypeScript Build Collection Index', () => {
   let testOutputFile: string;
 
   beforeAll(async () => {
-    // Create temporary directory for tests
-    testDir = join(tmpdir(), `build-index-test-${Date.now()}`);
+    // Create secure temporary directory for tests
+    testDir = await mkdtemp(join(tmpdir(), 'build-index-test-'));
     testLibraryDir = join(testDir, 'library');
     testOutputFile = join(testDir, 'public', 'collection-index.json');
-    
-    await mkdir(testDir, { recursive: true });
     await mkdir(testLibraryDir, { recursive: true });
     await mkdir(join(testDir, 'public'), { recursive: true });
   });

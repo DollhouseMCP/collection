@@ -7,20 +7,18 @@
 
 import { ContentValidator, type ValidationIssue } from '../../../src/validators/content-validator.js';
 import { z } from 'zod';
-import { writeFile, rm, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { writeFile, rm, mkdtemp } from 'fs/promises';
+import { join } from 'path';
+import { tmpdir } from 'os';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const testDir = join(__dirname, '../../../.test-tmp');
+let testDir: string;
 
 describe('Zod v3/v4 Compatibility', () => {
   let validator: ContentValidator;
 
   beforeEach(async () => {
     validator = new ContentValidator();
-    await mkdir(testDir, { recursive: true });
+    testDir = await mkdtemp(join(tmpdir(), 'zod-compat-'));
   });
 
   afterEach(async () => {
