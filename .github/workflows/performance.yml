@@ -1,5 +1,9 @@
 name: Performance Monitoring
 
+# Note: Ubuntu-only testing - Collection runs on GitHub infrastructure (Ubuntu)
+# Performance tests are non-blocking (continue-on-error: true) to prevent
+# flaky timing issues from blocking PRs
+
 on:
   push:
     branches: [ main ]

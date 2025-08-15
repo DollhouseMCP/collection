@@ -1,5 +1,9 @@
 name: Core Build & Test
 
+# Note: This workflow runs on Ubuntu-only since Collection is server-side
+# infrastructure that runs exclusively on GitHub Actions (Ubuntu) and will
+# deploy to Ubuntu cloud servers. Cross-platform testing is unnecessary.
+
 on:
   push:
     branches: [ main ]
