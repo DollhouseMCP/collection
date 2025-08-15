@@ -22,6 +22,12 @@ interface TestResult {
   elementCount?: number;
 }
 
+interface CollectionIndexData {
+  total_elements?: unknown;
+  version?: unknown;
+  [key: string]: unknown;
+}
+
 /**
  * Verify that the output file exists and is valid JSON
  */
@@ -29,7 +35,7 @@ async function verifyOutput(): Promise<{ valid: boolean; elementCount: number; e
   try {
     await access(OUTPUT_FILE);
     const content = await readFile(OUTPUT_FILE, 'utf-8');
-    const data = JSON.parse(content);
+    const data = JSON.parse(content) as CollectionIndexData;
     
     if (!data.total_elements || typeof data.total_elements !== 'number') {
       return { valid: false, elementCount: 0, error: 'Invalid index structure' };
@@ -179,11 +185,11 @@ async function main(): Promise<void> {
     
     console.log(`${status} ${result.method}`);
     console.log(`   Duration: ${duration}`);
-    if (elements) console.log(`   Output: ${elements}`);
-    if (result.error) console.log(`   Error: ${result.error}`);
+    if (elements) {console.log(`   Output: ${elements}`);}
+    if (result.error) {console.log(`   Error: ${result.error}`);}
     console.log('');
     
-    if (!result.success) allPassed = false;
+    if (!result.success) {allPassed = false;}
   }
   
   // Performance comparison
