@@ -7,7 +7,7 @@
  * to ensure the build system works correctly in all scenarios.
  */
 
-import { readFile, access } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { execSync } from 'child_process';
 import { resolve, join } from 'path';
 
@@ -33,7 +33,6 @@ interface CollectionIndexData {
  */
 async function verifyOutput(): Promise<{ valid: boolean; elementCount: number; error?: string }> {
   try {
-    await access(OUTPUT_FILE);
     const content = await readFile(OUTPUT_FILE, 'utf-8');
     const data = JSON.parse(content) as CollectionIndexData;
     

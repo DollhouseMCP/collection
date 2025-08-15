@@ -12,7 +12,7 @@
  * - Minified JSON output
  */
 
-import { readFile, writeFile, access, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { dirname, join, relative, basename, sep } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
@@ -40,7 +40,7 @@ const findRootDir = async (): Promise<string> => {
     try {
       // Check if package.json exists in current directory
       const packageJsonPath = join(currentDir, 'package.json');
-      await access(packageJsonPath);
+      await readFile(packageJsonPath, 'utf-8');
       return currentDir;
     } catch {
       currentDir = dirname(currentDir);
@@ -365,7 +365,7 @@ async function main(): Promise<void> {
   
   // Verify library directory exists
   try {
-    await access(LIBRARY_DIR);
+    await readdir(LIBRARY_DIR);
   } catch {
     console.error(`❌ Library directory not found: ${LIBRARY_DIR}`);
     process.exit(1);
