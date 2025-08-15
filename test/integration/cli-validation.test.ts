@@ -4,16 +4,12 @@
  */
 
 import { writeFile, mkdir, rm, readFile, mkdtemp, readdir } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 import { tmpdir } from 'os';
 import { main as validateContent } from '../../dist/src/cli/validate-content.js';
 
 // Type assertion to help ESLint understand this is a function
 const validateContentFn = validateContent as (args?: string[]) => Promise<number>;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Test constants
 const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
