@@ -10,7 +10,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { readFile, writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
-import { join, relative, basename } from 'path';
+import { join, relative, basename, sep } from 'path';
 import { tmpdir } from 'os';
 import { createHash } from 'crypto';
 import matter from 'gray-matter';
@@ -92,7 +92,8 @@ async function calculateFileSHA(filePath: string): Promise<string> {
 // Test implementation of getElementType function
 function getElementType(filePath: string, libraryDir: string): ElementType | null {
   const relativePath: string = relative(libraryDir, filePath);
-  const pathParts: string[] = relativePath.split('/');
+  // Use path.sep for cross-platform compatibility (handles both / and \)
+  const pathParts: string[] = relativePath.split(sep);
   
   if (pathParts.length >= 2) {
     const type: string = pathParts[0];
