@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'library/**/*.md'
-      - 'scripts/build-collection-index.js'
+      - 'scripts/build-collection-index.ts'
       - '.github/workflows/build-collection-index.yml'
     branches:
       - main
@@ -12,7 +12,7 @@ on:
   pull_request:
     paths:
       - 'library/**/*.md'
-      - 'scripts/build-collection-index.js'
+      - 'scripts/build-collection-index.ts'
       - '.github/workflows/build-collection-index.yml'
   workflow_dispatch:
 
@@ -47,7 +47,7 @@ jobs:
         run: mkdir -p public
 
       - name: Build collection index
-        run: node scripts/build-collection-index.js
+        run: node dist/scripts/build-collection-index.js
 
       - name: Verify index was created
         run: |

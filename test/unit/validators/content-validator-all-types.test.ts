@@ -13,18 +13,19 @@
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { ContentValidator } from '../../../src/validators/content-validator';
-import { writeFileSync, mkdirSync, rmSync } from 'fs';
+import { writeFileSync, mkdtempSync, rmSync } from 'fs';
 import { join } from 'path';
+import { tmpdir } from 'os';
 
 describe('ContentValidator - All Content Types', () => {
   let validator: ContentValidator;
-  const testDir = join(process.cwd(), '.test-content-types');
+  let testDir: string;
   
   beforeEach(() => {
     validator = new ContentValidator();
-    // Create test directory
+    // Create secure test directory
     try {
-      mkdirSync(testDir, { recursive: true });
+      testDir = mkdtempSync(join(tmpdir(), 'content-types-'));
     } catch {
       // Directory might already exist
     }

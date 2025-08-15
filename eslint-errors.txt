@@ -1,0 +1,20 @@
+   35:34  error    Expected { after 'if' condition  curly
+  206:20  error    Expected { after 'if' condition  curly
+   32:11  error    Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+   34:15  error    Unsafe member access .total_elements on an `any` value  @typescript-eslint/no-unsafe-member-access
+   34:45  error    Unsafe member access .total_elements on an `any` value  @typescript-eslint/no-unsafe-member-access
+   38:27  error    Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+   38:46  error    Unsafe member access .total_elements on an `any` value  @typescript-eslint/no-unsafe-member-access
+  182:19  error    Expected { after 'if' condition                         curly
+  183:23  error    Expected { after 'if' condition                         curly
+  186:26  error    Expected { after 'if' condition                         curly
+   19:1   error  'path' import is duplicated                                      no-duplicate-imports
+   32:1   error  '../../scripts/types/build-index.types.js' import is duplicated  no-duplicate-imports
+  318:9   error  Script URL is a form of eval                                     no-script-url
+  341:16  error  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  779:13  error  Unsafe assignment of an `any` value                              @typescript-eslint/no-unsafe-assignment
+  782:27  error  Unsafe member access .version on an `any` value                  @typescript-eslint/no-unsafe-member-access
+  783:27  error  Unsafe member access .total_elements on an `any` value           @typescript-eslint/no-unsafe-member-access
+  498:11  error  Unsafe return of a value of type `any[]`  @typescript-eslint/no-unsafe-return
+  551:11  error  Unsafe return of a value of type `any[]`  @typescript-eslint/no-unsafe-return
+  5 errors and 0 warnings potentially fixable with the `--fix` option.

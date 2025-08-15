@@ -3,23 +3,20 @@
  * Tests the command-line interface and its integration with the validation system
  */
 
-import { writeFile, mkdir, rm, readFile } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { writeFile, mkdir, rm, readFile, mkdtemp, readdir } from 'fs/promises';
+import { join } from 'path';
+import { tmpdir } from 'os';
 import { main as validateContent } from '../../dist/src/cli/validate-content.js';
 
 // Type assertion to help ESLint understand this is a function
 const validateContentFn = validateContent as (args?: string[]) => Promise<number>;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Test constants
 const BATCH_TEST_TIMEOUT = 10000; // 10 seconds
 const LARGE_BATCH_SIZE = 50; // Number of files for performance testing
 
 describe('CLI Validation Tool Integration Tests', () => {
-  const testDir = join(__dirname, '../../.test-tmp/cli-integration');
+  let testDir: string;
   
   // Console mocking utilities
   let originalLog: typeof console.log;
@@ -28,7 +25,7 @@ describe('CLI Validation Tool Integration Tests', () => {
   let capturedStderr: string[] = [];
 
   beforeAll(async () => {
-    await mkdir(testDir, { recursive: true });
+    testDir = await mkdtemp(join(tmpdir(), 'cli-integration-'));
     
     // Save original console methods
     originalLog = console.log;
@@ -152,9 +149,11 @@ Invalid skill content.`;
 
   describe('Glob Pattern Support', () => {
     beforeEach(async () => {
-      // Clean up test directory to ensure consistent state
-      await rm(testDir, { recursive: true, force: true });
-      await mkdir(testDir, { recursive: true });
+      // Clean contents of test directory to ensure consistent state
+      const existingFiles = await readdir(testDir).catch(() => []);
+      for (const file of existingFiles) {
+        await rm(join(testDir, file), { recursive: true, force: true });
+      }
       
       // Create test directory structure
       const dirs = ['personas', 'skills', 'agents'];
