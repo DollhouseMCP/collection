@@ -7,6 +7,8 @@
  * @example Usage in the main builder
  */
 
+/* eslint-disable no-console */
+
 import {
   CollectionIndex,
   IndexedElement,
@@ -32,7 +34,9 @@ import {
  * Example: Sanitize and validate a field with type safety
  */
 function sanitizeField(value: unknown, limit: number): string {
-  if (typeof value !== 'string') return '';
+  if (typeof value !== 'string') {
+    return '';
+  }
   
   // Sanitization logic here...
   const sanitized = value.trim();
@@ -203,7 +207,9 @@ function validateCollectionIndex(index: CollectionIndex): boolean {
   
   // Validate all elements
   for (const [type, elements] of Object.entries(index.index)) {
-    if (!elements) continue;
+    if (!elements) {
+      continue;
+    }
     
     for (const element of elements) {
       if (!isIndexedElement(element)) {

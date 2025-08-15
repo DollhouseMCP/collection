@@ -7,9 +7,12 @@
  * to ensure the build system works correctly in all scenarios.
  */
 
+/* eslint-disable no-console */
+
 import { readFile, access } from 'fs/promises';
 import { execSync } from 'child_process';
 import { resolve, join } from 'path';
+import type { CollectionIndex } from './types/build-index.types.js';
 
 const ROOT_DIR = resolve(process.cwd());
 const OUTPUT_FILE = join(ROOT_DIR, 'public', 'collection-index.json');
@@ -29,13 +32,19 @@ async function verifyOutput(): Promise<{ valid: boolean; elementCount: number; e
   try {
     await access(OUTPUT_FILE);
     const content = await readFile(OUTPUT_FILE, 'utf-8');
-    const data = JSON.parse(content);
+    const data = JSON.parse(content) as unknown;
     
-    if (!data.total_elements || typeof data.total_elements !== 'number') {
+    // Type guard for CollectionIndex
+    if (!data || typeof data !== 'object' || !('total_elements' in data)) {
       return { valid: false, elementCount: 0, error: 'Invalid index structure' };
     }
     
-    return { valid: true, elementCount: data.total_elements };
+    const index = data as CollectionIndex;
+    if (typeof index.total_elements !== 'number') {
+      return { valid: false, elementCount: 0, error: 'Invalid total_elements field' };
+    }
+    
+    return { valid: true, elementCount: index.total_elements };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return { valid: false, elementCount: 0, error: errorMessage };
@@ -179,11 +188,17 @@ async function main(): Promise<void> {
     
     console.log(`${status} ${result.method}`);
     console.log(`   Duration: ${duration}`);
-    if (elements) console.log(`   Output: ${elements}`);
-    if (result.error) console.log(`   Error: ${result.error}`);
+    if (elements) {
+      console.log(`   Output: ${elements}`);
+    }
+    if (result.error) {
+      console.log(`   Error: ${result.error}`);
+    }
     console.log('');
     
-    if (!result.success) allPassed = false;
+    if (!result.success) {
+      allPassed = false;
+    }
   }
   
   // Performance comparison
