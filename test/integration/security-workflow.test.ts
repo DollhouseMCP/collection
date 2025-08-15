@@ -4,7 +4,7 @@
  */
 
 import { ContentValidator } from '../../src/validators/content-validator.js';
-import { writeFile, mkdir, rm, mkdtemp } from 'fs/promises';
+import { writeFile, rm, mkdtemp } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'os';
