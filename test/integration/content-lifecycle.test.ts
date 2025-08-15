@@ -4,21 +4,22 @@
  */
 
 import { ContentValidator } from '../../src/validators/content-validator.js';
-import { writeFile, mkdir, rm } from 'fs/promises';
+import { writeFile, rm, mkdtemp } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { tmpdir } from 'os';
 import { glob } from 'glob';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('Content Lifecycle Integration Tests', () => {
-  const testDir = join(__dirname, '../../.test-tmp/integration');
+  let testDir: string;
   const validator = new ContentValidator();
 
   beforeAll(async () => {
-    // Ensure test directory exists
-    await mkdir(testDir, { recursive: true });
+    // Create secure test directory
+    testDir = await mkdtemp(join(tmpdir(), 'content-lifecycle-'));
   });
 
   afterAll(async () => {
