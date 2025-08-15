@@ -43,16 +43,36 @@ const VALID_TYPES = [
 
 /**
  * Sanitize and validate string fields
+ * 
+ * SECURITY FIX (PR #123): Implemented proper HTML sanitization
+ * Previously: Single-pass regex could allow nested tags like <scrip<script>t>
+ * Now: Multi-pass sanitization ensures complete removal of dangerous content
  */
 function sanitizeField(value, limit) {
   if (typeof value !== 'string') return '';
   
-  // Remove potential HTML/script content
-  const sanitized = value
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/[<>'"]/g, '') // Remove dangerous characters
-    .trim();
-    
+  // CRITICAL FIX: Multi-pass HTML sanitization to prevent incomplete removal
+  // CodeQL Alert #14: Incomplete multi-character sanitization vulnerability
+  // Solution: Apply sanitization repeatedly until no changes occur
+  let sanitized = value;
+  let previous;
+  let iterations = 0;
+  const MAX_ITERATIONS = 10; // Prevent potential DoS from malicious input
+  
+  // Keep sanitizing until the string stabilizes (no more changes)
+  // This prevents attacks like: <scrip<script>t>alert(1)</script>
+  // After first pass: <script>alert(1)</script> (dangerous!)
+  // After second pass: alert(1) (safe)
+  do {
+    previous = sanitized;
+    sanitized = sanitized
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/[<>'"]/g, ''); // Remove dangerous characters
+    iterations++;
+  } while (sanitized !== previous && iterations < MAX_ITERATIONS);
+  
+  // Final trim and length limit
+  sanitized = sanitized.trim();
   return sanitized.length > limit ? sanitized.slice(0, limit) : sanitized;
 }
 
@@ -228,28 +248,32 @@ async function buildCollectionIndex() {
     const buildTime = Date.now() - startTime;
     
     // Build final index structure
+    // TYPESCRIPT FIX (PR #123): Define metadata with optional properties upfront
+    // Previously: Dynamic property addition caused type errors
+    // Now: Proper metadata type with all possible properties
+    const metadata = {
+      build_time_ms: buildTime,
+      file_count: files.length,
+      skipped_files: skippedFiles.length,
+      categories: Object.keys(index).length,
+      nodejs_version: process.version,
+      builder_version: '1.0.0',
+      // Optional properties for warnings
+      ...(skippedFiles.length > 0 && {
+        skipped_files_list: skippedFiles.slice(0, 10),
+        ...(skippedFiles.length > 10 && {
+          additional_skipped: skippedFiles.length - 10
+        })
+      })
+    };
+    
     const collectionIndex = {
       version: '2.0.0',
       generated: new Date().toISOString(),
       total_elements: elements.length,
       index: index,
-      metadata: {
-        build_time_ms: buildTime,
-        file_count: files.length,
-        skipped_files: skippedFiles.length,
-        categories: Object.keys(index).length,
-        nodejs_version: process.version,
-        builder_version: '1.0.0'
-      }
+      metadata: metadata
     };
-    
-    // Add warnings if any files were skipped
-    if (skippedFiles.length > 0) {
-      collectionIndex.metadata.skipped_files_list = skippedFiles.slice(0, 10); // Only show first 10
-      if (skippedFiles.length > 10) {
-        collectionIndex.metadata.additional_skipped = skippedFiles.length - 10;
-      }
-    }
     
     // Write to output file (minified JSON for bandwidth efficiency)
     await fs.writeFile(OUTPUT_FILE, JSON.stringify(collectionIndex), 'utf-8');
