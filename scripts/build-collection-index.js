@@ -44,35 +44,33 @@ const VALID_TYPES = [
 /**
  * Sanitize and validate string fields
  * 
- * SECURITY FIX (PR #123): Implemented proper HTML sanitization
- * Previously: Single-pass regex could allow nested tags like <scrip<script>t>
- * Now: Multi-pass sanitization ensures complete removal of dangerous content
+ * SECURITY FIX (PR #123): Complete HTML sanitization implementation
+ * Previously: Regex pattern /<[^>]*>/g could be bypassed with nested tags
+ * Now: Simpler, more secure approach that removes ALL angle brackets
+ * 
+ * CodeQL Alert #14 Resolution: Instead of trying to match HTML tags,
+ * we now remove all angle brackets entirely, which is more secure and
+ * prevents any possibility of HTML injection.
  */
 function sanitizeField(value, limit) {
   if (typeof value !== 'string') return '';
   
-  // CRITICAL FIX: Multi-pass HTML sanitization to prevent incomplete removal
-  // CodeQL Alert #14: Incomplete multi-character sanitization vulnerability
-  // Solution: Apply sanitization repeatedly until no changes occur
-  let sanitized = value;
-  let previous;
-  let iterations = 0;
-  const MAX_ITERATIONS = 10; // Prevent potential DoS from malicious input
+  // CRITICAL SECURITY FIX: Remove ALL angle brackets and quotes
+  // This is the most secure approach - rather than trying to parse HTML tags
+  // (which can be bypassed), we simply remove all characters that could
+  // form HTML tags or attributes.
+  //
+  // This prevents ALL of these attack vectors:
+  // - <<script>alert(1)</script> 
+  // - <scrip<script>t>alert(1)</script>
+  // - <img src=x onerror="alert(1)">
+  // - Any other HTML-based injection
+  let sanitized = value
+    .replace(/[<>]/g, '')  // Remove ALL angle brackets (no HTML possible)
+    .replace(/['"]/g, '')  // Remove quotes (no attribute injection)
+    .trim();
   
-  // Keep sanitizing until the string stabilizes (no more changes)
-  // This prevents attacks like: <scrip<script>t>alert(1)</script>
-  // After first pass: <script>alert(1)</script> (dangerous!)
-  // After second pass: alert(1) (safe)
-  do {
-    previous = sanitized;
-    sanitized = sanitized
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/[<>'"]/g, ''); // Remove dangerous characters
-    iterations++;
-  } while (sanitized !== previous && iterations < MAX_ITERATIONS);
-  
-  // Final trim and length limit
-  sanitized = sanitized.trim();
+  // Apply length limit
   return sanitized.length > limit ? sanitized.slice(0, limit) : sanitized;
 }
 
