@@ -10,26 +10,22 @@
 
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { readFile, writeFile, mkdir, rm } from 'fs/promises';
-import { join, relative } from 'path';
+import { join, relative, basename } from 'path';
 import { tmpdir } from 'os';
 import { createHash } from 'crypto';
 import matter from 'gray-matter';
 import { glob } from 'glob';
 import sanitizeHtml from 'sanitize-html';
-import { basename } from 'path';
 
 // Import the TypeScript build script functions and types
-import type {
-  CollectionIndex,
-  IndexedElement,
-  BuildMetadata,
-  ElementType,
-  CollectionIndexMap,
-  RawFrontmatter,
-  FieldLimits
-} from '../../scripts/types/build-index.types.js';
-
 import {
+  type CollectionIndex,
+  type IndexedElement,
+  type BuildMetadata,
+  type ElementType,
+  type CollectionIndexMap,
+  type RawFrontmatter,
+  type FieldLimits,
   isElementType,
   isIndexedElement,
   isCollectionIndex,
@@ -315,7 +311,7 @@ describe('TypeScript Build Collection Index', () => {
       const dangerousInputs = [
         '{{constructor.constructor("return process")().exit()}}',
         '${process.env}',
-        'javascript:alert(1)',
+        'javascript:alert(1)', // eslint-disable-line no-script-url
         'data:text/html,<script>alert(1)</script>',
         '<iframe src="javascript:alert(1)"></iframe>',
         '&#x6A;&#x61;&#x76;&#x61;&#x73;&#x63;&#x72;&#x69;&#x70;&#x74;', // javascript encoded
@@ -338,7 +334,7 @@ describe('TypeScript Build Collection Index', () => {
       try {
         await rm(testLibraryDir, { recursive: true, force: true });
         await mkdir(testLibraryDir, { recursive: true });
-      } catch (error) {
+      } catch {
         // Ignore errors if directory doesn't exist
       }
     });
@@ -776,7 +772,7 @@ This is test content for integration testing.
       
       // Verify file was created and is valid JSON
       const outputContent = await readFile(testOutputFile, 'utf-8');
-      const parsedOutput = JSON.parse(outputContent);
+      const parsedOutput = JSON.parse(outputContent) as CollectionIndex;
       
       expect(isCollectionIndex(parsedOutput)).toBe(true);
       expect(parsedOutput.version).toBe('2.0.0');

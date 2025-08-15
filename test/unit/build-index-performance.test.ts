@@ -490,7 +490,7 @@ Generated for performance testing at ${new Date().toISOString()}.
       const measurement = await measurePerformance(
         `Run ${run}/${runs}: Processing ${elementCount} elements`,
         async () => {
-          const results: any[] = [];
+          const results: Array<{ file: string; processed: boolean }> = [];
           for (const file of files) {
             await new Promise(resolve => setImmediate(resolve));
             results.push({ file, processed: true });
@@ -543,7 +543,7 @@ Generated for performance testing at ${new Date().toISOString()}.
       const measurement = await measurePerformance(
         `Scaling test: ${count} elements`,
         async () => {
-          const results: any[] = [];
+          const results: Array<{ file: string; processed: boolean }> = [];
           for (const file of files) {
             await new Promise(resolve => setImmediate(resolve));
             results.push({ file, processed: true });
