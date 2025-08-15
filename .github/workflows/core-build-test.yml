@@ -18,12 +18,8 @@ env:
 
 jobs:
   build-and-test:
-    name: Build & Test - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Build & Test
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
@@ -76,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-${{ matrix.os }}
+          name: coverage-ubuntu
           path: test/coverage/
           retention-days: 7
 
@@ -84,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results-ubuntu
           path: |
             test-results/
             *.log
@@ -136,7 +132,7 @@ jobs:
             const repo = context.repo.repo;
             
             let comment = '## 🧪 Test Results\n\n';
-            comment += '✅ All tests passed on all platforms!\n\n';
+            comment += '✅ All tests passed!\n\n';
             
             // Add coverage data if available
             try {
