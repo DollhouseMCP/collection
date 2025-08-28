@@ -1,4 +1,4 @@
-name: Build Collection Index
+name: Build and Deploy Collection Index
 
 on:
   push:
@@ -48,6 +48,9 @@ jobs:
 
       - name: Build collection index
         run: node dist/scripts/build-collection-index.js
+        
+      - name: Build HTML index page
+        run: node scripts/build-html-index.js
 
       - name: Verify index was created
         run: |
@@ -112,3 +115,12 @@ jobs:
           name: collection-index
           path: public/collection-index.json
           retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          keep_files: false
+          enable_jekyll: false
