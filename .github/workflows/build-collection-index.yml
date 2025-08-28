@@ -50,7 +50,15 @@ jobs:
         run: node dist/scripts/build-collection-index.js
         
       - name: Build HTML index page
-        run: node scripts/build-html-index.js
+        run: |
+          if [ ! -f "scripts/build-html-index.js" ]; then
+            echo "Error: HTML generator script not found"
+            exit 1
+          fi
+          node scripts/build-html-index.js || {
+            echo "Error: Failed to build HTML index"
+            exit 1
+          }
 
       - name: Verify index was created
         run: |
@@ -112,8 +120,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: collection-index
-          path: public/collection-index.json
+          name: collection-index-${{ github.sha }}-${{ github.run_number }}
+          path: public/
           retention-days: 30
 
       - name: Deploy to GitHub Pages

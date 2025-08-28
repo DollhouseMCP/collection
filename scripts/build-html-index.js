@@ -11,6 +11,48 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Configuration constants
+const MAX_ELEMENTS_PER_CATEGORY = 12;  // Maximum elements to display per category
+
+/**
+ * Escape HTML to prevent XSS attacks
+ * @param {string} unsafe - The unsafe string to escape
+ * @returns {string} - The escaped HTML-safe string
+ */
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') return '';
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\//g, '&#x2F;');
+}
+
+/**
+ * Check if content contains potential malicious patterns
+ * @param {string} content - Content to check
+ * @returns {boolean} - True if potentially malicious
+ */
+function containsMaliciousPatterns(content) {
+  if (typeof content !== 'string') return false;
+  
+  // Check for common XSS patterns
+  const maliciousPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /on\w+\s*=/i,  // onclick, onerror, etc.
+    /<iframe/i,
+    /<embed/i,
+    /<object/i,
+    /data:text\/html/i,
+    /vbscript:/i
+  ];
+  
+  return maliciousPatterns.some(pattern => pattern.test(content));
+}
+
 async function buildHtmlIndex() {
   const publicDir = path.join(process.cwd(), 'public');
   const indexPath = path.join(publicDir, 'collection-index.json');
@@ -18,6 +60,23 @@ async function buildHtmlIndex() {
   try {
     // Read the JSON index
     const indexData = JSON.parse(await fs.readFile(indexPath, 'utf-8'));
+    
+    // Count potentially malicious elements for logging
+    let maliciousCount = 0;
+    Object.values(indexData.index).forEach(elements => {
+      elements.forEach(el => {
+        if (containsMaliciousPatterns(el.name) || 
+            containsMaliciousPatterns(el.description) ||
+            containsMaliciousPatterns(el.author)) {
+          maliciousCount++;
+          console.warn(`⚠️  Filtered potentially malicious element: ${el.name}`);
+        }
+      });
+    });
+    
+    if (maliciousCount > 0) {
+      console.log(`🛡️  Filtered ${maliciousCount} potentially malicious elements from HTML display`);
+    }
     
     // Generate HTML
     const html = `<!DOCTYPE html>
@@ -153,29 +212,40 @@ async function buildHtmlIndex() {
     </header>
 
     <div class="categories">
-      ${Object.entries(indexData.index).map(([category, elements]) => `
+      ${Object.entries(indexData.index).map(([category, elements]) => {
+        // Skip categories with malicious content
+        const safeElements = elements.filter(el => 
+          !containsMaliciousPatterns(el.name) && 
+          !containsMaliciousPatterns(el.description) &&
+          !containsMaliciousPatterns(el.author)
+        );
+        
+        if (safeElements.length === 0) return ''; // Skip empty categories
+        
+        return `
         <div class="category">
-          <h2>${category.charAt(0).toUpperCase() + category.slice(1)} (${elements.length})</h2>
+          <h2>${escapeHtml(category.charAt(0).toUpperCase() + category.slice(1))} (${safeElements.length})</h2>
           <div class="elements">
-            ${elements.slice(0, 12).map(el => `
+            ${safeElements.slice(0, MAX_ELEMENTS_PER_CATEGORY).map(el => `
               <div class="element">
-                <div class="element-name">${el.name}</div>
-                <div class="element-description">${el.description || 'No description available'}</div>
+                <div class="element-name">${escapeHtml(el.name)}</div>
+                <div class="element-description">${escapeHtml(el.description || 'No description available')}</div>
                 <div class="element-meta">
-                  ${el.author ? `<span>by ${el.author}</span>` : ''}
-                  ${el.version ? `<span>v${el.version}</span>` : ''}
+                  ${el.author ? `<span>by ${escapeHtml(el.author)}</span>` : ''}
+                  ${el.version ? `<span>v${escapeHtml(el.version)}</span>` : ''}
                   ${el.ai_generated ? '<span class="tag">AI Generated</span>' : ''}
                 </div>
               </div>
             `).join('')}
-            ${elements.length > 12 ? `
+            ${safeElements.length > MAX_ELEMENTS_PER_CATEGORY ? `
               <div class="element" style="text-align: center; padding: 2rem;">
-                <div class="element-description">... and ${elements.length - 12} more</div>
+                <div class="element-description">... and ${safeElements.length - MAX_ELEMENTS_PER_CATEGORY} more</div>
               </div>
             ` : ''}
           </div>
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>
 
     <footer>
