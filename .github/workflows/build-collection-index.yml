@@ -68,18 +68,11 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit updated index
-        if: steps.git-check.outputs.changed == 'true' && github.event_name == 'push'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add public/collection-index.json
-          git commit -m "🤖 Update collection index [automated]
-
-          - Rebuilt index with $(jq '.total_elements' public/collection-index.json) elements
-          - Build time: $(jq '.metadata.build_time_ms' public/collection-index.json)ms
-          - Generated: $(jq -r '.generated' public/collection-index.json)"
-          git push
+      # Disabled: Cannot push to protected branch
+      # The index is still built and uploaded as an artifact
+      # TODO: Create PR instead of direct push for protected branches
+      # - name: Commit updated index
+      #   if: steps.git-check.outputs.changed == 'true' && github.event_name == 'push'
 
       - name: Comment on PR with index stats
         if: steps.git-check.outputs.changed == 'true' && github.event_name == 'pull_request'
