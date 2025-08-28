@@ -54,12 +54,9 @@ jobs:
           fi
 
   build-release:
-    name: Build Release - ${{ matrix.os }}
+    name: Build Release
     needs: validate-release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
@@ -68,7 +65,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           cache: 'npm'
 
       - name: Install dependencies
@@ -94,12 +91,12 @@ jobs:
           cp LICENSE-CONTENT release/
           
           # Create tarball
-          tar -czf "dollhousemcp-collection-${{ needs.validate-release.outputs.version }}-${{ matrix.os }}.tar.gz" release/
+          tar -czf "dollhousemcp-collection-${{ needs.validate-release.outputs.version }}-ubuntu.tar.gz" release/
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ matrix.os }}
+          name: release-ubuntu
           path: "*.tar.gz"
           retention-days: 1
 
@@ -148,7 +145,7 @@ jobs:
           
           ## 📊 Quality Metrics
           
-          - ✅ All tests passing on Ubuntu, Windows, and macOS
+          - ✅ All tests passing on Ubuntu
           - 🔒 Security scan completed
           - 📈 Performance benchmarks available
           
@@ -180,7 +177,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
