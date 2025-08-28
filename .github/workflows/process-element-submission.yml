@@ -195,6 +195,28 @@ jobs:
 
             log(`✅ Metadata extracted with ${Object.keys(metadata).length} fields`);
 
+            // Extract type from issue title if not present in metadata
+            // Issue title format: [type] Add element-name by @username
+            if (!metadata.type) {
+              const titleMatch = issueTitle.match(/^\[([^\]]+)\]/);
+              if (titleMatch) {
+                // Convert plural to singular (personas -> persona, etc.)
+                const typeFromTitle = titleMatch[1].toLowerCase();
+                const typeMap = {
+                  'personas': 'persona',
+                  'skills': 'skill',
+                  'agents': 'agent',
+                  'prompts': 'prompt',
+                  'templates': 'template',
+                  'tools': 'tool',
+                  'ensembles': 'ensemble',
+                  'memories': 'memory'
+                };
+                metadata.type = typeMap[typeFromTitle] || typeFromTitle;
+                log(`✅ Extracted type from issue title: ${metadata.type}`);
+              }
+            }
+
             // Validate required fields
             const requiredFields = ['name', 'description', 'unique_id', 'author', 'type'];
             for (const field of requiredFields) {
@@ -268,7 +290,20 @@ jobs:
             const elementType = metadata.type;
             const category = metadata.category || 'personal';
             const filename = metadata.unique_id.replace(/[^a-z0-9-_]/g, '-') + '.md';
-            const targetPath = `library/${elementType}s/${filename}`;
+            
+            // Map singular types to plural directory names
+            const dirMap = {
+              'persona': 'personas',
+              'skill': 'skills',
+              'agent': 'agents',
+              'prompt': 'prompts',
+              'template': 'templates',
+              'tool': 'tools',
+              'ensemble': 'ensembles',
+              'memory': 'memories'
+            };
+            const targetDir = dirMap[elementType] || `${elementType}s`;
+            const targetPath = `library/${targetDir}/${filename}`;
             
             // Save validation results
             const validationResult = {
