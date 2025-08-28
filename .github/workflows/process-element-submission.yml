@@ -424,7 +424,7 @@ jobs:
             --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
             --body-file pr_body.md \
             --label "automated-submission,needs-review,$ELEMENT_TYPE" \
-            --assignee "${{ github.repository_owner }}"
+            --assignee "mickdarling"
 
           # Get PR number
           PR_NUMBER=$(gh pr view --json number --jq .number)
