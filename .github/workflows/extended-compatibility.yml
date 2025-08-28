@@ -1,5 +1,8 @@
 name: Extended Compatibility Testing
 
+# Note: Tests Node.js version compatibility on Ubuntu only
+# Collection is server-side infrastructure that runs on GitHub/cloud (Ubuntu)
+
 on:
   schedule:
     # Run every Monday at 6 AM UTC
@@ -9,7 +12,7 @@ on:
       node_versions:
         description: 'Node.js versions to test (comma-separated)'
         required: false
-        default: '20.x,22.x'
+        default: '22.x,24.x'
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096 --experimental-vm-modules
@@ -17,13 +20,12 @@ env:
 
 jobs:
   compatibility-matrix:
-    name: Node ${{ matrix.node-version }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: ['20.x', '22.x']
+        node-version: ['22.x', '24.x']
     
     steps:
       - name: Checkout repository
@@ -41,7 +43,7 @@ jobs:
         run: |
           echo "Node.js version: $(node --version)"
           echo "npm version: $(npm --version)"
-          echo "OS: ${{ matrix.os }}"
+          echo "OS: Ubuntu ($(lsb_release -d -s))"
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -75,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: compatibility-node${{ matrix.node-version }}-${{ matrix.os }}
+          name: compatibility-node${{ matrix.node-version }}-ubuntu
           path: |
             test-results/
             *.log
@@ -99,11 +101,9 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Matrix Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| OS | Node 20.x | Node 22.x |" >> $GITHUB_STEP_SUMMARY
-          echo "|----|-----------|-----------| " >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Node 22.x | Node 24.x |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-----------|-----------|" >> $GITHUB_STEP_SUMMARY
           echo "| Ubuntu | ${{ needs.compatibility-matrix.result }} | ${{ needs.compatibility-matrix.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Windows | ${{ needs.compatibility-matrix.result }} | ${{ needs.compatibility-matrix.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS | ${{ needs.compatibility-matrix.result }} | ${{ needs.compatibility-matrix.result }} |" >> $GITHUB_STEP_SUMMARY
 
       - name: Create issue if failed
         if: needs.compatibility-matrix.result == 'failure'
