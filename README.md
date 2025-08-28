@@ -6,7 +6,7 @@
 
 ## Status & Quality
 [![GitHub Views](https://komarev.com/ghpvc/?username=DollhouseMCP&repo=collection&label=Repository+Views&style=flat)](https://github.com/DollhouseMCP/collection)
-[![Version](https://img.shields.io/badge/version-v1.0.2-blue)](https://github.com/DollhouseMCP/collection/releases)
+[![Version](https://img.shields.io/badge/version-v1.0.3-blue)](https://github.com/DollhouseMCP/collection/releases)
 [![GitHub Pages](https://img.shields.io/badge/Catalog-Live-success)](https://dollhousemcp.github.io/collection/)
 [![Build Status](https://github.com/DollhouseMCP/collection/actions/workflows/build-collection-index.yml/badge.svg)](https://github.com/DollhouseMCP/collection/actions/workflows/build-collection-index.yml)
 [![Security Scan](https://img.shields.io/badge/Security-Validated-green)](https://github.com/DollhouseMCP/collection/security)
@@ -204,6 +204,12 @@ graph TD
 - 🗓️ [Roadmap](docs/ROADMAP.md) - Future features and timeline
 
 ## 📅 Changelog
+
+### [v1.0.3] - 2025-08-28
+- 📚 Added comprehensive documentation (ROADMAP, VALIDATION, SECURITY, QUICK_START)
+- 🎯 Enhanced README with professional badges and organization
+- 📝 Created examples directory with implementation guides
+- ✨ Improved collection statistics and live data sections
 
 ### [v1.0.2] - 2025-08-28
 - 🚀 Added GitHub Pages deployment
