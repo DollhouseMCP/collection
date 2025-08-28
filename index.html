@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DollhouseMCP Collection</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      color: white;
+      margin-bottom: 3rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .stat {
+      background: rgba(255,255,255,0.2);
+      padding: 1rem 2rem;
+      border-radius: 10px;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .categories {
+      display: grid;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .category {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .category h2 {
+      color: #764ba2;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+    .elements {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .element {
+      background: #f7f7f7;
+      padding: 1rem;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+    .element:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .element-name {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .element-description {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    .element-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #999;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    footer {
+      text-align: center;
+      color: white;
+      margin-top: 4rem;
+      padding: 2rem;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏚️ DollhouseMCP Collection</h1>
+      <p class="subtitle">Community-driven AI elements for the Model Context Protocol</p>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-number">44</div>
+          <div>Total Elements</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">8</div>
+          <div>Categories</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="categories">
+      
+        <div class="category">
+          <h2>Personas (6)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Business Consultant</div>
+                <div class="element-description">A strategic advisor focused on ROI, implementation, and practical business outcomes</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Creative Writer</div>
+                <div class="element-description">An imaginative storyteller who crafts engaging narratives and helps with creative writing projects</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Debug Detective</div>
+                <div class="element-description">A systematic investigator specializing in troubleshooting and root cause analysis</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">ELI5 Explainer</div>
+                <div class="element-description">A patient teacher who simplifies complex topics using everyday analogies and simple language</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Security Analyst</div>
+                <div class="element-description">Highly detail-oriented code security expert focused on vulnerability detection and secure coding practices</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Technical Analyst</div>
+                <div class="element-description">A systematic problem-solver focused on deep technical analysis and evidence-based solutions</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Agents (6)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Academic Researcher</div>
+                <div class="element-description">An autonomous agent specialized in conducting thorough academic research</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Code Reviewer</div>
+                <div class="element-description">Automated code review agent with security, performance, and quality analysis</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Research Assistant</div>
+                <div class="element-description">Autonomous agent for conducting thorough research and synthesizing findings</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Roundtrip Test Agent</div>
+                <div class="element-description">Automated testing agent that executes complete roundtrip workflow tests for MCP elements</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp-test</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Roundtrip Test Reporter</div>
+                <div class="element-description">Generates a comprehensive roundtrip test execution plan and results template as an artifact for Claude Desktop</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp-test</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Task Manager</div>
+                <div class="element-description">Goal-oriented agent for managing tasks, priorities, and project execution</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Skills (11)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Code Review</div>
+                <div class="element-description">Systematic code analysis for quality, security, and best practices</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Creative Writing</div>
+                <div class="element-description">Storytelling, narrative construction, and creative content generation</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Data Analysis</div>
+                <div class="element-description">Statistical analysis, visualization, and insights generation from data collections</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Debugging Assistant</div>
+                <div class="element-description">A specialized skill for helping debug code across multiple programming languages</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Penetration Testing</div>
+                <div class="element-description">Systematic security testing methodology for identifying vulnerabilities through ethical hacking</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Research</div>
+                <div class="element-description">Comprehensive research methodology for gathering and synthesizing information</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Roundtrip Test Skill</div>
+                <div class="element-description">A test skill designed to validate the complete collection submission workflow roundtrip</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Roundtrip Test Validator</div>
+                <div class="element-description">A test skill for validating the MCP roundtrip workflow - helps verify element submission, installation, and processing</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp-test</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Safe Roundtrip Tester</div>
+                <div class="element-description">A security-safe test skill for validating the complete MCP roundtrip workflow without triggering security alerts</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp-test</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Threat Modeling</div>
+                <div class="element-description">Systematic approach to identifying, analyzing, and mitigating security threats in systems and applications</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Translation</div>
+                <div class="element-description">Multi-language translation with cultural context and tone preservation</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Templates (10)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Code Documentation</div>
+                <div class="element-description">Technical documentation template for code modules, APIs, and functions</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Executive Report</div>
+                <div class="element-description">High-level report template for executive audiences with focus on insights and recommendations</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Meeting Notes</div>
+                <div class="element-description">Structured template for capturing and organizing meeting information</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Penetration Test Report</div>
+                <div class="element-description">Comprehensive penetration testing report with executive summary and technical findings</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Professional Email</div>
+                <div class="element-description">Business email template with proper formatting and tone</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Project Brief</div>
+                <div class="element-description">Comprehensive project overview template for planning and communication</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Project Proposal Template</div>
+                <div class="element-description">Professional template for creating comprehensive project proposals</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Roundtrip Test Template</div>
+                <div class="element-description">Interactive checklist template for MCP roundtrip workflow testing</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp-test</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Security Vulnerability Report</div>
+                <div class="element-description">Comprehensive vulnerability assessment report with technical details and remediation guidance</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Threat Assessment Report</div>
+                <div class="element-description">Comprehensive threat modeling and risk assessment report with mitigation strategies</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Memories (3)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Conversation History</div>
+                <div class="element-description">Maintains context and continuity across multiple conversation sessions</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Learning Progress</div>
+                <div class="element-description">Tracks learning goals, progress, and personalized educational pathways</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Project Context</div>
+                <div class="element-description">Persistent memory for project-specific information, decisions, and history</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Ensembles (6)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Business Advisor</div>
+                <div class="element-description">Strategic business advisory ensemble for analysis, planning, and decision-making</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Complete Productivity Suite</div>
+                <div class="element-description">A comprehensive collection of productivity-enhancing content for personal and professional use</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Creative Studio</div>
+                <div class="element-description">Multi-disciplinary creative ensemble for content creation and storytelling</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Development Team</div>
+                <div class="element-description">Complete development team ensemble for full-stack software projects</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Full-Stack Developer Ensemble</div>
+                <div class="element-description">Complete development environment combining personas, tools, and skills for professional software development</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+              <div class="element">
+                <div class="element-name">Security Analysis Team</div>
+                <div class="element-description">Elite security analysis ensemble combining threat modeling, penetration testing, and comprehensive vulnerability assessment</div>
+                <div class="element-meta">
+                  <span>by DollhouseMCP</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Prompts (1)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Story Starter</div>
+                <div class="element-description">Creative writing prompt generator for various genres and styles</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+        <div class="category">
+          <h2>Tools (1)</h2>
+          <div class="elements">
+            
+              <div class="element">
+                <div class="element-name">Task Prioritizer</div>
+                <div class="element-description">MCP tool for intelligent task prioritization using multiple frameworks</div>
+                <div class="element-meta">
+                  <span>by dollhousemcp</span>
+                  <span>v1.0.0</span>
+                  
+                </div>
+              </div>
+            
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <footer>
+      <p>Last updated: 8/28/2025, 5:50:21 PM</p>
+      <p style="margin-top: 1rem;">
+        <a href="https://github.com/DollhouseMCP/collection">GitHub Repository</a>
+        <a href="collection-index.json">JSON API</a>
+        <a href="https://github.com/DollhouseMCP/mcp-server">MCP Server</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
