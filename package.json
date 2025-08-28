@@ -1,6 +1,6 @@
 {
   "name": "@dollhousemcp/collection",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "DollhouseMCP Collection - The official collection of AI content including personas, skills, agents, prompts, templates, tools, and ensembles",
   "type": "module",
   "main": "dist/index.js",
