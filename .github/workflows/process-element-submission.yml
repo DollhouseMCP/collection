@@ -403,8 +403,8 @@ jobs:
           TARGET_DIR=$(dirname "$TARGET_PATH")
           mkdir -p "$TARGET_DIR"
           
-          # Write element content to target file
-          echo "$ELEMENT_CONTENT" > "$TARGET_PATH"
+          # Write element content to target file (using printf to preserve newlines)
+          printf "%s\n" "$ELEMENT_CONTENT" > "$TARGET_PATH"
           
           # Add and commit
           git add "$TARGET_PATH"
@@ -417,14 +417,16 @@ jobs:
 
           🤖 Automated submission processing"
           
-          # Push branch
-          git push origin "$BRANCH_NAME"
+          # Push branch (force push to handle existing branches)
+          git push origin "$BRANCH_NAME" --force
           
           # Create PR description
           cat > pr_body.md << EOF
           ## 🤖 Automated Element Submission
 
           This PR was automatically created from issue #$ISSUE_NUMBER submitted by @$ISSUE_USER.
+
+          ⚠️ **Direct to Main**: Element submissions go directly to the main branch for immediate availability.
 
           ### Element Details
           - **Type**: $ELEMENT_TYPE
@@ -443,6 +445,8 @@ jobs:
           - [ ] Element tested in appropriate environment
           - [ ] Documentation is clear and helpful
           - [ ] Attribution and licensing is correct
+          - [ ] No executable code or security risks
+          - [ ] Content-only submission (no system changes)
 
           ### Security Notes
           $(if [ "$SECURITY_WARNINGS" -gt 0 ]; then echo "⚠️ This submission has $SECURITY_WARNINGS security warning(s). Please review the validation log for details."; else echo "🔒 No security warnings detected."; fi)
@@ -459,6 +463,7 @@ jobs:
           # Use GITHUB_ASSIGNEE environment variable if set, otherwise default to mickdarling
           ASSIGNEE="${GITHUB_ASSIGNEE:-mickdarling}"
           gh pr create \
+            --base main \
             --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
             --body-file pr_body.md \
             --label "automated-submission,needs-review,$ELEMENT_TYPE" \
