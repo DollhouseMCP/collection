@@ -55,4 +55,6 @@ temp/
 # Cache
 .cache/
 .parcel-cache/
-node_modules
+
+# Generated files
+preview.html/

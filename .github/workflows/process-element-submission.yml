@@ -293,7 +293,10 @@ jobs:
 
             // Check for existing elements with same unique_id
             const searchCmd = `find library showcase catalog -name "*.md" -type f 2>/dev/null || true`;
-            const existingFiles = execSync(searchCmd, { encoding: 'utf8' }).trim().split('\n').filter(f => f);
+            const existingFiles = execSync(searchCmd, { 
+              encoding: 'utf8',
+              timeout: 10000  // 10 second timeout to prevent hanging
+            }).trim().split('\n').filter(f => f);
             
             let duplicateFound = false;
             for (const file of existingFiles) {
@@ -453,11 +456,13 @@ jobs:
           EOF
 
           # Create pull request
+          # Use GITHUB_ASSIGNEE environment variable if set, otherwise default to mickdarling
+          ASSIGNEE="${GITHUB_ASSIGNEE:-mickdarling}"
           gh pr create \
             --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
             --body-file pr_body.md \
             --label "automated-submission,needs-review,$ELEMENT_TYPE" \
-            --assignee "mickdarling"
+            --assignee "$ASSIGNEE"
 
           # Get PR number
           PR_NUMBER=$(gh pr view --json number --jq .number)
