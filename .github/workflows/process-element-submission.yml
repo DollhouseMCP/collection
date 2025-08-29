@@ -240,7 +240,10 @@ jobs:
               // Generate unique_id suggestion if that's what's missing
               let suggestion = '';
               if (missingFields.includes('unique_id')) {
-                const suggestedId = `${metadata.type || 'element'}_${(metadata.name || 'unnamed').toLowerCase().replace(/\s+/g, '-')}_${issueUser}_${new Date().toISOString().slice(0,10).replace(/-/g, '')}`;
+                const date = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                const time = new Date().toISOString().slice(11,19).replace(/:/g, '');
+                const safeName = (metadata.name || 'unnamed').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                const suggestedId = `${metadata.type || 'element'}_${safeName}_${issueUser}_${date}-${time}`;
                 suggestion = `\n\n💡 **Suggested unique_id**: \`${suggestedId}\``;
               }
               
