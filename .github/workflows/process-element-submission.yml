@@ -403,8 +403,8 @@ jobs:
           TARGET_DIR=$(dirname "$TARGET_PATH")
           mkdir -p "$TARGET_DIR"
           
-          # Write element content to target file
-          echo "$ELEMENT_CONTENT" > "$TARGET_PATH"
+          # Write element content to target file (printf preserves newlines)
+          printf "%s\n" "$ELEMENT_CONTENT" > "$TARGET_PATH"
           
           # Add and commit
           git add "$TARGET_PATH"
@@ -417,8 +417,8 @@ jobs:
 
           🤖 Automated submission processing"
           
-          # Push branch
-          git push origin "$BRANCH_NAME"
+          # Push branch (force to handle retries)
+          git push --force origin "$BRANCH_NAME"
           
           # Create PR description
           cat > pr_body.md << EOF
@@ -455,10 +455,11 @@ jobs:
           /cc @dollhouse-mcp/reviewers
           EOF
 
-          # Create pull request
+          # Create pull request directly to main (elements are content-only)
           # Use GITHUB_ASSIGNEE environment variable if set, otherwise default to mickdarling
           ASSIGNEE="${GITHUB_ASSIGNEE:-mickdarling}"
           gh pr create \
+            --base main \
             --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
             --body-file pr_body.md \
             --label "automated-submission,needs-review,$ELEMENT_TYPE" \
