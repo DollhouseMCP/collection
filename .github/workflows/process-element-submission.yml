@@ -403,8 +403,8 @@ jobs:
           TARGET_DIR=$(dirname "$TARGET_PATH")
           mkdir -p "$TARGET_DIR"
           
-          # Write element content to target file
-          echo "$ELEMENT_CONTENT" > "$TARGET_PATH"
+          # Write element content to target file (using printf to preserve newlines)
+          printf "%s\n" "$ELEMENT_CONTENT" > "$TARGET_PATH"
           
           # Add and commit
           git add "$TARGET_PATH"
