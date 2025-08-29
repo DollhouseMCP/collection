@@ -55,3 +55,6 @@ temp/
 # Cache
 .cache/
 .parcel-cache/
+
+# Generated files
+preview.html/

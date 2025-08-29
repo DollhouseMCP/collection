@@ -216,13 +216,46 @@ jobs:
                 log(`✅ Extracted type from issue title: ${metadata.type}`);
               }
             }
+            
+            // Auto-generate unique_id if missing (for backward compatibility)
+            if (!metadata.unique_id && metadata.name) {
+              const date = new Date().toISOString().slice(0,10).replace(/-/g, '');
+              const time = new Date().toISOString().slice(11,19).replace(/:/g, '');
+              const safeName = metadata.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+              metadata.unique_id = `${metadata.type || 'element'}_${safeName}_${issueUser}_${date}-${time}`;
+              log(`⚠️ Generated unique_id automatically: ${metadata.unique_id}`);
+              log(`   (It's recommended to include unique_id in your submission)`);
+            }
 
-            // Validate required fields
+            // Validate required fields with helpful error message
             const requiredFields = ['name', 'description', 'unique_id', 'author', 'type'];
+            const missingFields = [];
             for (const field of requiredFields) {
               if (!metadata[field]) {
-                throw new Error(`Missing required field: ${field}`);
+                missingFields.push(field);
               }
+            }
+            
+            if (missingFields.length > 0) {
+              // Generate unique_id suggestion if that's what's missing
+              let suggestion = '';
+              if (missingFields.includes('unique_id')) {
+                const date = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                const time = new Date().toISOString().slice(11,19).replace(/:/g, '');
+                const safeName = (metadata.name || 'unnamed').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                const suggestedId = `${metadata.type || 'element'}_${safeName}_${issueUser}_${date}-${time}`;
+                suggestion = `\n\n💡 **Suggested unique_id**: \`${suggestedId}\``;
+              }
+              
+              throw new Error(
+                `Missing required fields in YAML frontmatter: ${missingFields.join(', ')}\n\n` +
+                `Please ensure your submission includes all required fields in the YAML frontmatter:\n` +
+                `- name: The element's display name\n` +
+                `- description: A brief description\n` +
+                `- unique_id: A unique identifier (format: type_name_author_date)\n` +
+                `- author: Your username\n` +
+                `- type: The element type (persona, skill, template, etc.)${suggestion}`
+              );
             }
 
             // Validate element type
@@ -260,7 +293,10 @@ jobs:
 
             // Check for existing elements with same unique_id
             const searchCmd = `find library showcase catalog -name "*.md" -type f 2>/dev/null || true`;
-            const existingFiles = execSync(searchCmd, { encoding: 'utf8' }).trim().split('\n').filter(f => f);
+            const existingFiles = execSync(searchCmd, { 
+              encoding: 'utf8',
+              timeout: 10000  // 10 second timeout to prevent hanging
+            }).trim().split('\n').filter(f => f);
             
             let duplicateFound = false;
             for (const file of existingFiles) {
@@ -420,11 +456,13 @@ jobs:
           EOF
 
           # Create pull request
+          # Use GITHUB_ASSIGNEE environment variable if set, otherwise default to mickdarling
+          ASSIGNEE="${GITHUB_ASSIGNEE:-mickdarling}"
           gh pr create \
             --title "✨ Add $ELEMENT_TYPE: $ELEMENT_NAME (from issue #$ISSUE_NUMBER)" \
             --body-file pr_body.md \
             --label "automated-submission,needs-review,$ELEMENT_TYPE" \
-            --assignee "mickdarling"
+            --assignee "$ASSIGNEE"
 
           # Get PR number
           PR_NUMBER=$(gh pr view --json number --jq .number)
