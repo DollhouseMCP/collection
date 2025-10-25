@@ -1,33 +1,42 @@
 ---
-name: Threat Assessment Report
-description: >-
-  Comprehensive threat modeling and risk assessment report with mitigation
-  strategies
-type: template
-version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
-category: professional
-tags:
-  - threat-modeling
-  - risk-assessment
-  - security-analysis
-  - threat-intelligence
+name: "Threat Assessment Report"
+description: "Comprehensive threat modeling and risk assessment report with mitigation strategies"
+type: "template"
+version: "1.0.0"
+author: "DollhouseMCP"
+created: "2025-07-23"
+category: "security"
+tags: ["threat-modeling", "risk-assessment", "security-analysis", "threat-intelligence"]
 variables:
-  - system_name
-  - assessment_date
-  - threat_analyst
-  - business_owner
-  - methodology
-  - system_criticality
-outputFormats:
-  - pdf
-  - html
-  - markdown
-  - docx
+  system_name:
+    type: "string"
+    description: "Name of the system being assessed"
+    required: true
+  assessment_date:
+    type: "string"
+    description: "Date of the threat assessment"
+    required: true
+    default: "{{TODAY}}"
+  threat_analyst:
+    type: "string"
+    description: "Lead threat analyst name"
+    required: true
+  business_owner:
+    type: "string"
+    description: "Business system owner"
+    required: true
+  methodology:
+    type: "string"
+    description: "Threat modeling methodology used"
+    default: "STRIDE"
+    enum: ["STRIDE", "PASTA", "OCTAVE", "TRIKE", "VAST"]
+  system_criticality:
+    type: "string"
+    description: "Business criticality of the system"
+    default: "high"
+    enum: ["low", "medium", "high", "critical"]
+outputFormats: ["pdf", "html", "markdown", "docx"]
 includes: []
-unique_id: template_threat-assessment-report_dollhousemcp_20250723-165719
-format: markdown
 ---
 
 # Threat Assessment Report
