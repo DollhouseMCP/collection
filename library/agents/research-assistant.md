@@ -2,7 +2,7 @@
 name: "Research Assistant"
 description: "Autonomous agent for conducting thorough research and synthesizing findings"
 type: "agent"
-version: "1.0.0"
+version: 1.0.0
 author: "DollhouseMCP"
 created: "2025-07-23"
 category: "knowledge"
