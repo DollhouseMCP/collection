@@ -1,6 +1,6 @@
 ---
-author: anonymous
-created: 2025-10-15
+author: DollhouseMCP
+created: 2025-10-15T00:00:00.000Z
 decisionFramework: rule_based
 description: >-
   Specialized agent for publishing MCP servers to the Model Context Protocol
@@ -11,8 +11,11 @@ modified: 2025-10-15T17:19:57.092Z
 name: mcp-registry-publisher
 riskTolerance: moderate
 specializations: []
-type: agents
+type: agent
 version: 1.0.0
+unique_id: agents_mcp-registry-publisher_anonymous_20251015-000000
+capabilities:
+  - autonomous-task-execution
 ---
 # MCP Registry Publi
 

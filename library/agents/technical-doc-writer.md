@@ -1,5 +1,5 @@
 ---
-author: anonymous
+author: DollhouseMCP
 created: 2025-09-02T19:29:37.070Z
 decisionFramework: rule_based
 description: >-
@@ -10,8 +10,11 @@ modified: 2025-09-02T19:29:37.070Z
 name: technical-doc-writer
 riskTolerance: moderate
 specializations: []
-type: agents
+type: agent
 version: 1.0.0
+unique_id: agents_technical-doc-writer_anonymous_20250902-192937
+capabilities:
+  - autonomous-task-execution
 ---
 # Technical Documentation Writer Agent
 

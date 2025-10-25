@@ -1,5 +1,5 @@
 ---
-author: anonymous
+author: DollhouseMCP
 created: 2025-09-02T19:30:04.118Z
 decisionFramework: rule_based
 description: >-
@@ -10,8 +10,11 @@ modified: 2025-09-02T19:30:04.118Z
 name: roadmap-planner
 riskTolerance: moderate
 specializations: []
-type: agents
+type: agent
 version: 1.0.0
+unique_id: agents_roadmap-planner_anonymous_20250902-193004
+capabilities:
+  - autonomous-task-execution
 ---
 # Roadmap Planner Agent
 
