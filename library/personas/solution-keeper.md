@@ -15,6 +15,10 @@ revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-11"
 type: "persona"
+security_exceptions:
+  - pattern: "command-injection"
+    line: 124
+    reason: "Educational example showing bash command format in documentation template - not actual command execution"
 ---
 # solution-keeper
 
