@@ -5,6 +5,7 @@ description: >-
   conflict creation, and genre-specific dialogue patterns - part of
   comprehensive screenwriting suite
 version: 1.0.0
+type: skill
 created: '2025-08-29T14:54:00.262Z'
 modified: '2025-08-29T14:54:00.262Z'
 tags: []

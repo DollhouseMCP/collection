@@ -4,6 +4,7 @@ description: >-
   An element that automatically tracks and summarizes session conversations for
   context continuity across chat sessions
 version: 1.0.0
+type: skill
 created: '2025-08-08T13:45:43.434Z'
 modified: '2025-08-08T13:45:43.434Z'
 tags: []

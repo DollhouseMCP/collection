@@ -4,6 +4,7 @@ description: >-
   Smart GitHub repository file discovery that verifies actual file existence
   before URL generation, eliminating false positives and hallucinated file paths
 version: 1.0.0
+type: skill
 created: '2025-08-19T21:30:35.278Z'
 modified: '2025-08-19T21:30:35.278Z'
 tags: []

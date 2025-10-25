@@ -4,6 +4,7 @@ description: >-
   Analyzes Reddit submissions for engagement optimization, rule compliance, and
   community fit
 version: '1.0'
+type: skill
 created: '2025-08-29T21:50:36.463Z'
 modified: '2025-08-29T21:50:36.463Z'
 tags:

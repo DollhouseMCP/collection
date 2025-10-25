@@ -5,6 +5,7 @@ description: >-
   proper authentication and rate limiting
 author: sonar-guardian
 version: 1.0.0
+type: skill
 created: '2025-10-01T18:10:48.756Z'
 modified: '2025-10-01T18:10:48.756Z'
 tags:

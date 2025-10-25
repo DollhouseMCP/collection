@@ -2,6 +2,7 @@
 name: time-query
 description: A skill for querying the current system time and date
 version: 1.0.0
+type: skill
 created: '2025-08-07T19:15:02.887Z'
 modified: '2025-08-07T19:15:02.887Z'
 tags:

@@ -5,6 +5,7 @@ description: >-
   code to follow modern JavaScript/TypeScript patterns
 author: mickdarling
 version: 1.0.2
+type: skill
 created: '2025-09-28T16:33:21.645Z'
 modified: '2025-09-28T16:33:21.645Z'
 tags:

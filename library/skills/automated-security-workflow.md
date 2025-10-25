@@ -5,6 +5,7 @@ description: >-
   validation processes with intelligent threat response and seamless user
   experience management
 version: 1.0.0
+type: skill
 created: '2025-08-12T15:29:51.801Z'
 modified: '2025-08-12T15:29:51.801Z'
 tags: []

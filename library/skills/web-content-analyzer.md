@@ -5,6 +5,7 @@ description: >-
   injections, malicious scripts, and privacy violations in real-time browsing
   scenarios
 version: 1.0.0
+type: skill
 created: '2025-08-12T15:27:33.230Z'
 modified: '2025-08-12T15:27:33.230Z'
 tags: []

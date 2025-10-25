@@ -4,6 +4,7 @@ description: >-
   Advanced diagnostic tool for troubleshooting DollhouseMCP indexing issues,
   file parsing problems, and system health monitoring
 version: 1.0.0
+type: skill
 created: '2025-08-25T13:41:00.780Z'
 modified: '2025-08-25T13:41:00.780Z'
 tags: []

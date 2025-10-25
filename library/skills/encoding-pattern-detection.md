@@ -4,6 +4,7 @@ description: >-
   Pattern recognition skill for detecting encoding-based jailbreak attempts and
   TIP techniques
 version: 1.0.0
+type: skill
 created: '2025-08-09T14:13:42.166Z'
 modified: '2025-08-09T14:13:42.166Z'
 tags: []

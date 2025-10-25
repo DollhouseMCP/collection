@@ -5,6 +5,7 @@ description: >-
   identifiers, gender markers, age information, and other potentially
   discriminatory data while maintaining formatting and professional presentation
 version: 1.0.0
+type: skill
 created: '2025-09-22T22:59:15.655Z'
 modified: '2025-09-22T22:59:15.655Z'
 tags: []

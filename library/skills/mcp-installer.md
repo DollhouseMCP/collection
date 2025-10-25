@@ -5,6 +5,7 @@ description: >-
   documentation and adding servers to any MCP client
 author: Mick Darling
 version: 1.0.0
+type: skill
 created: '2025-10-11T15:19:00.846Z'
 modified: '2025-10-11T15:19:00.846Z'
 tags:

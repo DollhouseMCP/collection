@@ -4,6 +4,7 @@ description: >-
   Analyzes raw content structure and provides detailed recommendations for blog
   post organization
 version: 1.0.0
+type: skill
 created: '2025-08-12T19:26:49.651Z'
 modified: '2025-08-12T19:26:49.651Z'
 tags: []

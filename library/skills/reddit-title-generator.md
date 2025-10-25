@@ -4,6 +4,7 @@ description: >-
   Generates compelling, optimized titles for Reddit submissions using proven
   engagement strategies
 version: '1.0'
+type: skill
 created: '2025-08-29T21:50:48.614Z'
 modified: '2025-08-29T21:50:48.614Z'
 tags:

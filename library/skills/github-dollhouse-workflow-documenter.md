@@ -5,6 +5,7 @@ description: >-
   integration workflows
 author: mickdarling
 version: 1.0.0
+type: skill
 created: '2025-09-10T00:06:28.647Z'
 modified: '2025-09-10T00:06:28.647Z'
 tags:

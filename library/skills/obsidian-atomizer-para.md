@@ -7,6 +7,7 @@ description: >-
   vault context and user patterns
 author: mick
 version: 2.0.0
+type: skill
 created: '2025-10-11T21:54:26.449Z'
 modified: '2025-10-11T21:54:26.449Z'
 tags:

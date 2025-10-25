@@ -5,6 +5,7 @@ description: >-
   agent collaboration
 author: Claude
 version: 1.0.0
+type: skill
 created: '2025-08-15T17:36:28.890Z'
 modified: '2025-08-15T17:36:28.890Z'
 tags:

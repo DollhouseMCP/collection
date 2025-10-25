@@ -4,6 +4,7 @@ description: >-
   Provides final polish and enhancement for blog content including SEO
   optimization and readability improvements
 version: 1.0.0
+type: skill
 created: '2025-08-12T19:27:06.983Z'
 modified: '2025-08-12T19:27:06.983Z'
 tags: []

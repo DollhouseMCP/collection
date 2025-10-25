@@ -5,6 +5,7 @@ description: >-
   for different social and professional platforms while maintaining message
   consistency
 version: 1.0.0
+type: skill
 created: '2025-09-03T22:03:42.527Z'
 modified: '2025-09-03T22:03:42.527Z'
 tags:

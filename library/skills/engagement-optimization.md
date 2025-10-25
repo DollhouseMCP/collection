@@ -3,6 +3,7 @@ name: engagement-optimization
 description: Optimize content for maximum engagement and meaningful audience interaction
 author: user
 version: '1.0'
+type: skill
 created: '2025-08-29T15:33:01.620Z'
 modified: '2025-08-29T15:33:01.620Z'
 tags: []

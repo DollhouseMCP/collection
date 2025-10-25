@@ -6,6 +6,7 @@ description: >-
   suggestions, and follow-up items
 author: DollhouseMCP
 version: 1.0.0
+type: skill
 created: '2025-09-30T14:50:38.838Z'
 modified: '2025-09-30T14:50:38.838Z'
 tags:

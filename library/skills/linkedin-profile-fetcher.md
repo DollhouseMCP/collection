@@ -4,6 +4,7 @@ description: >-
   A skill for fetching and analyzing LinkedIn profile data from URLs using
   available web fetch tools
 version: 1.0.1
+type: skill
 created: '2025-09-04T20:06:47.581Z'
 modified: '2025-09-04T20:06:47.581Z'
 tags: []

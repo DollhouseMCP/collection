@@ -4,6 +4,7 @@ description: >-
   Intelligent conversation summarizer that identifies key decision points and
   generates audio summaries using macOS say command for hands-free updates
 version: 1.0.7
+type: skill
 created: '2025-09-03T21:53:20.597Z'
 modified: '2025-09-05T21:00:00.000Z'
 platform: macos

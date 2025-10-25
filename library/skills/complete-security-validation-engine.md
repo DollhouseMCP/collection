@@ -5,6 +5,7 @@ description: >-
   capabilities, repository analysis, AI tool validation, and automated response
   generation
 version: 1.0.0
+type: skill
 created: '2025-08-12T16:10:09.409Z'
 modified: '2025-08-12T16:10:09.409Z'
 tags: []

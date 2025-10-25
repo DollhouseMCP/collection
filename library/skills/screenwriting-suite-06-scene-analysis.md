@@ -5,6 +5,7 @@ description: >-
   compelling screenplay scenes with proper structure, conflict, and character
   development - part of comprehensive screenwriting suite
 version: 1.0.0
+type: skill
 created: '2025-08-29T14:54:45.607Z'
 modified: '2025-08-29T14:54:45.607Z'
 tags: []
