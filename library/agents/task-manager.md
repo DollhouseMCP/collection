@@ -48,6 +48,9 @@ risk_thresholds:
 unique_id: agent_task-manager_dollhousemcp_20250723-000000
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "yaml-config"
+    reason: "Agent configuration metadata in YAML format describing task management capabilities - structural documentation, not security risk"
 ---
 
 # Task Manager Agent

@@ -1,0 +1,254 @@
+================================================================================
+PORTFOLIO METADATA FIXER - COMPLETE PACKAGE
+================================================================================
+
+Created: October 25, 2025
+Location: /Users/mick/Developer/Organizations/DollhouseMCP/active/collection/
+
+================================================================================
+FILES CREATED
+================================================================================
+
+1. fix-portfolio-metadata.mjs
+   - Main executable script (Node.js)
+   - 600+ lines of code
+   - Full validation and fixing logic
+   - Safe, defensive implementation
+
+2. FIX-PORTFOLIO-METADATA-README.md
+   - Comprehensive documentation
+   - All features explained
+   - Usage examples
+   - Troubleshooting guide
+
+3. FIX-PORTFOLIO-SUMMARY.md
+   - Detailed dry-run analysis
+   - Statistics by content type
+   - Example fixes for each type
+   - Validation rules reference
+
+4. QUICK-START-FIX.md
+   - Quick reference guide
+   - Copy-paste commands
+   - Common questions
+   - Before/after examples
+
+================================================================================
+CURRENT PORTFOLIO STATUS (DRY-RUN RESULTS)
+================================================================================
+
+Total Files: 261
+  ✓ Already Valid: 4 (1.5%)
+  ✗ Need Fixes: 257 (98.5%)
+  
+Files Already Valid:
+  ✓ agents/academic-researcher.md
+  ✓ agents/roundtrip-test-agent.md
+  ✓ skills/safe-roundtrip-tester.md
+  ✓ templates/project-proposal.md
+
+================================================================================
+ISSUES BREAKDOWN
+================================================================================
+
+Issue Type              Count    % of Files    Will Fix
+─────────────────────────────────────────────────────────
+type (plural)            225      86.2%         ✓
+unique_id format         190      72.8%         ✓
+capabilities missing     119      45.6%         ✓
+author missing           114      43.7%         ✓
+version format            86      33.0%         ✓
+template format           53      20.3%         ✓
+template category         53      20.3%         ✓
+
+================================================================================
+BY CONTENT TYPE
+================================================================================
+
+AGENTS (34 files)
+  - Need fixes: 32
+  - Already valid: 2
+  - Top issues: unique_id (32), capabilities (32), type (29)
+
+SKILLS (88 files)
+  - Need fixes: 87
+  - Already valid: 1
+  - Top issues: unique_id (87), capabilities (87), type (77)
+
+TEMPLATES (56 files)
+  - Need fixes: 55
+  - Already valid: 1
+  - Top issues: format (53), category (53), unique_id (52)
+
+PERSONAS (75 files)
+  - Need fixes: 75
+  - Already valid: 0
+  - Top issues: type (75), version (72), unique_id (9)
+
+ENSEMBLES (7 files)
+  - Need fixes: Most files
+  - Top issues: type, unique_id, author
+
+MEMORIES (75 files)
+  - Need fixes: Most files
+  - Top issues: type, unique_id
+
+================================================================================
+WHAT THE SCRIPT FIXES
+================================================================================
+
+1. unique_id
+   ✗ Before: verbose-victorian-scholar_20250827-102340_anon-calm-tiger-gjse
+   ✓ After:  persona_verbose-victorian-scholar_mickdarling_20250827-102340
+   
+2. version
+   ✗ Before: 1.0 or 2.2 or missing
+   ✓ After:  1.0.0 or 2.2.0 or 1.0.0
+   
+3. type
+   ✗ Before: agents, skills, personas, templates
+   ✓ After:  agent, skill, persona, template
+   
+4. author
+   ✗ Before: anonymous or missing
+   ✓ After:  DollhouseMCP
+   
+5. capabilities (for skills/agents)
+   ✗ Before: missing
+   ✓ After:  ["general-purpose"] or ["autonomous-task-execution"]
+   
+6. format (for templates)
+   ✗ Before: missing
+   ✓ After:  "markdown"
+   
+7. category (for templates)
+   ✗ Before: "general" or missing
+   ✓ After:  "professional"
+
+================================================================================
+USAGE COMMANDS
+================================================================================
+
+QUICK START (Safest):
+  cd /Users/mick/Developer/Organizations/DollhouseMCP/active/collection
+  node fix-portfolio-metadata.mjs --dry-run       # Preview
+  node fix-portfolio-metadata.mjs --backup        # Apply with backup
+
+DRY-RUN OPTIONS:
+  node fix-portfolio-metadata.mjs --dry-run                    # All files
+  node fix-portfolio-metadata.mjs --dry-run --type agents      # Agents only
+  node fix-portfolio-metadata.mjs --dry-run --type skills      # Skills only
+  node fix-portfolio-metadata.mjs --dry-run --type templates   # Templates only
+  node fix-portfolio-metadata.mjs --dry-run --type personas    # Personas only
+
+APPLY FIXES:
+  node fix-portfolio-metadata.mjs                              # No backup
+  node fix-portfolio-metadata.mjs --backup                     # With backup
+  node fix-portfolio-metadata.mjs --backup --type agents       # Type-specific
+
+VERIFY SUCCESS:
+  node fix-portfolio-metadata.mjs --dry-run                    # Should show 0 issues
+
+RESTORE FROM BACKUP:
+  # Restore all
+  find ~/.dollhouse/portfolio -name "*.backup.md" -exec sh -c 'mv "$1" "${1%.backup.md}.md"' _ {} \;
+  
+  # Restore one file
+  mv ~/.dollhouse/portfolio/agents/file.md.backup ~/.dollhouse/portfolio/agents/file.md
+
+CLEAN UP BACKUPS:
+  find ~/.dollhouse/portfolio -name "*.backup.md" -delete
+
+================================================================================
+VALIDATION RULES (COLLECTION SCHEMA)
+================================================================================
+
+All Types Must Have:
+  - unique_id: /^[a-z0-9-_]+$/ (lowercase, no colons/uppercase)
+  - version: /^\d+\.\d+\.\d+$/ (semantic versioning)
+  - type: Must be singular (persona, skill, agent, template, etc.)
+  - author: Required string
+
+Type-Specific:
+  - Skills: capabilities array required
+  - Agents: capabilities array required
+  - Templates: format string + valid category required
+  - Personas: No additional requirements
+
+================================================================================
+RECOMMENDED WORKFLOW
+================================================================================
+
+1. PREVIEW ALL CHANGES
+   node fix-portfolio-metadata.mjs --dry-run
+
+2. TEST ON ONE TYPE (Agents = smallest)
+   node fix-portfolio-metadata.mjs --backup --type agents
+
+3. CHECK RESULTS MANUALLY
+   cat ~/.dollhouse/portfolio/agents/sonar-sweep-agent.md | head -20
+
+4. IF GOOD, APPLY TO ALL
+   node fix-portfolio-metadata.mjs --backup
+
+5. VERIFY SUCCESS
+   node fix-portfolio-metadata.mjs --dry-run
+
+6. CLEAN UP BACKUPS (after testing)
+   find ~/.dollhouse/portfolio -name "*.backup.md" -delete
+
+================================================================================
+SAFETY FEATURES
+================================================================================
+
+✓ Non-destructive dry-run mode (always preview first)
+✓ Optional backup creation before modification
+✓ Preserves existing valid unique_ids
+✓ Extracts timestamps from existing IDs when possible
+✓ Error handling (catches errors, reports, continues)
+✓ Validation before and after
+✓ Type-specific fixes only where needed
+✓ Preserves all custom metadata fields
+
+================================================================================
+AFTER RUNNING SUCCESSFULLY
+================================================================================
+
+You will have:
+  ✓ 261 files passing collection schema validation
+  ✓ All unique_ids in proper format (lowercase, no special chars)
+  ✓ All versions in semantic format (X.Y.Z)
+  ✓ All types in singular form
+  ✓ All skills/agents with capabilities arrays
+  ✓ All templates with format and valid category
+  ✓ All files with proper author attribution
+  
+Ready to:
+  ✓ Submit elements to DollhouseMCP collection
+  ✓ Use elements in production
+  ✓ Share portfolio on GitHub
+  ✓ Pass all validation checks
+
+================================================================================
+SCRIPT LOCATION
+================================================================================
+
+Main Script:
+  /Users/mick/Developer/Organizations/DollhouseMCP/active/collection/fix-portfolio-metadata.mjs
+
+Documentation:
+  /Users/mick/Developer/Organizations/DollhouseMCP/active/collection/FIX-PORTFOLIO-METADATA-README.md
+  /Users/mick/Developer/Organizations/DollhouseMCP/active/collection/FIX-PORTFOLIO-SUMMARY.md
+  /Users/mick/Developer/Organizations/DollhouseMCP/active/collection/QUICK-START-FIX.md
+
+Target Directory:
+  ~/.dollhouse/portfolio/
+
+================================================================================
+READY TO RUN
+================================================================================
+
+cd /Users/mick/Developer/Organizations/DollhouseMCP/active/collection
+node fix-portfolio-metadata.mjs --backup
+
+================================================================================

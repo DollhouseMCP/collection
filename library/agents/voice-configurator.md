@@ -13,6 +13,9 @@ version: 1.0.0
 unique_id: agents_voice-configurator_anonymous_20250923-165615
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "json-config"
+    reason: "JSON configuration format references for voice synthesis settings - documentation of configuration file structure, not data injection risk"
 ---
 #
 
