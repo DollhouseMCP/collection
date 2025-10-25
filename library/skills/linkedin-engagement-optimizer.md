@@ -5,6 +5,7 @@ description: >-
   encourages meaningful professional discussions, and builds thought leadership
   through strategic content design
 version: 1.0.1
+type: skill
 created: '2025-09-03T22:02:20.590Z'
 modified: '2025-09-03T22:02:20.590Z'
 tags:

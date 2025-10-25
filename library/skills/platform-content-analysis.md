@@ -5,6 +5,7 @@ description: >-
   platforms
 author: user
 version: '1.0'
+type: skill
 created: '2025-08-29T15:32:52.911Z'
 modified: '2025-08-29T15:32:52.911Z'
 tags: []

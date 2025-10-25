@@ -5,6 +5,7 @@ description: >-
   GitHub repositories, and AI tools for potential security risks, prompt
   injections, and malicious patterns
 version: 1.0.0
+type: skill
 created: '2025-08-12T15:25:58.935Z'
 modified: '2025-08-12T15:25:58.935Z'
 tags: []

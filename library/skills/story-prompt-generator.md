@@ -4,6 +4,7 @@ description: >-
   A skill for generating creative writing prompts based on genres, themes, and
   writing challenges
 version: 1.0.0
+type: skill
 created: '2025-08-31T22:08:33.547Z'
 modified: '2025-08-31T22:08:33.547Z'
 tags: []

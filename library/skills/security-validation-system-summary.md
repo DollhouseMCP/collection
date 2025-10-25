@@ -4,6 +4,7 @@ description: >-
   Comprehensive summary and demonstration of the complete programmatic security
   validation system with real-world testing capabilities
 version: 1.0.0
+type: skill
 created: '2025-08-12T16:11:11.728Z'
 modified: '2025-08-12T16:11:11.728Z'
 tags: []

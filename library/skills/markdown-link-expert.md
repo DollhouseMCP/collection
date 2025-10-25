@@ -5,6 +5,7 @@ description: >-
   and markdown-specific link validation tools
 author: assistant
 version: 1.0.0
+type: skill
 created: '2025-09-03T19:28:35.738Z'
 modified: '2025-09-03T19:28:35.738Z'
 tags:

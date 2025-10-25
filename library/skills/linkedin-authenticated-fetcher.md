@@ -4,6 +4,7 @@ description: >-
   A comprehensive workflow for capturing LinkedIn profile data using
   authenticated browser session sharing
 version: '1.0'
+type: skill
 created: '2025-09-04T20:16:54.887Z'
 modified: '2025-09-04T20:16:54.887Z'
 tags: []

@@ -6,6 +6,7 @@ description: >-
   anonymous identifiers
 author: DollhouseMCP
 version: 1.0.0
+type: skill
 created: '2025-09-22T22:07:51.512Z'
 modified: '2025-09-22T22:07:51.512Z'
 tags: []

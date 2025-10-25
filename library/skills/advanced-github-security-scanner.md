@@ -5,6 +5,7 @@ description: >-
   source code fetching, and comprehensive security validation using dollhouse
   security framework
 version: 1.0.0
+type: skill
 created: '2025-08-19T21:17:13.251Z'
 modified: '2025-08-19T21:17:13.251Z'
 tags: []

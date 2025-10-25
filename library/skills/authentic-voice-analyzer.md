@@ -4,6 +4,7 @@ description: >-
   Analyzes documents to extract and learn authentic voice patterns, verbal
   constructions, and writing style preferences for maintaining consistent voice
 version: 1.0.0
+type: skill
 created: '2025-09-04T14:32:40.534Z'
 modified: '2025-09-04T14:32:40.534Z'
 tags: []

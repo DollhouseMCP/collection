@@ -2,6 +2,7 @@
 name: skill-converter
 description: Convert skills between Claude Skills (Anthropic) and DollhouseMCP formats bidirectionally with automatic format detection
 version: 1.0.0
+type: skill
 category: development
 author: DollhouseMCP
 tags:

@@ -5,6 +5,7 @@ description: >-
   isolation, cleanup, and parallel session coordination
 author: mick
 version: 1.0.0
+type: skill
 created: '2025-10-07T20:33:19.035Z'
 modified: '2025-10-07T20:33:19.035Z'
 tags:

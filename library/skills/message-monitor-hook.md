@@ -4,6 +4,7 @@ description: >-
   A hook-style element that monitors all messages and triggers reactions based
   on configurable conditions
 version: 1.0.0
+type: skill
 created: '2025-08-09T14:03:37.453Z'
 modified: '2025-08-09T14:03:37.453Z'
 tags: []

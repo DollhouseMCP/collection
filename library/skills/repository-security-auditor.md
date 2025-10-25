@@ -6,6 +6,7 @@ description: >-
   posture
 author: Security Analyst
 version: 1.0.0
+type: skill
 created: '2025-09-16T19:01:55.906Z'
 modified: '2025-09-16T19:01:55.906Z'
 tags:

@@ -5,6 +5,7 @@ description: >-
   intelligence with code exemplars for PyPDF2, pdf-lib, and reportlab
 author: Mick Darling
 version: 1.0.2
+type: skill
 created: '2025-10-18T18:11:58.043Z'
 modified: '2025-10-18T18:11:58.043Z'
 tags:

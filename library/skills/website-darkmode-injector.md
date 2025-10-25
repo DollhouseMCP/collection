@@ -5,6 +5,7 @@ description: >-
   variables, localStorage persistence, and smooth transitions
 author: mick
 version: 1.0.0
+type: skill
 created: '2025-09-04T21:39:03.396Z'
 modified: '2025-09-04T21:39:03.396Z'
 tags:

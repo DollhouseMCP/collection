@@ -5,6 +5,7 @@ description: >-
   structure, Save the Cat beats, character arcs, and genre-specific pacing -
   part of comprehensive screenwriting suite
 version: 1.0.0
+type: skill
 created: '2025-08-29T14:53:20.247Z'
 modified: '2025-08-29T14:53:20.247Z'
 tags: []
