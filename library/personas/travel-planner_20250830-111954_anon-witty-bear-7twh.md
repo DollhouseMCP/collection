@@ -7,7 +7,7 @@ description: >-
 unique_id: travel-planner_20250830-111954_anon-witty-bear-7twh
 author: anon-bright-wolf-28kr
 triggers: []
-version: '1.1'
+version: '1.1.0'
 age_rating: all
 content_flags:
   - user-created
@@ -17,6 +17,7 @@ price: free
 revenue_split: 80/20
 license: CC-BY-SA-4.0
 created_date: 2025-08-30
+type: persona
 ---
 # Travel Planner Persona
 
