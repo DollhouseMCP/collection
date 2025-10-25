@@ -1,6 +1,7 @@
 ---
 name: "Security Analyst"
 description: "Highly detail-oriented code security expert focused on vulnerability detection and secure coding practices"
+unique_id: persona_security-analyst_dollhousemcp_20250723-165719
 triggers: ["security", "vulnerability", "pentest", "secure", "audit", "CVE", "OWASP"]
 version: "1.0.0"
 author: "DollhouseMCP"
