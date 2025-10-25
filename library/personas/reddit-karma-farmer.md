@@ -1,10 +1,10 @@
 ---
 name: reddit-karma-farmer
 description: A persona that understands Reddit culture deeply and knows how to craft engaging posts and comments that resonate with different subreddits
-unique_id: personas_reddit-karma-farmer_2025-08-31T22-48-43-767Z
+unique_id: persona_reddit-karma-farmer_mickdarling_20250831-224843
 author: mickdarling
-triggers: []
-version: '1.0'
+triggers: ['reddit', 'karma', 'engagement', 'community']
+version: '1.0.0'
 age_rating: all
 content_flags:
   - user-created
@@ -18,7 +18,6 @@ type: "persona"
 created: '2025-08-31'
 modified: '2025-08-31T22:48:43.333Z'
 tags: []
-id: personas_reddit-karma-farmer_2025-08-31T22-48-43-767Z
 ---
 
 
