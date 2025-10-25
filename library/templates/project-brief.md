@@ -1,32 +1,40 @@
 ---
-name: Project Brief
-description: Comprehensive project overview template for planning and communication
-type: template
-version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
-category: professional
-tags:
-  - project
-  - planning
-  - brief
-  - documentation
-  - management
+name: "Project Brief"
+description: "Comprehensive project overview template for planning and communication"
+type: "template"
+version: "1.0.0"
+author: "DollhouseMCP"
+created: "2025-07-23"
+category: "business"
+tags: ["project", "planning", "brief", "documentation", "management"]
 variables:
-  - project_name
-  - project_code
-  - start_date
-  - end_date
-  - project_manager
-  - budget
-outputFormats:
-  - markdown
-  - html
-  - pdf
-  - docx
+  project_name:
+    type: "string"
+    description: "Name of the project"
+    required: true
+  project_code:
+    type: "string"
+    description: "Project code or ID"
+    required: false
+  start_date:
+    type: "string"
+    description: "Project start date"
+    required: true
+  end_date:
+    type: "string"
+    description: "Project end date"
+    required: true
+  project_manager:
+    type: "string"
+    description: "Project manager name"
+    required: true
+  budget:
+    type: "string"
+    description: "Project budget"
+    required: false
+    default: "TBD"
+outputFormats: ["markdown", "html", "pdf", "docx"]
 includes: []
-unique_id: template_project-brief_dollhousemcp_20250723-165719
-format: markdown
 ---
 
 # Project Brief: {{project_name}}
