@@ -66,6 +66,9 @@ risk_thresholds:
 unique_id: agent_code-reviewer_dollhousemcp_20250723-000000
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Agent metadata describes security vulnerability types it can detect (SQL injection, XSS, command injection) - documentation of capabilities, not actual vulnerabilities"
 ---
 
 # Code Reviewer Agent

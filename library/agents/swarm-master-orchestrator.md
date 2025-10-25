@@ -15,6 +15,9 @@ version: 2.0.0
 unique_id: agents_swarm-master-orchestrator_anonymous_20251020-162151
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "code-execution"
+    reason: "Documentation describes Warp terminal tab management and worker spawning capabilities - technical specification of agent's distributed coordination features, not malicious automation"
 ---
 # Swarm Master Orchestrator Agent
 

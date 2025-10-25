@@ -16,6 +16,13 @@ version: 1.0.0
 unique_id: agents_programmatic-analysis-agent_anonymous_20250812-155522
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "command-injection"
+    reason: "Agent documentation contains JavaScript/YAML code examples showing security analysis patterns - educational content demonstrating threat detection capabilities, not actual malicious code"
+  - pattern: "credential-leak"
+    reason: "Code examples show security vulnerability patterns for educational purposes - teaching what the agent can detect, not exposing real credentials"
+  - pattern: "code-execution"
+    reason: "JavaScript examples demonstrate programmatic security analysis functions - technical documentation of agent capabilities using code samples"
 ---
 # Programmatic Security Analysis Agent
 

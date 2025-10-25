@@ -16,6 +16,9 @@ version: 1.0.0
 unique_id: agents_security-workflow-orchestrator_anonymous_20250812-152827
 capabilities:
   - autonomous-task-execution
+security_exceptions:
+  - pattern: "yaml-config"
+    reason: "YAML configuration examples showing security workflow orchestration stages - agent capability documentation using structured data formats"
 ---
 # Security Workflow Orchestration Agent
 
