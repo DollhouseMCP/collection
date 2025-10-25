@@ -5,7 +5,6 @@ description: >-
   intelligence with code exemplars for PyPDF2, pdf-lib, and reportlab
 author: Mick Darling
 version: 1.0.2
-type: skill
 created: '2025-10-18T18:11:58.043Z'
 modified: '2025-10-18T18:11:58.043Z'
 tags:
@@ -36,6 +35,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_pdf-orientation_mick-darling_20251018-181158
+type: skill
+capabilities:
+  - general-purpose
 ---
 # PDF Orientation Detection and Correction
 

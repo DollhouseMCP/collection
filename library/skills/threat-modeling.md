@@ -7,7 +7,7 @@ type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: professional
+category: security
 tags:
   - threat-modeling
   - security-analysis
@@ -60,13 +60,9 @@ parameters:
       - SOX
       - ISO27001
       - NIST
-unique_id: skill_threat-modeling_dollhousemcp_20250723-165724
+unique_id: skill_threat-modeling_dollhousemcp_20250723-000000
 capabilities:
-  - threat-modeling
-  - security-analysis
-  - risk-assessment
-  - architecture
-  - security-design
+  - general-purpose
 ---
 
 # Threat Modeling Skill

@@ -2,7 +2,6 @@
 name: time-query
 description: A skill for querying the current system time and date
 version: 1.0.0
-type: skill
 created: '2025-08-07T19:15:02.887Z'
 modified: '2025-08-07T19:15:02.887Z'
 tags:
@@ -19,6 +18,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_time-query_anonymous_20250807-191502
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Time Query Skill
 

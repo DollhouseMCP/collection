@@ -5,7 +5,6 @@ description: >-
   identifiers, gender markers, age information, and other potentially
   discriminatory data while maintaining formatting and professional presentation
 version: 1.0.0
-type: skill
 created: '2025-09-22T22:59:15.655Z'
 modified: '2025-09-22T22:59:15.655Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_resume-anonymizer_anonymous_20250922-225915
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Resume Anonymizer Skill
 

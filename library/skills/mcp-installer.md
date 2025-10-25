@@ -5,7 +5,6 @@ description: >-
   documentation and adding servers to any MCP client
 author: Mick Darling
 version: 1.0.0
-type: skill
 created: '2025-10-11T15:19:00.846Z'
 modified: '2025-10-11T15:19:00.846Z'
 tags:
@@ -23,6 +22,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_mcp-installer_mick-darling_20251011-151900
+type: skill
+capabilities:
+  - general-purpose
 ---
 # MCP Installer Skill
 

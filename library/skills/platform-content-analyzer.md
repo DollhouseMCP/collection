@@ -5,7 +5,6 @@ description: >-
   for different social and professional platforms while maintaining message
   consistency
 version: 1.0.0
-type: skill
 created: '2025-09-03T22:03:42.527Z'
 modified: '2025-09-03T22:03:42.527Z'
 tags:
@@ -29,6 +28,11 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_platform-content-analyzer_anonymous_20250903-220342
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Platform Content AnalyzerA comprehensive skill for analyzing and adapting content across different platforms while maintaining core message integrity and maximizing platform-specific engagement.
 

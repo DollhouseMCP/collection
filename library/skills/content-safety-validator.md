@@ -5,7 +5,6 @@ description: >-
   GitHub repositories, and AI tools for potential security risks, prompt
   injections, and malicious patterns
 version: 1.0.0
-type: skill
 created: '2025-08-12T15:25:58.935Z'
 modified: '2025-08-12T15:25:58.935Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_content-safety-validator_anonymous_20250812-152558
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Content Safety Validation Skill
 

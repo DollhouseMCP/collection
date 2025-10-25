@@ -4,7 +4,6 @@ description: >-
   Pattern recognition skill for detecting encoding-based jailbreak attempts and
   TIP techniques
 version: 1.0.0
-type: skill
 created: '2025-08-09T14:13:42.166Z'
 modified: '2025-08-09T14:13:42.166Z'
 tags: []
@@ -23,6 +22,11 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_encoding-pattern-detection_anonymous_20250809-141342
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Encoding Pattern Detection Skill
 

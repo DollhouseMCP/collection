@@ -5,7 +5,6 @@ description: >-
   capabilities, repository analysis, AI tool validation, and automated response
   generation
 version: 1.0.0
-type: skill
 created: '2025-08-12T16:10:09.409Z'
 modified: '2025-08-12T16:10:09.409Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_complete-security-validation-engine_anonymous_20250812-161009
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Complete Programmatic Security Validation Engine
 

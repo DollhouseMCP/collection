@@ -5,7 +5,6 @@ description: >-
   source code fetching, and comprehensive security validation using dollhouse
   security framework
 version: 1.0.0
-type: skill
 created: '2025-08-19T21:17:13.251Z'
 modified: '2025-08-19T21:17:13.251Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_advanced-github-security-scanner_anonymous_20250819-211713
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Advanced GitHub Repository Security Scanner (Reality-Based)
 

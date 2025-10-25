@@ -5,7 +5,6 @@ description: >-
   validation processes with intelligent threat response and seamless user
   experience management
 version: 1.0.0
-type: skill
 created: '2025-08-12T15:29:51.801Z'
 modified: '2025-08-12T15:29:51.801Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_automated-security-workflow_anonymous_20250812-152951
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Automated Security Workflow Skill
 

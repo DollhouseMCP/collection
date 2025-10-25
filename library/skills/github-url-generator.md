@@ -4,7 +4,6 @@ description: >-
   Generates raw GitHub URLs for repository files to enable direct source code
   analysis and security validation
 version: 1.0.0
-type: skill
 created: '2025-08-19T21:15:57.518Z'
 modified: '2025-08-19T21:15:57.518Z'
 tags: []
@@ -17,6 +16,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_github-url-generator_anonymous_20250819-211557
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Git
 

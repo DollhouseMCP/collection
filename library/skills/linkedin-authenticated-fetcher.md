@@ -3,8 +3,7 @@ name: linkedin-authenticated-fetcher
 description: >-
   A comprehensive workflow for capturing LinkedIn profile data using
   authenticated browser session sharing
-version: '1.0'
-type: skill
+version: 1.0.0
 created: '2025-09-04T20:16:54.887Z'
 modified: '2025-09-04T20:16:54.887Z'
 tags: []
@@ -21,6 +20,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_linkedin-authenticated-fetcher_anonymous_20250904-201654
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # LinkedIn Authenticated Data FetcherA secure workflow for capturing full Linked
 

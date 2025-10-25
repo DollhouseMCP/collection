@@ -5,7 +5,6 @@ description: >-
   isolation, cleanup, and parallel session coordination
 author: mick
 version: 1.0.0
-type: skill
 created: '2025-10-07T20:33:19.035Z'
 modified: '2025-10-07T20:33:19.035Z'
 tags:
@@ -23,6 +22,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_git-worktree-automation_mick_20251007-203319
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Git Worktree Automation Skill
 

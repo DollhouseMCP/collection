@@ -5,7 +5,6 @@ description: >-
   conflict creation, and genre-specific dialogue patterns - part of
   comprehensive screenwriting suite
 version: 1.0.0
-type: skill
 created: '2025-08-29T14:54:00.262Z'
 modified: '2025-08-29T14:54:00.262Z'
 tags: []
@@ -21,6 +20,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_screenwriting-suite-05-dialogue-mastery_anonymous_20250829-145400
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Dialogue Mastery Skill
 

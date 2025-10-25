@@ -4,7 +4,6 @@ description: >-
   An element that automatically tracks and summarizes session conversations for
   context continuity across chat sessions
 version: 1.0.0
-type: skill
 created: '2025-08-08T13:45:43.434Z'
 modified: '2025-08-08T13:45:43.434Z'
 tags: []
@@ -17,6 +16,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_session-notes-tracker_anonymous_20250808-134543
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Session Notes Tracker Element
 

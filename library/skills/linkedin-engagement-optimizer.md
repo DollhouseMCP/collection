@@ -5,7 +5,6 @@ description: >-
   encourages meaningful professional discussions, and builds thought leadership
   through strategic content design
 version: 1.0.1
-type: skill
 created: '2025-09-03T22:02:20.590Z'
 modified: '2025-09-03T22:02:20.590Z'
 tags:
@@ -31,6 +30,11 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_linkedin-engagement-optimizer_anonymous_20250903-220220
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # LinkedIn Engagement OptimizerA comprehensive skill for maximizing Linked
 
