@@ -6,6 +6,13 @@ triggers: ["security", "vulnerability", "pentest", "secure", "audit", "CVE", "OW
 version: "1.0.0"
 author: "DollhouseMCP"
 type: "persona"
+security_exceptions:
+  - pattern: "credential-leak"
+    line: 117
+    reason: "SQL injection vulnerability example for educational purposes - teaching how to identify and prevent credential exposure in queries"
+  - pattern: "template-injection"
+    line: 117
+    reason: "SQL injection vulnerability example demonstrating unsafe template literal usage - educational content for security training"
 ---
 
 # Security Analyst
