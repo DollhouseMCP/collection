@@ -564,23 +564,14 @@ class IntegrationTester {
   }
 
   async test_COLLECTION_INTEGRATION_validCategories(fileResult, _content) {
-    // This overlaps with enum validation but adds integration context
+    // Category is optional and can be any string value
     const metadata = fileResult.metadata;
     if (!metadata?.category) {
       return { passed: true, message: 'No category specified (optional)', skipped: true };
     }
 
-    const validCategories = ['creative', 'educational', 'gaming', 'personal', 'professional'];
-    
-    if (!validCategories.includes(metadata.category)) {
-      return {
-        passed: false,
-        message: `Invalid category for collection integration: ${metadata.category}`,
-        severity: 'medium'
-      };
-    }
-
-    return { passed: true, message: 'Category is valid for collection' };
+    // Category can be any string value - no enum restriction
+    return { passed: true, message: `Category specified: ${metadata.category}` };
   }
 
   async test_COLLECTION_INTEGRATION_properNaming(fileResult, _content) {
