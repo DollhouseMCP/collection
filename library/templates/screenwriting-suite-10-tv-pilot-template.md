@@ -12,6 +12,7 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+type: template
 
 ---
 # TV Pilot TemplateSERIES: series_titleEPISODE: episode_titleWRITER: writer_nameGENRE: genreFORMAT: format 30min/60min/LimitedDRAFT: draft_version
