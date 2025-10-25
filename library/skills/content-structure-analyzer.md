@@ -4,7 +4,6 @@ description: >-
   Analyzes raw content structure and provides detailed recommendations for blog
   post organization
 version: 1.0.0
-type: skill
 created: '2025-08-12T19:26:49.651Z'
 modified: '2025-08-12T19:26:49.651Z'
 tags: []
@@ -17,6 +16,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_content-structure-analyzer_anonymous_20250812-192649
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Content Structure Analyzer Skill
 

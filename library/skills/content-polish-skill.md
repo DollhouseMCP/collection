@@ -4,7 +4,6 @@ description: >-
   Provides final polish and enhancement for blog content including SEO
   optimization and readability improvements
 version: 1.0.0
-type: skill
 created: '2025-08-12T19:27:06.983Z'
 modified: '2025-08-12T19:27:06.983Z'
 tags: []
@@ -17,6 +16,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_content-polish-skill_anonymous_20250812-192706
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Content Poli
 

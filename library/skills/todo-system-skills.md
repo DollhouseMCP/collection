@@ -5,7 +5,6 @@ description: >-
   agent collaboration
 author: Claude
 version: 1.0.0
-type: skill
 created: '2025-08-15T17:36:28.890Z'
 modified: '2025-08-15T17:36:28.890Z'
 tags:
@@ -23,6 +22,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_todo-system-skills_claude_20250815-173628
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Todo System Management Skills
 

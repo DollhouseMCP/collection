@@ -6,7 +6,6 @@ description: >-
   suggestions, and follow-up items
 author: DollhouseMCP
 version: 1.0.0
-type: skill
 created: '2025-09-30T14:50:38.838Z'
 modified: '2025-09-30T14:50:38.838Z'
 tags:
@@ -24,6 +23,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_meeting-prep-assistant_dollhousemcp_20250930-145038
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Meeting Prep Assistant
 

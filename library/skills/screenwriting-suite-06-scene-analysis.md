@@ -5,7 +5,6 @@ description: >-
   compelling screenplay scenes with proper structure, conflict, and character
   development - part of comprehensive screenwriting suite
 version: 1.0.0
-type: skill
 created: '2025-08-29T14:54:45.607Z'
 modified: '2025-08-29T14:54:45.607Z'
 tags: []
@@ -21,6 +20,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_screenwriting-suite-06-scene-analysis_anonymous_20250829-145445
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Scene Analysis Skill
 

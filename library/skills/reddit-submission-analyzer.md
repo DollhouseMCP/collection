@@ -3,8 +3,7 @@ name: reddit-submission-analyzer
 description: >-
   Analyzes Reddit submissions for engagement optimization, rule compliance, and
   community fit
-version: '1.0'
-type: skill
+version: 1.0.0
 created: '2025-08-29T21:50:36.463Z'
 modified: '2025-08-29T21:50:36.463Z'
 tags:
@@ -21,6 +20,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_reddit-submission-analyzer_anonymous_20250829-215036
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Reddit Submission Analyzer
 

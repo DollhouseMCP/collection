@@ -5,7 +5,6 @@ description: >-
   code to follow modern JavaScript/TypeScript patterns
 author: mickdarling
 version: 1.0.2
-type: skill
 created: '2025-09-28T16:33:21.645Z'
 modified: '2025-09-28T16:33:21.645Z'
 tags:
@@ -22,6 +21,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_sonarcloud-modernizer_mickdarling_20250928-163321
+type: skill
+capabilities:
+  - general-purpose
 ---
 # SonarCloud Modernizer Skill
 

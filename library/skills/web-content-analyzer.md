@@ -5,7 +5,6 @@ description: >-
   injections, malicious scripts, and privacy violations in real-time browsing
   scenarios
 version: 1.0.0
-type: skill
 created: '2025-08-12T15:27:33.230Z'
 modified: '2025-08-12T15:27:33.230Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_web-content-analyzer_anonymous_20250812-152733
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Web Content Analysis Skill
 

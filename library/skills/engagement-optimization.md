@@ -2,8 +2,7 @@
 name: engagement-optimization
 description: Optimize content for maximum engagement and meaningful audience interaction
 author: user
-version: '1.0'
-type: skill
+version: 1.0.0
 created: '2025-08-29T15:33:01.620Z'
 modified: '2025-08-29T15:33:01.620Z'
 tags: []
@@ -16,6 +15,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_engagement-optimization_user_20250829-153301
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Engagement Optimization
 

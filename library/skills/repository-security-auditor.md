@@ -6,7 +6,6 @@ description: >-
   posture
 author: Security Analyst
 version: 1.0.0
-type: skill
 created: '2025-09-16T19:01:55.906Z'
 modified: '2025-09-16T19:01:55.906Z'
 tags:
@@ -29,6 +28,10 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_repository-security-auditor_security-analyst_20250916-190155
+type: skill
+capabilities:
+  - general-purpose
 ---
 #
 

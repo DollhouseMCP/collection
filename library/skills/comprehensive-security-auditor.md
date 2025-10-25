@@ -1,50 +1,98 @@
 ---
-name: "Comprehensive Security Auditor"
-description: "Advanced security audit orchestration skill that conducts thorough security assessments across code, dependencies, infrastructure, and MCP-specific vulnerabilities with intelligent reporting and remediation guidance"
-type: "skill"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-09-16"
-category: "security"
-tags: ["security", "audit", "vulnerability-assessment", "owasp", "cwe", "mcp-security", "static-analysis", "compliance"]
+name: Comprehensive Security Auditor
+description: >-
+  Advanced security audit orchestration skill that conducts thorough security
+  assessments across code, dependencies, infrastructure, and MCP-specific
+  vulnerabilities with intelligent reporting and remediation guidance
+type: skill
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-09-16'
+category: security
+tags:
+  - security
+  - audit
+  - vulnerability-assessment
+  - owasp
+  - cwe
+  - mcp-security
+  - static-analysis
+  - compliance
 proficiency_levels:
-  beginner: "Basic security scanning and vulnerability identification"
-  intermediate: "Comprehensive multi-domain security assessment with risk analysis"
-  advanced: "Expert-level threat modeling, compliance assessment, and security architecture review"
+  beginner: Basic security scanning and vulnerability identification
+  intermediate: Comprehensive multi-domain security assessment with risk analysis
+  advanced: >-
+    Expert-level threat modeling, compliance assessment, and security
+    architecture review
 parameters:
   project_path:
-    type: "string"
-    description: "Path to the project root directory to audit"
+    type: string
+    description: Path to the project root directory to audit
     required: true
-    default: "."
+    default: .
   audit_scope:
-    type: "array"
-    description: "Security domains to include in the audit"
-    default: ["code", "dependencies", "configuration", "mcp-specific", "infrastructure", "cryptography"]
-    enum: ["code", "dependencies", "configuration", "mcp-specific", "infrastructure", "cryptography", "compliance"]
+    type: array
+    description: Security domains to include in the audit
+    default:
+      - code
+      - dependencies
+      - configuration
+      - mcp-specific
+      - infrastructure
+      - cryptography
+    enum:
+      - code
+      - dependencies
+      - configuration
+      - mcp-specific
+      - infrastructure
+      - cryptography
+      - compliance
   severity_threshold:
-    type: "string"
-    description: "Minimum severity level to include in detailed analysis"
-    default: "info"
-    enum: ["critical", "high", "medium", "low", "info"]
+    type: string
+    description: Minimum severity level to include in detailed analysis
+    default: info
+    enum:
+      - critical
+      - high
+      - medium
+      - low
+      - info
   output_format:
-    type: "array"
-    description: "Report output formats to generate"
-    default: ["console", "markdown"]
-    enum: ["console", "markdown", "json", "sarif"]
+    type: array
+    description: Report output formats to generate
+    default:
+      - console
+      - markdown
+    enum:
+      - console
+      - markdown
+      - json
+      - sarif
   include_suppressions:
-    type: "boolean"
-    description: "Include analysis of suppression rules and their validity"
+    type: boolean
+    description: Include analysis of suppression rules and their validity
     default: true
   generate_remediation_plan:
-    type: "boolean"
-    description: "Generate detailed remediation plan with timelines"
+    type: boolean
+    description: Generate detailed remediation plan with timelines
     default: true
   compliance_frameworks:
-    type: "array"
-    description: "Compliance frameworks to assess against"
-    default: ["owasp-top-10", "cwe-top-25", "nist-csf"]
-    enum: ["owasp-top-10", "cwe-top-25", "nist-csf", "soc2", "iso27001"]
+    type: array
+    description: Compliance frameworks to assess against
+    default:
+      - owasp-top-10
+      - cwe-top-25
+      - nist-csf
+    enum:
+      - owasp-top-10
+      - cwe-top-25
+      - nist-csf
+      - soc2
+      - iso27001
+unique_id: skill_comprehensive-security-auditor_dollhousemcp_20250916-000000
+capabilities:
+  - general-purpose
 ---
 
 # Comprehensive Security Auditor Skill

@@ -3,8 +3,7 @@ name: reddit-title-generator
 description: >-
   Generates compelling, optimized titles for Reddit submissions using proven
   engagement strategies
-version: '1.0'
-type: skill
+version: 1.0.0
 created: '2025-08-29T21:50:48.614Z'
 modified: '2025-08-29T21:50:48.614Z'
 tags:
@@ -21,6 +20,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_reddit-title-generator_anonymous_20250829-215048
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Reddit Title Generator
 

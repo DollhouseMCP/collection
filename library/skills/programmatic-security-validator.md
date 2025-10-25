@@ -5,7 +5,6 @@ description: >-
   tool to execute real JavaScript-based security checks on websites,
   repositories, and AI tools with precise threat detection
 version: 1.0.0
-type: skill
 created: '2025-08-12T15:53:45.332Z'
 modified: '2025-08-12T15:53:45.332Z'
 tags: []
@@ -18,6 +17,11 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_programmatic-security-validator_anonymous_20250812-155345
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Programmatic Security Validator Skill
 

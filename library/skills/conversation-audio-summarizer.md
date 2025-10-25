@@ -4,7 +4,6 @@ description: >-
   Intelligent conversation summarizer that identifies key decision points and
   generates audio summaries using macOS say command for hands-free updates
 version: 1.0.7
-type: skill
 created: '2025-09-03T21:53:20.597Z'
 modified: '2025-09-05T21:00:00.000Z'
 platform: macos
@@ -29,6 +28,11 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_conversation-audio-summarizer_anonymous_20250903-215320
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Conversation Audio SummarizerA specialized skill for creating concise, audio-ready summaries of conversations at key decision points, delivered through macOSs built-in text-to-speech system using the default system voice.
 

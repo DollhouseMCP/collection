@@ -5,7 +5,6 @@ description: >-
   variables, localStorage persistence, and smooth transitions
 author: mick
 version: 1.0.0
-type: skill
 created: '2025-09-04T21:39:03.396Z'
 modified: '2025-09-04T21:39:03.396Z'
 tags:
@@ -30,6 +29,10 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_website-darkmode-injector_mick_20250904-213903
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Website Dark Mode InjectorA drop-in solution for adding professional dark/light mode toggle to any website. Provides CSS variables, local
 

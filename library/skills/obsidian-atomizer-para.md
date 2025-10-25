@@ -7,7 +7,6 @@ description: >-
   vault context and user patterns
 author: mick
 version: 2.0.0
-type: skill
 created: '2025-10-11T21:54:26.449Z'
 modified: '2025-10-11T21:54:26.449Z'
 tags:
@@ -26,6 +25,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_obsidian-atomizer-para_mick_20251011-215426
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Obsidian PARA Note Atomizer  Processor
 

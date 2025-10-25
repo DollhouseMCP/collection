@@ -5,7 +5,6 @@ description: >-
   with organized sections, descriptions, and easy editing
 author: mickdarling
 version: 1.0.1
-type: skill
 created: '2025-10-18T18:39:52.957Z'
 modified: '2025-10-18T18:39:52.957Z'
 tags: []
@@ -23,6 +22,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_dollhouse-config-ui_mickdarling_20251018-183952
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Dollhouse Configuration UI Skill
 

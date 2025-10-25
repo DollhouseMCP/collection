@@ -1,6 +1,9 @@
 ---
 name: screenwriting-suite-03-screenplay-formatting
-description: Expert knowledge of industry-standard screenplay formatting, document types, and professional presentation standards - part of comprehensive screenwriting suite
+description: >-
+  Expert knowledge of industry-standard screenplay formatting, document types,
+  and professional presentation standards - part of comprehensive screenwriting
+  suite
 version: 1.0.0
 created: '2025-08-29T14:52:44.347Z'
 modified: '2025-08-29T14:52:44.347Z'
@@ -19,7 +22,11 @@ examples: []
 proficiency_level: 0
 author: mickdarling
 id: skills_screenwriting-suite-03-screenplay-formatting_2025-08-29T15-24-04-574Z
-type: skills
+type: skill
+unique_id: >-
+  skills_screenwriting-suite-03-screenplay-formatting_mickdarling_20250829-145244
+capabilities:
+  - general-purpose
 ---
 # Screenplay Formatting Skill
 

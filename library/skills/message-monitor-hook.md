@@ -4,7 +4,6 @@ description: >-
   A hook-style element that monitors all messages and triggers reactions based
   on configurable conditions
 version: 1.0.0
-type: skill
 created: '2025-08-09T14:03:37.453Z'
 modified: '2025-08-09T14:03:37.453Z'
 tags: []
@@ -23,6 +22,11 @@ prerequisites:
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_message-monitor-hook_anonymous_20250809-140337
+type: skill
+author: DollhouseMCP
+capabilities:
+  - general-purpose
 ---
 # Message Monitor Hook
 

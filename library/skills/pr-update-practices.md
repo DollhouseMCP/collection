@@ -1,10 +1,12 @@
 ---
 name: PR Update Best Practices
-description: Systematic approach to updating pull requests with clear documentation for reviewers
+description: >-
+  Systematic approach to updating pull requests with clear documentation for
+  reviewers
 type: skill
 version: 1.0.0
 author: dollhousemcp
-created: 2025-09-01
+created: 2025-09-01T00:00:00.000Z
 tags:
   - pull-requests
   - github
@@ -22,6 +24,9 @@ proficiency_levels:
   beginner: Basic PR comments after changes
   intermediate: Structured updates with commit references
   advanced: Comprehensive documentation with synchronized code and comments
+unique_id: skill_pr-update-best-practices_dollhousemcp_20250901-000000
+capabilities:
+  - general-purpose
 ---
 
 # PR Update Best Practices Skill

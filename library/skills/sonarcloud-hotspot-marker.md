@@ -5,7 +5,6 @@ description: >-
   proper authentication and rate limiting
 author: sonar-guardian
 version: 1.0.0
-type: skill
 created: '2025-10-01T18:10:48.756Z'
 modified: '2025-10-01T18:10:48.756Z'
 tags:
@@ -33,6 +32,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_sonarcloud-hotspot-marker_sonar-guardian_20251001-181048
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Sonar
 

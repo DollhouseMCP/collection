@@ -1,14 +1,23 @@
 ---
 name: Roundtrip Test Skill
-description: A test skill designed to validate the complete collection submission workflow roundtrip
+description: >-
+  A test skill designed to validate the complete collection submission workflow
+  roundtrip
 author: dollhousemcp
-version: 1.0.0
-type: skill
+version: 1.0.1
 category: testing
-created: 2025-08-11
-updated: 2025-08-11
-tags: [testing, integration, workflow, validation]
+created: 2025-08-11T00:00:00.000Z
+updated: 2025-08-22T00:00:00.000Z
+tags:
+  - testing
+  - integration
+  - workflow
+  - validation
 proficiency: intermediate
+unique_id: unknown_roundtrip-test-skill_dollhousemcp_20250811-000000
+type: skill
+capabilities:
+  - general-purpose
 ---
 
 # Roundtrip Test Skill
@@ -123,4 +132,13 @@ The roundtrip is successful when:
 - Consider using timestamps in names for uniqueness
 
 ---
-*Test skill for DollhouseMCP collection workflow validation*
+
+---
+
+## Test Modification Log
+
+- **Test ID**: 1755896229
+- **Modified**: 2025-08-22 16:57:09
+- **User**: mick@TheMachine.local
+- **Version**: 1.0.0 → 1.0.1
+- **Purpose**: Automated roundtrip workflow test

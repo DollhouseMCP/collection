@@ -5,7 +5,6 @@ description: >-
   workflow configuration issues
 author: assistant
 version: 1.0.0
-type: skill
 created: '2025-09-03T19:28:23.186Z'
 modified: '2025-09-03T19:28:23.186Z'
 tags:
@@ -21,6 +20,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_github-actions-debugger_assistant_20250903-192823
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Git
 

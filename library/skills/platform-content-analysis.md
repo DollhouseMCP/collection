@@ -4,8 +4,7 @@ description: >-
   Analyze and adapt content for different social media and professional
   platforms
 author: user
-version: '1.0'
-type: skill
+version: 1.0.0
 created: '2025-08-29T15:32:52.911Z'
 modified: '2025-08-29T15:32:52.911Z'
 tags: []
@@ -18,6 +17,10 @@ prerequisites: []
 parameters: []
 examples: []
 proficiency_level: 0
+unique_id: unknown_platform-content-analysis_user_20250829-153252
+type: skill
+capabilities:
+  - general-purpose
 ---
 # Platform Content Analysis
 
