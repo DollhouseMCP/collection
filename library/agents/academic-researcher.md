@@ -4,8 +4,8 @@ name: Academic Researcher
 description: An autonomous agent specialized in conducting thorough academic research
 unique_id: agent_academic-researcher_dollhousemcp_20250715-100100
 author: dollhousemcp
-category: educational
 version: 1.0.0
+category: educational
 tags:
   - research
   - academic

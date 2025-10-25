@@ -1,11 +1,12 @@
 ---
+type: agent
 name: Research Assistant
 description: Autonomous agent for conducting thorough research and synthesizing findings
-type: agent
-version: 1.0.0
+unique_id: agent_research-assistant_dollhousemcp_20250723-000000
 author: DollhouseMCP
-created: '2025-07-23'
+version: 1.0.0
 category: knowledge
+created: '2025-07-23'
 tags:
   - research
   - analysis
