@@ -745,10 +745,22 @@ class IntegrationTester {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
-    // Look for example sections
-    const hasExamples = contentBody.toLowerCase().includes('example') || 
-                       contentBody.toLowerCase().includes('usage') ||
-                       contentBody.includes('```');
+    // Look for various example/usage section formats
+    const contentLower = contentBody.toLowerCase();
+    const examplePatterns = [
+      'example',           // Generic examples
+      'usage',             // Usage instructions
+      'sample',            // Sample responses/usage
+      'how to use',        // How-to sections
+      'use case',          // Use cases
+      'demonstration',     // Demonstrations
+      'illustration',      // Illustrations
+      '```'               // Code blocks (often used for examples)
+    ];
+
+    const hasExamples = examplePatterns.some(pattern =>
+      pattern === '```' ? contentBody.includes(pattern) : contentLower.includes(pattern)
+    );
 
     if (!hasExamples) {
       return {
