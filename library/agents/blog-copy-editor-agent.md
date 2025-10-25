@@ -1,5 +1,5 @@
 ---
-author: anonymous
+author: DollhouseMCP
 created: 2025-08-12T19:27:17.969Z
 decisionFramework: rule_based
 description: >-
@@ -10,8 +10,11 @@ modified: 2025-08-12T19:27:17.969Z
 name: blog-copy-editor-agent
 riskTolerance: moderate
 specializations: []
-type: agents
+type: agent
 version: 1.0.0
+unique_id: agents_blog-copy-editor-agent_anonymous_20250812-192717
+capabilities:
+  - autonomous-task-execution
 ---
 # Blog Copy Editor Agent
 

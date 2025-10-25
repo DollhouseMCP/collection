@@ -1,5 +1,5 @@
 ---
-author: anonymous
+author: DollhouseMCP
 created: 2025-09-02T19:31:28.081Z
 decisionFramework: rule_based
 description: >-
@@ -10,8 +10,11 @@ modified: 2025-09-02T19:31:28.081Z
 name: product-architect
 riskTolerance: moderate
 specializations: []
-type: agents
+type: agent
 version: 1.0.0
+unique_id: agents_product-architect_anonymous_20250902-193128
+capabilities:
+  - autonomous-task-execution
 ---
 # Product Architect Agent
 
