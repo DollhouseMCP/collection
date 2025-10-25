@@ -30,7 +30,7 @@ const BaseMetadataSchema = z.object({
   description: z.string().min(10).max(500),
   unique_id: z.string().regex(/^[a-z0-9-_]+$/),
   author: z.string().min(2).max(100),
-  category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional']).optional(),
+  category: z.string().optional(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
   created_date: z.union([z.string(), z.date()]).optional(),
   updated_date: z.union([z.string(), z.date()]).optional(),
