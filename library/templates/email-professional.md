@@ -3,8 +3,8 @@ name: Professional Email
 description: Business email template with proper formatting and tone
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - email
@@ -12,19 +12,53 @@ tags:
   - communication
   - professional
 variables:
-  - recipient_name
-  - sender_name
-  - sender_title
-  - company
-  - subject
-  - email_type
-  - tone
+  recipient_name:
+    type: string
+    description: Recipient's name
+    required: true
+  sender_name:
+    type: string
+    description: Sender's name
+    required: true
+  sender_title:
+    type: string
+    description: Sender's job title
+    required: false
+  company:
+    type: string
+    description: Company name
+    required: false
+  subject:
+    type: string
+    description: Email subject line
+    required: true
+  email_type:
+    type: string
+    description: Type of email
+    default: general
+    enum:
+      - general
+      - inquiry
+      - proposal
+      - follow-up
+      - introduction
+      - thank-you
+      - apology
+  tone:
+    type: string
+    description: Email tone
+    default: professional
+    enum:
+      - formal
+      - professional
+      - friendly-professional
+      - casual-professional
 outputFormats:
   - text
   - html
   - markdown
 includes: []
-unique_id: template_professional-email_dollhousemcp_20250723-165719
+unique_id: template_professional-email_dollhousemcp_20250723-000000
 format: markdown
 ---
 
