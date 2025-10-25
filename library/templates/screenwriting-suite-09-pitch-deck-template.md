@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Professional pitch deck template for presenting screenplay projects to
   producers, networks, and studios - part of comprehensive screenwriting suite
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_screenwriting-suite-09-pitch-deck-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Pitch Deck Template---
 

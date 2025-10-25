@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   A comprehensive to-do system template designed for software development
   projects, optimized for both human developers and AI agents to collaborate
@@ -12,8 +12,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_dev-todo-system_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Software Development Todo System
 

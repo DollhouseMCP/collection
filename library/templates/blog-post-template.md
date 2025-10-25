@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   A comprehensive blog post template with placeholders for structured content
   creation
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_blog-post-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Blog Post Template
 

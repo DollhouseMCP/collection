@@ -1,85 +1,127 @@
 ---
-name: "Security Findings Report"
-description: "Standardized template for documenting individual security vulnerabilities and findings with comprehensive remediation guidance"
-type: "template"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-09-16"
-category: "security"
-tags: ["security", "vulnerability", "finding", "remediation", "compliance", "cwe", "owasp", "cvss"]
+name: Security Findings Report
+description: >-
+  Standardized template for documenting individual security vulnerabilities and
+  findings with comprehensive remediation guidance
+type: template
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-09-16'
+category: professional
+tags:
+  - security
+  - vulnerability
+  - finding
+  - remediation
+  - compliance
+  - cwe
+  - owasp
+  - cvss
 variables:
   finding_id:
-    type: "string"
-    description: "Unique identifier for the security finding"
+    type: string
+    description: Unique identifier for the security finding
     required: true
   title:
-    type: "string"
-    description: "Descriptive title of the security finding"
+    type: string
+    description: Descriptive title of the security finding
     required: true
   severity:
-    type: "string"
-    description: "Severity level of the finding"
+    type: string
+    description: Severity level of the finding
     required: true
-    enum: ["critical", "high", "medium", "low", "info"]
+    enum:
+      - critical
+      - high
+      - medium
+      - low
+      - info
   rule_id:
-    type: "string"
-    description: "Security rule that detected this finding"
+    type: string
+    description: Security rule that detected this finding
     required: true
   file_path:
-    type: "string"
-    description: "File path where the finding was detected"
+    type: string
+    description: File path where the finding was detected
     required: false
   line_number:
-    type: "integer"
-    description: "Line number where the finding was detected"
+    type: integer
+    description: Line number where the finding was detected
     required: false
   cwe_id:
-    type: "string"
-    description: "Common Weakness Enumeration (CWE) identifier"
+    type: string
+    description: Common Weakness Enumeration (CWE) identifier
     required: false
   owasp_category:
-    type: "string"
-    description: "OWASP Top 10 category"
+    type: string
+    description: OWASP Top 10 category
     required: false
   cvss_score:
-    type: "number"
-    description: "CVSS v3.1 base score (0.0-10.0)"
+    type: number
+    description: CVSS v3.1 base score (0.0-10.0)
     required: false
   discovery_method:
-    type: "string"
-    description: "How the finding was discovered"
+    type: string
+    description: How the finding was discovered
     required: false
-    enum: ["automated-scan", "manual-review", "penetration-test", "code-review", "security-audit"]
+    enum:
+      - automated-scan
+      - manual-review
+      - penetration-test
+      - code-review
+      - security-audit
   affected_component:
-    type: "string"
-    description: "System component affected by this finding"
+    type: string
+    description: System component affected by this finding
     required: false
   business_impact:
-    type: "string"
-    description: "Potential business impact"
+    type: string
+    description: Potential business impact
     required: false
-    enum: ["critical", "high", "medium", "low", "none"]
+    enum:
+      - critical
+      - high
+      - medium
+      - low
+      - none
   exploitability:
-    type: "string"
-    description: "How easily this vulnerability can be exploited"
+    type: string
+    description: How easily this vulnerability can be exploited
     required: false
-    enum: ["trivial", "easy", "moderate", "difficult", "very-difficult"]
+    enum:
+      - trivial
+      - easy
+      - moderate
+      - difficult
+      - very-difficult
   reported_by:
-    type: "string"
-    description: "Person or tool that reported the finding"
+    type: string
+    description: Person or tool that reported the finding
     required: false
   assigned_to:
-    type: "string"
-    description: "Person responsible for remediation"
+    type: string
+    description: Person responsible for remediation
     required: false
   status:
-    type: "string"
-    description: "Current status of the finding"
+    type: string
+    description: Current status of the finding
     required: false
-    default: "open"
-    enum: ["open", "in-progress", "resolved", "suppressed", "false-positive", "accepted-risk"]
-outputFormats: ["markdown", "json", "sarif", "csv"]
+    default: open
+    enum:
+      - open
+      - in-progress
+      - resolved
+      - suppressed
+      - false-positive
+      - accepted-risk
+outputFormats:
+  - markdown
+  - json
+  - sarif
+  - csv
 includes: []
+unique_id: template_security-findings-report_dollhousemcp_20250916-000000
+format: markdown
 ---
 
 # Security Finding Report: {{title}}

@@ -5,13 +5,14 @@ type: template
 version: 1.0.0
 author: dollhousemcp-test
 created_date: '2025-08-14'
-category: testing
+category: professional
 tags:
   - testing
   - validation
   - checklist
   - roundtrip
 unique_id: template_roundtrip-test-template_dollhousemcp-test_20250814-220000
+format: markdown
 ---
 
 # MCP Roundtrip Test Checklist

@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Template for creating professional LinkedIn posts that drive engagement and
   build thought leadership
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_linkedin-post-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Linked
 

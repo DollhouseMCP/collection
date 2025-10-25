@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Template for AI agents creating documentation issues - simpler structure for
   docs improvements, additions, and fixes
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_github-issue-documentation_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Git
 

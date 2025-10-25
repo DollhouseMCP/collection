@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive template for developing TV pilots with series overview,
   character breakdowns, episode structure, and season planning - part of
@@ -12,8 +12,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_screenwriting-suite-10-tv-pilot-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # TV Pilot TemplateSERIES: series_titleEPISODE: episode_titleWRITER: writer_nameGENRE: genreFORMAT: format 30min/60min/LimitedDRAFT: draft_version
 

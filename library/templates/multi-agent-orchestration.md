@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Generic multi-agent orchestration template for coordinating AI agents across
   diverse domains and tasks
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_multi-agent-orchestration_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Multi-Agent Orchestration Template
 

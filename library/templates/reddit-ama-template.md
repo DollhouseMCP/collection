@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: Template for creating engaging AMA Ask Me Anything posts on Reddit
 examples: []
 includes: []
@@ -9,8 +9,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_reddit-ama-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # AMA Ask Me Anything Template
 
