@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Professional treatment template for pitching screenplay projects to producers
   and executives - part of comprehensive screenwriting suite
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_screenwriting-suite-08-treatment-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Treatment TemplatePROJECT: project_titleWRITER: writer_nameGENRE: genreFORMAT: format Feature/TV/Limited SeriesDATE: date---
 

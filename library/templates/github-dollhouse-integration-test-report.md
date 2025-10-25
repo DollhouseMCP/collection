@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive template for documenting GitHub and DollhouseMCP integration
   testing results
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_github-dollhouse-integration-test-report_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # test_name
 

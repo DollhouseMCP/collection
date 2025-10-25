@@ -1,6 +1,9 @@
 ---
-category: general
-description: Comprehensive template for developing feature screenplays with structure, character arcs, scene breakdowns, and revision checklists - part of comprehensive screenwriting suite
+category: professional
+description: >-
+  Comprehensive template for developing feature screenplays with structure,
+  character arcs, scene breakdowns, and revision checklists - part of
+  comprehensive screenwriting suite
 examples: []
 includes: []
 name: screenwriting-suite-07-feature-screenplay-template
@@ -12,8 +15,12 @@ version: 1.0.0
 author: mickdarling
 created: '2025-08-29T15:24:22.111Z'
 modified: '2025-08-29T15:24:22.111Z'
-id: templates_screenwriting-suite-07-feature-screenplay-template_2025-08-29T15-24-22-355Z
-type: templates
+id: >-
+  templates_screenwriting-suite-07-feature-screenplay-template_2025-08-29T15-24-22-355Z
+type: template
+unique_id: >-
+  templates_screenwriting-suite-07-feature-screenplay-template_mickdarling_20250829-152422
+format: markdown
 ---
 # Feature Screenplay TemplatePROJECT: project_titleWRITER: writer_name  DRAFT: draft_version
 

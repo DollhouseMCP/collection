@@ -1,41 +1,64 @@
 ---
-name: "Executive Report"
-description: "High-level report template for executive audiences with focus on insights and recommendations"
-type: "template"
-version: "1.0.0"
-author: "DollhouseMCP"
-created: "2025-07-23"
-category: "business"
-tags: ["report", "executive", "summary", "business", "strategy"]
+name: Executive Report
+description: >-
+  High-level report template for executive audiences with focus on insights and
+  recommendations
+type: template
+version: 1.0.0
+author: DollhouseMCP
+created: '2025-07-23'
+category: professional
+tags:
+  - report
+  - executive
+  - summary
+  - business
+  - strategy
 variables:
   report_title:
-    type: "string"
-    description: "Title of the report"
+    type: string
+    description: Title of the report
     required: true
   report_period:
-    type: "string"
-    description: "Reporting period"
+    type: string
+    description: Reporting period
     required: true
   prepared_by:
-    type: "string"
-    description: "Report author(s)"
+    type: string
+    description: Report author(s)
     required: true
   report_date:
-    type: "string"
-    description: "Date of report"
+    type: string
+    description: Date of report
     required: true
-    default: "{{TODAY}}"
+    default: '{{TODAY}}'
   executive_audience:
-    type: "array"
-    description: "Target executive audience"
-    default: ["CEO", "CFO", "Board"]
+    type: array
+    description: Target executive audience
+    default:
+      - CEO
+      - CFO
+      - Board
   report_type:
-    type: "string"
-    description: "Type of executive report"
-    default: "general"
-    enum: ["general", "quarterly", "annual", "strategic", "performance", "risk", "opportunity"]
-outputFormats: ["pdf", "pptx", "markdown", "html"]
+    type: string
+    description: Type of executive report
+    default: general
+    enum:
+      - general
+      - quarterly
+      - annual
+      - strategic
+      - performance
+      - risk
+      - opportunity
+outputFormats:
+  - pdf
+  - pptx
+  - markdown
+  - html
 includes: []
+unique_id: template_executive-report_dollhousemcp_20250723-000000
+format: markdown
 ---
 
 # {{report_title}}

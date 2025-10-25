@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive parameter optimization guide for all DollhouseMCP personas,
   including temperature, max tokens, reasoning effort, and BoltAI custom
@@ -12,8 +12,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_persona-parameter-optimization-guide_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Persona Parameter Optimization Guide for BoltAI + DollhouseMCP
 

@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: Handlebars template for generating context transfer files between sessions
 examples: []
 includes: []
@@ -9,8 +9,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_session-context-transfer_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 
 # Session Context Transfer - {{main_topic}} - {{end_date}}

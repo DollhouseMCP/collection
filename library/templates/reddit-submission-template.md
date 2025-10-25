@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive template for creating well-structured Reddit submissions with
   optimization features
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_reddit-submission-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Reddit Submission TemplateSubreddit: subredditPost Type: post_type
 

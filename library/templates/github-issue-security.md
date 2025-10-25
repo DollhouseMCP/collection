@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Template for AI agents creating security vulnerability issues - includes
   severity assessment, CVE considerations, and responsible disclosure guidance
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_github-issue-security_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Git
 

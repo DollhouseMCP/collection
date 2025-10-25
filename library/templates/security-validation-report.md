@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive security validation report template for documenting analysis
   results, risk assessments, and recommendations for tools, websites, and
@@ -12,8 +12,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_security-validation-report_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Security Validation Report
 

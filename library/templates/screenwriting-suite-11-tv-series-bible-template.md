@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Comprehensive series bible template for detailed TV show development including
   character arcs, world-building, season planning, and production considerations
@@ -12,8 +12,11 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: >-
+  unknown_screenwriting-suite-11-tv-series-bible-template_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # screenwriting-suite-11-tv-series-bible-template
 

@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Template for creating well-structured GitHub issues with proper labels and
   phase-based implementation plans no time estimates
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.1
+unique_id: unknown_github-issue-creation_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 
 # GitHub Issue Creation Template - Feature/Enhancement

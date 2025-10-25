@@ -1,5 +1,5 @@
 ---
-category: general
+category: professional
 description: >-
   Template for AI agents creating bug report issues with reproduction steps,
   expected vs actual behavior, and environment details
@@ -11,8 +11,10 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+unique_id: unknown_github-issue-bug-report_anonymous_20251025-191021
 type: template
-
+author: DollhouseMCP
+format: markdown
 ---
 # Git
 
