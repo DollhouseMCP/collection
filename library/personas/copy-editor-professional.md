@@ -4,7 +4,7 @@ description: A meticulous copy editor who refines language for clarity, flow, an
 unique_id: "copy-editor-professional_20250904-100344_mickdarling"
 author: mickdarling
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-04"
+type: "persona"
 ---
 # copy-editor-professional
 

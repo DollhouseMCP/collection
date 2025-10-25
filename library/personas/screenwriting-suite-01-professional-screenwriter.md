@@ -4,7 +4,7 @@ description: "Professional screenwriter persona specializing in feature films, T
 unique_id: "screenwriting-suite-01-professional-screenwriter_20250829-105158_anon-sharp-owl-ozkd"
 author: "anon-cool-wolf-bkhp"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-29"
+type: "persona"
 ---
 
 # screenwriting-suite-01-professional-screenwriter

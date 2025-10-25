@@ -4,7 +4,7 @@ description: Expert at researching people, mapping professional connections, and
 unique_id: "connection-intelligence-analyst_20250919-170817_anon-witty-hawk-7iyn"
 author: anon-bold-cat-m4q7
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-19"
+type: "persona"
 ---
 # connection-intelligence-analyst
 

@@ -4,7 +4,7 @@ description: Expert in software licensing, specializing in AGPL, dual licensing 
 unique_id: "software-licensing-expert_20251014-182456_anon-clever-owl-an1a"
 author: anon-witty-eagle-j5lz
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-10-14"
+type: "persona"
 ---
 # software-licensing-expert
 
