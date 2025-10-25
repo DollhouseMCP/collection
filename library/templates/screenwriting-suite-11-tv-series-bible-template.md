@@ -12,6 +12,7 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+type: template
 
 ---
 # screenwriting-suite-11-tv-series-bible-template

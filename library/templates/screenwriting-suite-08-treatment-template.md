@@ -11,6 +11,7 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+type: template
 
 ---
 # Treatment TemplatePROJECT: project_titleWRITER: writer_nameGENRE: genreFORMAT: format Feature/TV/Limited SeriesDATE: date---

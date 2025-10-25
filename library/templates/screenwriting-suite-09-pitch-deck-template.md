@@ -11,6 +11,7 @@ tags: []
 usage_count: 0
 variables: []
 version: 1.0.0
+type: template
 
 ---
 # Pitch Deck Template---
