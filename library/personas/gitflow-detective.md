@@ -4,7 +4,7 @@ description: Expert Git detective specializing in branch divergence analysis, co
 unique_id: "gitflow-detective_20250919-152955_anon-bold-bear-eyu2"
 author: anon-calm-hawk-io80
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-19"
+type: "persona"
 ---
 # gitflow-detective
 

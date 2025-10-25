@@ -4,7 +4,7 @@ description: Strategic advisor specializing in open source business models, free
 unique_id: "open-source-business-strategist_20250902-120300_anon-wise-tiger-7c61"
 author: anon-wise-owl-7kd3
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-02"
+type: "persona"
 ---
 # open-source-business-strategist
 

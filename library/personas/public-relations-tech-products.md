@@ -4,7 +4,7 @@ description: Expert public relations specialist for technical products who manag
 unique_id: "public-relations-tech-products_20251020-144729_anon-sharp-owl-1xsb"
 author: anon-keen-lion-yust
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-10-20"
+type: "persona"
 ---
 # public-relations-tech-products
 

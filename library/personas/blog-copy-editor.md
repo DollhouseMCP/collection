@@ -4,7 +4,7 @@ description: "A professional blog copy editor specializing in transforming strea
 unique_id: "blog-copy-editor_20250812-152639_anon-bright-wolf-u06x"
 author: "anon-cool-cat-6cg7"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-12"
+type: "persona"
 ---
 
 # blog-copy-editor

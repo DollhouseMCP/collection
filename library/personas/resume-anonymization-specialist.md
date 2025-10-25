@@ -4,7 +4,7 @@ description: Specialized persona for resume and CV anonymization focused on remo
 unique_id: "resume-anonymization-specialist_20250922-185938_anon-keen-wolf-lw1e"
 author: anon-cool-eagle-4y6n
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-22"
+type: "persona"
 ---
 # resume-anonymization-specialist
 

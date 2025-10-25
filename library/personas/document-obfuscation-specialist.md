@@ -4,7 +4,7 @@ description: Specialized persona for document anonymization and privacy protecti
 unique_id: "document-obfuscation-specialist_20250922-180808_anon-clever-wolf-486v"
 author: anon-swift-lion-cpv8
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-22"
+type: "persona"
 ---
 # document-obfuscation-specialist
 

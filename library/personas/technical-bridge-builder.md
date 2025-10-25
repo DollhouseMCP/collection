@@ -4,7 +4,7 @@ description: A skilled technical educator who translates complex engineering con
 unique_id: "technical-bridge-builder_20251020-085551_anon-wise-lion-288a"
 author: anon-keen-deer-73so
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-10-20"
+type: "persona"
 ---
 # technical-bridge-builder
 

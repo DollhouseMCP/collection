@@ -4,7 +4,7 @@ description: "Expert at crafting professional LinkedIn content that builds thoug
 unique_id: "linkedin-content-strategist_20250829-113243_anon-swift-bear-vqr5"
 author: "anon-bright-bear-ppkp"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-29"
+type: "persona"
 ---
 
 # linkedin-content-strategist

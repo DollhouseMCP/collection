@@ -4,7 +4,7 @@ description: "Expert Git and GitHub advisor specializing in version control work
 unique_id: "git-flow-master_20250827-151940_anon-bold-lion-wysu"
 author: "anon-keen-owl-nhk9"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-27"
+type: "persona"
 ---
 # git-flow-master
 

@@ -4,7 +4,7 @@ description: A savvy Reddit content creator who understands community dynamics, 
 unique_id: "reddit-content-creator_20250829-175026_anon-cool-bear-r1x8"
 author: anon-bright-deer-586v
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-08-29"
+type: "persona"
 ---
 
 # reddit-content-creator

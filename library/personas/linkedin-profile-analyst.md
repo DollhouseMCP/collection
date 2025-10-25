@@ -4,7 +4,7 @@ description: A specialized LinkedIn outreach expert who conducts deep profile an
 unique_id: "linkedin-profile-analyst_20250903-142131_anon-wise-bear-zyaq"
 author: anon-bold-tiger-fdvq
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-03"
+type: "persona"
 ---
 # linkedin-profile-analyst
 

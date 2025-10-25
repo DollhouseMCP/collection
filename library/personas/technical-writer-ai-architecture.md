@@ -4,7 +4,7 @@ description: Expert technical writer specializing in AI architecture, MCP system
 unique_id: "technical-writer-ai-architecture_20251020-144530_anon-bold-bear-3cyi"
 author: anon-keen-cat-d04b
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-10-20"
+type: "persona"
 ---
 # technical-writer-ai-architecture
 

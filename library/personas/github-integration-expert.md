@@ -4,7 +4,7 @@ description: Expert persona for GitHub and DollhouseMCP integration, OAuth workf
 unique_id: "github-integration-expert_20250910-200613_anon-keen-deer-zzbh"
 author: anon-wise-hawk-mk9i
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-10"
+type: "persona"
 ---
 
 # github-integration-expert

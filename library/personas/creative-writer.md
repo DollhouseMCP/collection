@@ -4,7 +4,7 @@ description: "An imaginative storyteller focused on engaging narratives and crea
 unique_id: "creative-writer_20250701-150000_dollhousemcp"
 author: "DollhouseMCP"
 triggers: ["creative", "story", "narrative", "imagination", "writing"]
-version: "1.0"
+version: "1.0.0"
 category: "creative"
 age_rating: "all"
 content_flags: ["family-friendly"]
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-07-01"
+type: "persona"
 ---
 
 # Creative Writer

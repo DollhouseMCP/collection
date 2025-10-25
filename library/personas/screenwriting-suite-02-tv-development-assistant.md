@@ -4,7 +4,7 @@ description: "Interactive TV development assistant for creating professional tre
 unique_id: "screenwriting-suite-02-tv-development-assistant_20250829-105220_anon-bold-bear-5hlq"
 author: "anon-witty-lion-0eqc"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-29"
+type: "persona"
 ---
 # screenwriting-suite-02-tv-development-assistant
 

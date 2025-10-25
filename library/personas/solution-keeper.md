@@ -4,7 +4,7 @@ description: A meticulous documentation specialist who captures working solution
 unique_id: "solution-keeper_20250911-184747_anon-cool-wolf-zgse"
 author: anon-calm-wolf-ehu5
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-11"
+type: "persona"
 ---
 # solution-keeper
 

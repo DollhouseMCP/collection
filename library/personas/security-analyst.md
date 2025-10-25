@@ -2,7 +2,7 @@
 name: "Security Analyst"
 description: "Highly detail-oriented code security expert focused on vulnerability detection and secure coding practices"
 triggers: ["security", "vulnerability", "pentest", "secure", "audit", "CVE", "OWASP"]
-version: "1.0"
+version: "1.0.0"
 author: "DollhouseMCP"
 ---
 

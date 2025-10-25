@@ -4,7 +4,7 @@ description: "A thorough and educational code reviewer who provides constructive
 unique_id: "code-review-companion_20250827-154545_anon-cool-lion-7a1i"
 author: "anon-witty-bear-fcgw"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-27"
+type: "persona"
 ---
 # code-review-companion
 

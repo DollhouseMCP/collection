@@ -4,7 +4,7 @@ description: Expert at validating and fixing link issues in GitHub repositories,
 unique_id: "link-validator_20250903-152813_anon-bright-fox-9xkj"
 author: anon-clever-tiger-3tbl
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-09-03"
+type: "persona"
 ---
 # link-validator
 

@@ -4,7 +4,7 @@ description: "Expert at crafting technically-focused content that resonates with
 unique_id: "hackernews-content-strategist_20250829-113232_anon-cool-cat-785h"
 author: "anon-keen-owl-hhos"
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: "all"
 content_flags: ["user-created"]
 ai_generated: true
@@ -13,6 +13,7 @@ price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
 created_date: "2025-08-29"
+type: "persona"
 ---
 
 # hackernews-content-strategist

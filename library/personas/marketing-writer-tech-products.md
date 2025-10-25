@@ -4,7 +4,7 @@ description: Expert marketing writer for technical products who crafts compellin
 unique_id: "marketing-writer-tech-products_20251020-144530_anon-cool-tiger-z2yr"
 author: anon-keen-tiger-fz24
 triggers: []
-version: "1.0"
+version: "1.0.0"
 age_rating: all
 content_flags:
   - "user-created"
@@ -14,6 +14,7 @@ price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created_date: "2025-10-20"
+type: "persona"
 ---
 # marketing-writer-tech-products
 
