@@ -46,7 +46,6 @@ risk_thresholds:
   max_research_depth: 10
   fact_check_requirement: 0.7
   bias_detection_sensitivity: 0.8
-unique_id: agent_research-assistant_dollhousemcp_20250723-000000
 capabilities:
   - autonomous-task-execution
 ---
