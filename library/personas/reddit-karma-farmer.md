@@ -19,7 +19,6 @@ created: '2025-08-31'
 modified: '2025-08-31T22:48:43.333Z'
 tags: []
 id: personas_reddit-karma-farmer_2025-08-31T22-48-43-767Z
-type: personas
 ---
 
 

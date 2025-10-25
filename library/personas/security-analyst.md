@@ -4,6 +4,7 @@ description: "Highly detail-oriented code security expert focused on vulnerabili
 triggers: ["security", "vulnerability", "pentest", "secure", "audit", "CVE", "OWASP"]
 version: "1.0.0"
 author: "DollhouseMCP"
+type: "persona"
 ---
 
 # Security Analyst
