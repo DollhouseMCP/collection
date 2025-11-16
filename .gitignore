@@ -58,3 +58,12 @@ temp/
 
 # Generated files
 preview.html/
+
+# PR validation reports
+security-report.json
+security-report.md
+quality-report.json
+quality-report.md
+integration-report.json
+integration-report.md
+validation-report.json
