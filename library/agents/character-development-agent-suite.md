@@ -2,7 +2,7 @@
 name: character-development-agent-suite
 description: Valid agents element
 author: mickdarling
-category: test
+category: educational
 version: 1.0.0
 created: '2025-08-29T15:18:23.102Z'
 modified: '2025-08-29T15:18:23.102Z'

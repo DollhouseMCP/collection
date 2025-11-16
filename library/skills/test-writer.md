@@ -19,7 +19,7 @@ keywords:
   - testing
   - coverage
   - TDD
-category: development
+category: professional
 proficiency_levels:
   beginner: Basic unit test creation
   intermediate: Complex mocking and integration tests
