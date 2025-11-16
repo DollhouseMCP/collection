@@ -2,7 +2,7 @@
 name: Test agent
 description: Valid agents element
 author: Test
-category: test
+category: educational
 unique_id: unknown_test-agent_test_20251025-191021
 version: 1.0.0
 type: agent

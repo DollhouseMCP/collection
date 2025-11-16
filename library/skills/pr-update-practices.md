@@ -19,7 +19,7 @@ keywords:
   - commit documentation
   - reviewer communication
   - GitHub
-category: development
+category: professional
 proficiency_levels:
   beginner: Basic PR comments after changes
   intermediate: Structured updates with commit references

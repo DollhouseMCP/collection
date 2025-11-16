@@ -4,7 +4,7 @@ description: >-
   Convert skills between Claude Skills (Anthropic) and DollhouseMCP formats
   bidirectionally with automatic format detection
 version: 1.0.0
-category: development
+category: professional
 author: DollhouseMCP
 tags:
   - conversion

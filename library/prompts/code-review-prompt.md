@@ -4,7 +4,7 @@ name: Code Review Prompt
 description: Systematic code review checklist for quality, security, and best practices assessment
 unique_id: prompt_code-review-prompt_dollhousemcp_20251025-100000
 author: dollhousemcp
-category: development
+category: professional
 version: 1.0.0
 tags:
   - code-review
