@@ -13,31 +13,12 @@ tags:
   - documentation
   - management
 variables:
-  project_name:
-    type: string
-    description: Name of the project
-    required: true
-  project_code:
-    type: string
-    description: Project code or ID
-    required: false
-  start_date:
-    type: string
-    description: Project start date
-    required: true
-  end_date:
-    type: string
-    description: Project end date
-    required: true
-  project_manager:
-    type: string
-    description: Project manager name
-    required: true
-  budget:
-    type: string
-    description: Project budget
-    required: false
-    default: TBD
+  - project_name
+  - project_code
+  - start_date
+  - end_date
+  - project_manager
+  - budget
 outputFormats:
   - markdown
   - html

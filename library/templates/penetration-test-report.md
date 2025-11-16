@@ -15,43 +15,12 @@ tags:
   - report
   - ethical-hacking
 variables:
-  test_period:
-    type: string
-    description: Testing period (start - end dates)
-    required: true
-  target_organization:
-    type: string
-    description: Target organization name
-    required: true
-  lead_tester:
-    type: string
-    description: Lead penetration tester name
-    required: true
-  test_type:
-    type: string
-    description: Type of penetration test
-    default: external
-    enum:
-      - external
-      - internal
-      - web_application
-      - wireless
-      - social_engineering
-      - red_team
-  methodology:
-    type: string
-    description: Testing methodology used
-    default: PTES
-    enum:
-      - PTES
-      - OWASP
-      - NIST
-      - OSSTMM
-      - custom
-  client_contact:
-    type: string
-    description: Primary client contact
-    required: true
+  - test_period
+  - target_organization
+  - lead_tester
+  - test_type
+  - methodology
+  - client_contact
 outputFormats:
   - pdf
   - html
@@ -59,6 +28,9 @@ outputFormats:
 includes: []
 unique_id: template_penetration-test-report_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: network_access
+    reason: Contains example exploit payloads for penetration testing documentation - educational security report template showing vulnerabilities, not actual network access threats
 ---
 
 # Penetration Testing Report
@@ -615,10 +587,10 @@ To measure the effectiveness of remediation efforts, we recommend tracking:
 {{else}}
 | Priority | Estimated Cost | Timeline | Risk Reduction |
 |----------|---------------|----------|----------------|
-| Critical | $X,XXX | 1 week | 70% |
-| High | $XX,XXX | 1 month | 20% |
-| Medium | $XXX,XXX | 3 months | 8% |
-| Low | $XX,XXX | 6 months | 2% |
+| Critical | ${CRITICAL_COST} | 1 week | 70% |
+| High | ${HIGH_COST} | 1 month | 20% |
+| Medium | ${MEDIUM_COST} | 3 months | 8% |
+| Low | ${LOW_COST} | 6 months | 2% |
 {{/if}}
 
 ---

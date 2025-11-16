@@ -25,6 +25,9 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: network_access
+    reason: Contains legitimate documentation about using web fetch tools for LinkedIn profile data - educational content about API usage, not actual network access threats
 ---
 # LinkedIn Profile FetcherA skill for attempting to fetch and analyze Linked
 

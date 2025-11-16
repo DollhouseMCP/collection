@@ -14,42 +14,12 @@ tags:
   - security-analysis
   - threat-intelligence
 variables:
-  system_name:
-    type: string
-    description: Name of the system being assessed
-    required: true
-  assessment_date:
-    type: string
-    description: Date of the threat assessment
-    required: true
-    default: '{{TODAY}}'
-  threat_analyst:
-    type: string
-    description: Lead threat analyst name
-    required: true
-  business_owner:
-    type: string
-    description: Business system owner
-    required: true
-  methodology:
-    type: string
-    description: Threat modeling methodology used
-    default: STRIDE
-    enum:
-      - STRIDE
-      - PASTA
-      - OCTAVE
-      - TRIKE
-      - VAST
-  system_criticality:
-    type: string
-    description: Business criticality of the system
-    default: high
-    enum:
-      - low
-      - medium
-      - high
-      - critical
+  - system_name
+  - assessment_date
+  - threat_analyst
+  - business_owner
+  - methodology
+  - system_criticality
 outputFormats:
   - pdf
   - html

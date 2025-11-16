@@ -36,6 +36,9 @@ unique_id: unknown_sonarcloud-hotspot-marker_sonar-guardian_20251001-181048
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: network_access
+    reason: Contains legitimate documentation with curl examples for SonarCloud API integration - educational content showing API usage with proper authentication, not actual network access threats
 ---
 # Sonar
 

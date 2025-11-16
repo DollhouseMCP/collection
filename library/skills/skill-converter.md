@@ -26,6 +26,9 @@ unique_id: unknown_skill-converter_dollhousemcp_20251025-191021
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: command_execution
+    reason: Contains legitimate documentation with bash code examples for skill conversion - educational content showing CLI usage, not actual command execution threats
 ---
 
 # Skill Converter

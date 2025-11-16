@@ -13,35 +13,11 @@ tags:
   - technical
   - reference
 variables:
-  module_name:
-    type: string
-    description: Name of the module or component
-    required: true
-  module_type:
-    type: string
-    description: Type of code module
-    default: module
-    enum:
-      - module
-      - class
-      - function
-      - api
-      - library
-      - component
-  version:
-    type: string
-    description: Version number
-    required: true
-    default: 1.0.0
-  language:
-    type: string
-    description: Programming language
-    required: true
-    default: typescript
-  author:
-    type: string
-    description: Author name
-    required: true
+  - module_name
+  - module_type
+  - version
+  - language
+  - author
 outputFormats:
   - markdown
   - html

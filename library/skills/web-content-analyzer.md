@@ -22,6 +22,11 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: prompt_injection
+    reason: Contains educational documentation explaining prompt injection attacks with examples for learning purposes - teaching material about security threats, not actual attack attempts
+  - pattern: context_awareness
+    reason: Contains educational examples of system prompt extraction for security awareness training - educational content showing what to watch for, not actual attempts
 ---
 # Web Content Analysis Skill
 

@@ -15,6 +15,9 @@ unique_id: unknown_github-issue-bug-report_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: file_system
+    reason: Contains example bug reproduction steps showing file operations for documentation purposes - template showing how to write bug reports, not actual file system threats
 ---
 # Git
 
