@@ -39,6 +39,13 @@ unique_id: unknown_pdf-orientation_mick-darling_20251018-181158
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "file-system"
+    reason: "Contains file path examples and file operation documentation for technical reference - not actual file system access"
+  - pattern: "script-injection"
+    reason: "Documentation contains JavaScript code examples and configuration syntax (javascript:) for educational/technical reference purposes - not executable code"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # PDF Orientation Detection and Correction
 

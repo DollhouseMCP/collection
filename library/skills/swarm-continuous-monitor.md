@@ -21,6 +21,11 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "file-system"
+    reason: "Contains file path examples and file operation documentation for technical reference - not actual file system access"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Swarm Continuous Monitoring Skill
 

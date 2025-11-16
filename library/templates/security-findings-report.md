@@ -42,6 +42,9 @@ outputFormats:
 includes: []
 unique_id: template_security-findings-report_dollhousemcp_20250916-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Security Finding Report: {{title}}

@@ -18,6 +18,8 @@ capabilities:
 security_exceptions:
   - pattern: "code-execution"
     reason: "Documentation describes Warp terminal tab management and worker spawning capabilities - technical specification of agent's distributed coordination features, not malicious automation"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Swarm Master Orchestrator Agent
 

@@ -13,6 +13,9 @@ unique_id: unknown_session-context-transfer_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Session Context Transfer - {{main_topic}} - {{end_date}}

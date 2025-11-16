@@ -247,6 +247,21 @@ class SecurityScanner {
   }
 
   /**
+   * Check if issue is exempted by security_exceptions metadata
+   */
+  isExempted(category, metadata) {
+    if (!metadata?.security_exceptions) {
+      return false;
+    }
+
+    return metadata.security_exceptions.some(exception => {
+      const exceptionPattern = exception.pattern?.replace(/-/g, '_');
+      const categoryNormalized = category?.replace(/-/g, '_');
+      return exceptionPattern === categoryNormalized;
+    });
+  }
+
+  /**
    * Pattern matching security checks
    */
   async runPatternMatching(content, fileResult) {
@@ -260,6 +275,11 @@ class SecurityScanner {
     for (const pattern of allPatterns) {
       const matches = content.match(pattern.pattern);
       if (matches) {
+        // Skip if category is exempted
+        if (this.isExempted(pattern.category, fileResult.metadata)) {
+          continue;
+        }
+
         for (const match of matches) {
           const issue = {
             id: pattern.id,
@@ -272,7 +292,7 @@ class SecurityScanner {
             context: this.extractContext(content, match),
             line: this.findLineNumber(content, match)
           };
-          
+
           fileResult.issues.push(issue);
         }
       }
@@ -299,6 +319,11 @@ class SecurityScanner {
    * Check for prompt injection in AI assistant contexts
    */
   checkPromptInjectionContext(content, fileResult) {
+    // Skip if prompt-injection is exempted
+    if (this.isExempted('prompt-injection', fileResult.metadata)) {
+      return;
+    }
+
     const suspiciousContexts = [
       /(?:new\s+instructions?|updated\s+rules?|override\s+default)/gi,
       /(?:jailbreak|DAN|evil|harmful)\s+mode/gi,
@@ -351,8 +376,13 @@ class SecurityScanner {
     // Use explicit Unicode ranges to avoid control characters
     const unicodePattern = /[\u0080-\uffff]{10,}/g;
     const unicodeMatches = content.match(unicodePattern);
-    
+
     if (unicodeMatches && unicodeMatches.length > 2) {
+      // Skip if obfuscation category is exempted
+      if (this.isExempted('obfuscation', fileResult.metadata)) {
+        return;
+      }
+
       fileResult.issues.push({
         id: 'unicode-obfuscation',
         severity: 'MEDIUM',

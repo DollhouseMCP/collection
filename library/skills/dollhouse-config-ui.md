@@ -26,6 +26,9 @@ unique_id: unknown_dollhouse-config-ui_mickdarling_20251018-183952
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Dollhouse Configuration UI Skill
 

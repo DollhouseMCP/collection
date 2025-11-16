@@ -16,6 +16,9 @@ unique_id: unknown_programmatic-analysis-template_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Programmatic Security Analysis Template
 

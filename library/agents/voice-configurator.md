@@ -16,6 +16,8 @@ capabilities:
 security_exceptions:
   - pattern: "json-config"
     reason: "JSON configuration format references for voice synthesis settings - documentation of configuration file structure, not data injection risk"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 #
 

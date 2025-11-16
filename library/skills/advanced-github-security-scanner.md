@@ -22,6 +22,11 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Advanced GitHub Repository Security Scanner (Reality-Based)
 

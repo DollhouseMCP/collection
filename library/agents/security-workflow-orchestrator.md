@@ -19,6 +19,8 @@ capabilities:
 security_exceptions:
   - pattern: "yaml-config"
     reason: "YAML configuration examples showing security workflow orchestration stages - agent capability documentation using structured data formats"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Security Workflow Orchestration Agent
 

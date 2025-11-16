@@ -23,6 +23,10 @@ security_exceptions:
     reason: "Code examples show security vulnerability patterns for educational purposes - teaching what the agent can detect, not exposing real credentials"
   - pattern: "code-execution"
     reason: "JavaScript examples demonstrate programmatic security analysis functions - technical documentation of agent capabilities using code samples"
+  - pattern: "script-injection"
+    reason: "Documentation contains JavaScript code examples and configuration syntax (javascript:) for educational/technical reference purposes - not executable code"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Programmatic Security Analysis Agent
 

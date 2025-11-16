@@ -24,6 +24,9 @@ outputFormats:
 includes: []
 unique_id: template_meeting-notes_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # {{meeting_title}}

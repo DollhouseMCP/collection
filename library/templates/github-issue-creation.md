@@ -20,6 +20,8 @@ security_exceptions:
     reason: Contains example GitHub CLI commands for documentation purposes - template showing how to create issues, not actual command execution threats
   - pattern: file_system
     reason: Contains example cleanup commands in documentation - template showing workflow examples, not actual file system threats
+  - pattern: "command-injection"
+    reason: "Documentation contains command-line examples and shell syntax for educational purposes - not executed directly"
 ---
 
 # GitHub Issue Creation Template - Feature/Enhancement

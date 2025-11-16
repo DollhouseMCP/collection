@@ -28,6 +28,11 @@ outputFormats:
 includes: []
 unique_id: template_threat-assessment-report_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "obfuscation"
+    reason: "Contains encoded examples or Unicode characters as part of documentation/examples"
 ---
 
 # Threat Assessment Report

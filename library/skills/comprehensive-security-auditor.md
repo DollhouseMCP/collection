@@ -93,6 +93,13 @@ parameters:
 unique_id: skill_comprehensive-security-auditor_dollhousemcp_20250916-000000
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "file-system"
+    reason: "Contains file path examples and file operation documentation for technical reference - not actual file system access"
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 
 # Comprehensive Security Auditor Skill
