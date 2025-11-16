@@ -5,7 +5,7 @@ description: Autonomous agent for conducting thorough research and synthesizing 
 unique_id: agent_research-assistant_dollhousemcp_20250723-000000
 author: DollhouseMCP
 version: 1.0.0
-category: knowledge
+category: educational
 created: '2025-07-23'
 tags:
   - research
