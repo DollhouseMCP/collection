@@ -5,8 +5,8 @@ description: >-
   recommendations
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - report
@@ -15,19 +15,49 @@ tags:
   - business
   - strategy
 variables:
-  - report_title
-  - report_period
-  - prepared_by
-  - report_date
-  - executive_audience
-  - report_type
+  report_title:
+    type: string
+    description: Title of the report
+    required: true
+  report_period:
+    type: string
+    description: Reporting period
+    required: true
+  prepared_by:
+    type: string
+    description: Report author(s)
+    required: true
+  report_date:
+    type: string
+    description: Date of report
+    required: true
+    default: '{{TODAY}}'
+  executive_audience:
+    type: array
+    description: Target executive audience
+    default:
+      - CEO
+      - CFO
+      - Board
+  report_type:
+    type: string
+    description: Type of executive report
+    default: general
+    enum:
+      - general
+      - quarterly
+      - annual
+      - strategic
+      - performance
+      - risk
+      - opportunity
 outputFormats:
   - pdf
   - pptx
   - markdown
   - html
 includes: []
-unique_id: template_executive-report_dollhousemcp_20250723-165719
+unique_id: template_executive-report_dollhousemcp_20250723-000000
 format: markdown
 ---
 

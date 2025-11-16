@@ -1,10 +1,10 @@
 ---
 name: Code Documentation
-description: Technical documentation template for code modules, APIs, and functions
+description: 'Technical documentation template for code modules, APIs, and functions'
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - documentation
@@ -13,18 +13,42 @@ tags:
   - technical
   - reference
 variables:
-  - module_name
-  - module_type
-  - version
-  - language
-  - author
+  module_name:
+    type: string
+    description: Name of the module or component
+    required: true
+  module_type:
+    type: string
+    description: Type of code module
+    default: module
+    enum:
+      - module
+      - class
+      - function
+      - api
+      - library
+      - component
+  version:
+    type: string
+    description: Version number
+    required: true
+    default: 1.0.0
+  language:
+    type: string
+    description: Programming language
+    required: true
+    default: typescript
+  author:
+    type: string
+    description: Author name
+    required: true
 outputFormats:
   - markdown
   - html
   - jsdoc
   - typedoc
 includes: []
-unique_id: template_code-documentation_dollhousemcp_20250723-165719
+unique_id: template_code-documentation_dollhousemcp_20250723-000000
 format: markdown
 ---
 
@@ -286,7 +310,7 @@ const result = await instance
 - `{{name}}`: {{description}}
 {{/each}}
 {{else}}
-- `{{MODULE_NAME}}_DEBUG`: Enable diagnostic logging
+- `{{MODULE_NAME}}_DEBUG`: Enable debug mode
 - `{{MODULE_NAME}}_TIMEOUT`: Override default timeout
 {{/if}}
 
