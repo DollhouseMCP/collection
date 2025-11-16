@@ -19,6 +19,9 @@ unique_id: unknown_universal-voice-config_mick_20250923-165637
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 #
 

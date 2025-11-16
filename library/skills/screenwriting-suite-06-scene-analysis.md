@@ -25,6 +25,9 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Scene Analysis Skill
 

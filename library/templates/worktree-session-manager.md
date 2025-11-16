@@ -15,6 +15,11 @@ unique_id: unknown_worktree-session-manager_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: "command-injection"
+    reason: "Documentation contains command-line examples and shell syntax for educational purposes - not executed directly"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Worktree Session Manager Template
 

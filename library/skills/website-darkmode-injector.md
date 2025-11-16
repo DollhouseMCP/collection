@@ -33,6 +33,9 @@ unique_id: unknown_website-darkmode-injector_mick_20250904-213903
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Website Dark Mode InjectorA drop-in solution for adding professional dark/light mode toggle to any website. Provides CSS variables, local
 

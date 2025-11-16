@@ -18,6 +18,8 @@ format: markdown
 security_exceptions:
   - pattern: file_system
     reason: Contains example bug reproduction steps showing file operations for documentation purposes - template showing how to write bug reports, not actual file system threats
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Git
 

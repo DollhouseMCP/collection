@@ -49,6 +49,9 @@ parameters:
 unique_id: skill_test-writer_dollhousemcp_20250901-000000
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Test Writer Skill

@@ -31,6 +31,8 @@ format: markdown
 security_exceptions:
   - pattern: network_access
     reason: Contains example exploit payloads for penetration testing documentation - educational security report template showing vulnerabilities, not actual network access threats
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Penetration Testing Report

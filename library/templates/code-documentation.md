@@ -26,6 +26,13 @@ outputFormats:
 includes: []
 unique_id: template_code-documentation_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
+  - pattern: "privilege-escalation"
+    reason: "Documentation of sudo/admin commands for educational purposes - not actual privilege escalation"
 ---
 
 # {{module_name}} Documentation

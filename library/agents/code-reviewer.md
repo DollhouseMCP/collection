@@ -69,6 +69,8 @@ capabilities:
 security_exceptions:
   - pattern: "template-injection"
     reason: "Agent metadata describes security vulnerability types it can detect (SQL injection, XSS, command injection) - documentation of capabilities, not actual vulnerabilities"
+  - pattern: "script-injection"
+    reason: "Documentation contains JavaScript code examples and configuration syntax (javascript:) for educational/technical reference purposes - not executable code"
 ---
 
 # Code Reviewer Agent

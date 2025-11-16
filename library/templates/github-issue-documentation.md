@@ -15,6 +15,9 @@ unique_id: unknown_github-issue-documentation_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: "file-system"
+    reason: "Contains file path examples and file operation documentation for technical reference - not actual file system access"
 ---
 # Git
 

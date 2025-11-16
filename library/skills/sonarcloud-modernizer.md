@@ -25,6 +25,9 @@ unique_id: unknown_sonarcloud-modernizer_mickdarling_20250928-163321
 type: skill
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 # SonarCloud Modernizer Skill
 

@@ -25,6 +25,8 @@ capabilities:
 security_exceptions:
   - pattern: "context_awareness"
     reason: "Skill contains educational examples of security patterns for detection purposes - documentation of threats, not actual threats"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Programmatic Security Validator Skill
 

@@ -29,6 +29,8 @@ capabilities:
 security_exceptions:
   - pattern: command_execution
     reason: Contains legitimate documentation with bash code examples for skill conversion - educational content showing CLI usage, not actual command execution threats
+  - pattern: "command-injection"
+    reason: "Documentation contains command-line examples and shell syntax for educational purposes - not executed directly"
 ---
 
 # Skill Converter

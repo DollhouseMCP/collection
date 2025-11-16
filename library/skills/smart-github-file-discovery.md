@@ -21,6 +21,11 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "script-injection"
+    reason: "Documentation contains JavaScript code examples and configuration syntax (javascript:) for educational/technical reference purposes - not executable code"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Smart Git
 

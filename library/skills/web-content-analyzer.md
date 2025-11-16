@@ -27,6 +27,8 @@ security_exceptions:
     reason: Contains educational documentation explaining prompt injection attacks with examples for learning purposes - teaching material about security threats, not actual attack attempts
   - pattern: context_awareness
     reason: Contains educational examples of system prompt extraction for security awareness training - educational content showing what to watch for, not actual attempts
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 # Web Content Analysis Skill
 
