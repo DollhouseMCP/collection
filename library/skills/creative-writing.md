@@ -1,6 +1,6 @@
 ---
 name: Creative Writing
-description: Storytelling, narrative construction, and creative content generation
+description: 'Storytelling, narrative construction, and creative content generation'
 type: skill
 version: 1.0.0
 author: DollhouseMCP
@@ -65,13 +65,9 @@ parameters:
       - humor
       - metaphor
       - symbolism
-unique_id: skill_creative-writing_dollhousemcp_20250723-165720
+unique_id: skill_creative-writing_dollhousemcp_20250723-000000
 capabilities:
-  - writing
-  - storytelling
-  - creativity
-  - narrative
-  - fiction
+  - general-purpose
 ---
 
 # Creative Writing Skill
