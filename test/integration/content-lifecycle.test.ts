@@ -120,9 +120,9 @@ This content has multiple validation errors.`;
       expect(issueDetails.toLowerCase()).toMatch(/too small|at least 10 character/);
       expect(issueDetails).toContain('unique_id:');
       expect(issueDetails).toContain('author:');
-      expect(issueDetails).toContain('category:');
-      // Zod v4 changed enum error messages too
-      expect(issueDetails.toLowerCase()).toMatch(/invalid.*enum|invalid.*option/);
+      // Category is now optional, so we don't expect it in errors
+      // Check version format error instead
+      expect(issueDetails).toContain('version:');
     });
 
     it('should handle all content types correctly', async () => {
