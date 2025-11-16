@@ -5,7 +5,7 @@ type: agent
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: productivity
+category: professional
 tags:
   - tasks
   - project-management

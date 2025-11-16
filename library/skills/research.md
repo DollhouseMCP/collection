@@ -5,7 +5,7 @@ type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: knowledge
+category: educational
 tags:
   - research
   - analysis
