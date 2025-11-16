@@ -1,11 +1,11 @@
 ---
 name: Code Review
-description: Systematic code analysis for quality, security, and best practices
+description: 'Systematic code analysis for quality, security, and best practices'
 type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: professional
+category: development
 tags:
   - code-quality
   - security
@@ -38,12 +38,9 @@ parameters:
       - warning
       - info
       - style
-unique_id: skill_code-review_dollhousemcp_20250723-165719
+unique_id: skill_code-review_dollhousemcp_20250723-000000
 capabilities:
-  - code-quality
-  - security
-  - best-practices
-  - review
+  - general-purpose
 ---
 
 # Code Review Skill
