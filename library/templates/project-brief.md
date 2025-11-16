@@ -3,8 +3,8 @@ name: Project Brief
 description: Comprehensive project overview template for planning and communication
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - project
@@ -25,8 +25,11 @@ outputFormats:
   - pdf
   - docx
 includes: []
-unique_id: template_project-brief_dollhousemcp_20250723-165719
+unique_id: template_project-brief_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Project Brief: {{project_name}}

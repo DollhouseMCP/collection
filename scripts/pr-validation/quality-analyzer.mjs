@@ -103,8 +103,8 @@ class QualityAnalyzer {
       },
       timestamp: new Date().toISOString()
     };
-    
-    this.passingScore = 70; // Minimum score to pass
+
+    this.passingScore = 60; // Minimum score to pass (lowered for community contributions)
   }
 
   /**

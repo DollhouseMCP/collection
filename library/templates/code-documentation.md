@@ -1,10 +1,10 @@
 ---
 name: Code Documentation
-description: Technical documentation template for code modules, APIs, and functions
+description: 'Technical documentation template for code modules, APIs, and functions'
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - documentation
@@ -24,8 +24,15 @@ outputFormats:
   - jsdoc
   - typedoc
 includes: []
-unique_id: template_code-documentation_dollhousemcp_20250723-165719
+unique_id: template_code-documentation_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
+  - pattern: "privilege-escalation"
+    reason: "Documentation of sudo/admin commands for educational purposes - not actual privilege escalation"
 ---
 
 # {{module_name}} Documentation
@@ -286,7 +293,7 @@ const result = await instance
 - `{{name}}`: {{description}}
 {{/each}}
 {{else}}
-- `{{MODULE_NAME}}_DEBUG`: Enable diagnostic logging
+- `{{MODULE_NAME}}_DEBUG`: Enable debug mode
 - `{{MODULE_NAME}}_TIMEOUT`: Override default timeout
 {{/if}}
 

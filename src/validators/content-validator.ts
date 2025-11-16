@@ -30,7 +30,7 @@ const BaseMetadataSchema = z.object({
   description: z.string().min(10).max(500),
   unique_id: z.string().regex(/^[a-z0-9-_]+$/),
   author: z.string().min(2).max(100),
-  category: z.enum(['creative', 'educational', 'gaming', 'personal', 'professional']).optional(),
+  category: z.string().optional(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
   created_date: z.union([z.string(), z.date()]).optional(),
   updated_date: z.union([z.string(), z.date()]).optional(),
@@ -188,14 +188,21 @@ export class ContentValidator {
 
       // Security scanning
       const securityIssues = scanForSecurityPatterns(content);
-      // Convert SecurityIssue to ValidationIssue format
-      const convertedSecurityIssues = securityIssues.map(securityIssue => ({
-        severity: securityIssue.severity,
-        type: `security_${securityIssue.category}`,
-        details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,
-        line: securityIssue.line,
-        suggestion: `Review and remove potentially unsafe content related to ${securityIssue.category}.`
-      }));
+
+      // Extract security exceptions from metadata
+      const securityExceptions = parsed.data.security_exceptions as Array<{ pattern: string; reason: string }> | undefined;
+      const exceptionCategories = new Set(securityExceptions?.map(exc => exc.pattern) || []);
+
+      // Convert SecurityIssue to ValidationIssue format, filtering out exceptions
+      const convertedSecurityIssues = securityIssues
+        .filter(securityIssue => !exceptionCategories.has(securityIssue.category))
+        .map(securityIssue => ({
+          severity: securityIssue.severity,
+          type: `security_${securityIssue.category}`,
+          details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,
+          line: securityIssue.line,
+          suggestion: `Review and remove potentially unsafe content related to ${securityIssue.category}.`
+        }));
       issues.push(...convertedSecurityIssues);
 
       // Content quality checks

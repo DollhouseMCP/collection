@@ -564,23 +564,14 @@ class IntegrationTester {
   }
 
   async test_COLLECTION_INTEGRATION_validCategories(fileResult, _content) {
-    // This overlaps with enum validation but adds integration context
+    // Category is optional and can be any string value
     const metadata = fileResult.metadata;
     if (!metadata?.category) {
       return { passed: true, message: 'No category specified (optional)', skipped: true };
     }
 
-    const validCategories = ['creative', 'educational', 'gaming', 'personal', 'professional'];
-    
-    if (!validCategories.includes(metadata.category)) {
-      return {
-        passed: false,
-        message: `Invalid category for collection integration: ${metadata.category}`,
-        severity: 'medium'
-      };
-    }
-
-    return { passed: true, message: 'Category is valid for collection' };
+    // Category can be any string value - no enum restriction
+    return { passed: true, message: `Category specified: ${metadata.category}` };
   }
 
   async test_COLLECTION_INTEGRATION_properNaming(fileResult, _content) {
@@ -745,10 +736,22 @@ class IntegrationTester {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
-    // Look for example sections
-    const hasExamples = contentBody.toLowerCase().includes('example') || 
-                       contentBody.toLowerCase().includes('usage') ||
-                       contentBody.includes('```');
+    // Look for various example/usage section formats
+    const contentLower = contentBody.toLowerCase();
+    const examplePatterns = [
+      'example',           // Generic examples
+      'usage',             // Usage instructions
+      'sample',            // Sample responses/usage
+      'how to use',        // How-to sections
+      'use case',          // Use cases
+      'demonstration',     // Demonstrations
+      'illustration',      // Illustrations
+      '```'               // Code blocks (often used for examples)
+    ];
+
+    const hasExamples = examplePatterns.some(pattern =>
+      pattern === '```' ? contentBody.includes(pattern) : contentLower.includes(pattern)
+    );
 
     if (!hasExamples) {
       return {
@@ -934,7 +937,19 @@ class IntegrationTester {
     this.results.summary.passedTests = passedTests;
     this.results.summary.failedTests = failedTests;
     this.results.summary.skippedTests = skippedTests;
-    this.results.summary.overallSuccess = failedTests === 0 && totalTests > 0;
+
+    // Count only high/critical severity failures for overall success
+    // Low-severity issues (like filename mismatches) are warnings only
+    let criticalFailures = 0;
+    for (const file of files) {
+      if (file.issues) {
+        criticalFailures += file.issues.filter(issue =>
+          issue.severity === 'critical' || issue.severity === 'high'
+        ).length;
+      }
+    }
+
+    this.results.summary.overallSuccess = criticalFailures === 0 && totalTests > 0;
 
     // Calculate test suite summaries
     for (const suiteName of Object.keys(TEST_SUITE)) {

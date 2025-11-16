@@ -1,12 +1,12 @@
 ---
 name: Data Analysis
-description: 'Statistical analysis, visualization, and insights generation from data collections'
+description: 'Statistical analysis, visualization, and insights extraction from datasets'
 type: skill
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: professional
-tags: &ref_0
+category: analytics
+tags:
   - data
   - statistics
   - visualization
@@ -53,18 +53,14 @@ parameters:
       - interpolate
       - drop
       - flag
-unique_id: skill_data-analysis_dollhousemcp_20250723-165721
+unique_id: skill_data-analysis_dollhousemcp_20250723-000000
 capabilities:
-  - data
-  - statistics
-  - visualization
-  - insights
-  - analytics
+  - general-purpose
 ---
 
 # Data Analysis Skill
 
-This skill provides comprehensive data analysis capabilities for analyzing insights, identifying patterns, and making data-driven recommendations.
+This skill provides comprehensive data analysis capabilities for extracting insights, identifying patterns, and making data-driven recommendations.
 
 ## Core Capabilities
 

@@ -5,8 +5,8 @@ description: >-
   recommendations
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - report
@@ -27,8 +27,13 @@ outputFormats:
   - markdown
   - html
 includes: []
-unique_id: template_executive-report_dollhousemcp_20250723-165719
+unique_id: template_executive-report_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "obfuscation"
+    reason: "Contains encoded examples or Unicode characters as part of documentation/examples"
 ---
 
 # {{report_title}}

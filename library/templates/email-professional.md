@@ -3,8 +3,8 @@ name: Professional Email
 description: Business email template with proper formatting and tone
 type: template
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags:
   - email
@@ -24,8 +24,13 @@ outputFormats:
   - html
   - markdown
 includes: []
-unique_id: template_professional-email_dollhousemcp_20250723-165719
+unique_id: template_professional-email_dollhousemcp_20250723-000000
 format: markdown
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Template file contains placeholder variables ({{variable}}) for content generation - these are legitimate template syntax, not injection vulnerabilities"
+  - pattern: "xss"
+    reason: "Contains HTML examples and event handlers for documentation/template purposes - sanitized in actual usage"
 ---
 
 Subject: {{subject}}

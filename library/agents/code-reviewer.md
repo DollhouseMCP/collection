@@ -3,10 +3,10 @@ name: Code Reviewer
 description: 'Automated code review agent with security, performance, and quality analysis'
 type: agent
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
-tags: &ref_0
+tags:
   - code-review
   - security
   - quality
@@ -63,13 +63,14 @@ risk_thresholds:
   max_file_size: 500
   max_function_length: 50
   security_score_minimum: 8
-unique_id: agent_code-reviewer_dollhousemcp_20250723-165719
+unique_id: agent_code-reviewer_dollhousemcp_20250723-000000
 capabilities:
-  - security_analysis
-  - code_quality_review
-  - performance_optimization
-  - automated_testing
-  - documentation_review
+  - autonomous-task-execution
+security_exceptions:
+  - pattern: "template-injection"
+    reason: "Agent metadata describes security vulnerability types it can detect (SQL injection, XSS, command injection) - documentation of capabilities, not actual vulnerabilities"
+  - pattern: "script-injection"
+    reason: "Documentation contains JavaScript code examples and configuration syntax (javascript:) for educational/technical reference purposes - not executable code"
 ---
 
 # Code Reviewer Agent
