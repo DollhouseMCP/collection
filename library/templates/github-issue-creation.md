@@ -15,6 +15,11 @@ unique_id: unknown_github-issue-creation_anonymous_20251025-191021
 type: template
 author: DollhouseMCP
 format: markdown
+security_exceptions:
+  - pattern: command_execution
+    reason: Contains example GitHub CLI commands for documentation purposes - template showing how to create issues, not actual command execution threats
+  - pattern: file_system
+    reason: Contains example cleanup commands in documentation - template showing workflow examples, not actual file system threats
 ---
 
 # GitHub Issue Creation Template - Feature/Enhancement
@@ -284,7 +289,7 @@ Be explicit about what this issue will NOT address. This prevents scope creep an
 ## Out of Scope
 
 This issue will NOT include:
-- ❌ [Feature/capability X] (reason: separate concern, will create Issue #XXX)
+- ❌ [Feature/capability X] (reason: separate concern, will create Issue #{ISSUE_NUMBER})
 - ❌ [Feature/capability Y] (reason: future work, not MVP)
 - ❌ [Refactoring Z] (reason: unrelated to telemetry)
 ```

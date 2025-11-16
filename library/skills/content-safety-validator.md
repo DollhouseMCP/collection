@@ -22,6 +22,13 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "prompt_injection"
+    reason: "Skill contains educational examples of security patterns for detection purposes - documentation of threats, not actual threats"
+  - pattern: "role_hijacking"
+    reason: "Skill contains educational examples of security patterns for detection purposes - documentation of threats, not actual threats"
+  - pattern: "jailbreak"
+    reason: "Skill contains educational examples of security patterns for detection purposes - documentation of threats, not actual threats"
 ---
 # Content Safety Validation Skill
 

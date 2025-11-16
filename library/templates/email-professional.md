@@ -12,47 +12,13 @@ tags:
   - communication
   - professional
 variables:
-  recipient_name:
-    type: string
-    description: Recipient's name
-    required: true
-  sender_name:
-    type: string
-    description: Sender's name
-    required: true
-  sender_title:
-    type: string
-    description: Sender's job title
-    required: false
-  company:
-    type: string
-    description: Company name
-    required: false
-  subject:
-    type: string
-    description: Email subject line
-    required: true
-  email_type:
-    type: string
-    description: Type of email
-    default: general
-    enum:
-      - general
-      - inquiry
-      - proposal
-      - follow-up
-      - introduction
-      - thank-you
-      - apology
-  tone:
-    type: string
-    description: Email tone
-    default: professional
-    enum:
-      - formal
-      - professional
-      - friendly-professional
-      - casual-professional
+  - recipient_name
+  - sender_name
+  - sender_title
+  - company
+  - subject
+  - email_type
+  - tone
 outputFormats:
   - text
   - html

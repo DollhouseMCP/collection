@@ -22,6 +22,9 @@ type: skill
 author: DollhouseMCP
 capabilities:
   - general-purpose
+security_exceptions:
+  - pattern: "context_awareness"
+    reason: "Skill contains educational examples of security patterns for detection purposes - documentation of threats, not actual threats"
 ---
 # Programmatic Security Validator Skill
 
