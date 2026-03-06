@@ -37,10 +37,10 @@
   --font-mono:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
   --step--1: clamp(0.78rem, 0.75rem + 0.15vw, 0.87rem);
   --step-0:  clamp(0.93rem, 0.88rem + 0.25vw, 1.05rem);
-  --step-1:  clamp(1.1rem,  1rem   + 0.5vw,   1.28rem);
+  --step-1:  clamp(1.1rem,  1rem + 0.5vw,   1.28rem);
   --step-2:  clamp(1.3rem,  1.16rem + 0.7vw,  1.6rem);
-  --step-3:  clamp(1.6rem,  1.4rem  + 1vw,    2.1rem);
-  --step-4:  clamp(1.9rem,  1.7rem  + 1.1vw,  2.6rem);
+  --step-3:  clamp(1.6rem,  1.4rem + 1vw,    2.1rem);
+  --step-4:  clamp(1.9rem,  1.7rem + 1.1vw,  2.6rem);
 }
 
 [data-theme="dark"] {
@@ -630,7 +630,25 @@ p, li { max-width: 69ch; }
 
 /* ── Modal ───────────────────────────────────────────────────────────────── */
 
-.modal {
+/* Reset browser-native fieldset chrome */
+fieldset.type-filters,
+fieldset.view-toggle {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+dialog.modal {
+  /* Reset browser-native dialog chrome */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  /* Layout */
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -639,8 +657,10 @@ p, li { max-width: 69ch; }
   justify-content: center;
   padding: clamp(0.5rem, 3vw, 2rem) var(--gutter);
   overflow-y: auto;
+  width: 100%;
 }
-.modal[hidden] { display: none; }
+dialog.modal::backdrop { display: none; }
+dialog.modal:not([open]) { display: none; }
 
 body.modal-open { overflow: hidden; }
 

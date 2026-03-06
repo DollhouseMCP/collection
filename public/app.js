@@ -21,7 +21,6 @@
   let filteredElements = []; // currently displayed after search + type filter
   let activeType = 'all';
   let searchQuery = '';
-  let currentElement = null; // element shown in modal
 
   // ── Bootstrap ──────────────────────────────────────────────────────────────
 
@@ -76,7 +75,7 @@
       return acc;
     }, {});
 
-    const types = ['all', ...Object.keys(typeCounts).sort()];
+    const types = ['all', ...Object.keys(typeCounts).sort((a, b) => a.localeCompare(b))];
 
     container.innerHTML = types.map(type => {
       const count = type === 'all' ? allElements.length : typeCounts[type];
@@ -206,11 +205,10 @@
   function handleCardClick(e) {
     const card = e.target.closest('[data-index]');
     if (!card) return;
-    openModal(filteredElements[parseInt(card.dataset.index, 10)]);
+    openModal(filteredElements[Number.parseInt(card.dataset.index, 10)]);
   }
 
   async function openModal(element) {
-    currentElement = element;
     const modal = document.getElementById('element-modal');
     if (!modal) return;
 
@@ -236,7 +234,7 @@
     // Show modal with loading state
     const body = document.getElementById('modal-body');
     body.innerHTML = '<p class="loading">Loading content…</p>';
-    modal.removeAttribute('hidden');
+    modal.showModal();
     document.body.classList.add('modal-open');
     modal.querySelector('.modal-close').focus();
 
@@ -265,9 +263,8 @@
   function closeModal() {
     const modal = document.getElementById('element-modal');
     if (!modal) return;
-    modal.setAttribute('hidden', '');
+    modal.close();
     document.body.classList.remove('modal-open');
-    currentElement = null;
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -287,7 +284,7 @@
         document.body.appendChild(ta);
         ta.select();
         document.execCommand('copy');
-        document.body.removeChild(ta);
+        ta.remove();
         btn.textContent = 'Copied!';
       } catch {
         btn.textContent = 'Copy failed';
@@ -297,13 +294,13 @@
   }
 
   function downloadFile(name, content) {
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+    const slug = name.toLowerCase().split(/[^a-z0-9]/).filter(Boolean).join('-');
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     const a    = Object.assign(document.createElement('a'), { href: url, download: `${slug}.md` });
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
   }
 
@@ -312,15 +309,15 @@
   function escapeHtml(str) {
     if (str == null) return '';
     return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#x27;');
   }
 
   function escapeAttr(str) {
-    return String(str || '').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+    return String(str || '').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
   }
 
   function capitalize(str) {
@@ -350,7 +347,7 @@
     const html = document.documentElement;
 
     function applyTheme(theme) {
-      html.setAttribute('data-theme', theme);
+      html.dataset.theme = theme;
       const isDark = theme === 'dark';
       if (themeToggleIcon) themeToggleIcon.textContent = isDark ? '☀' : '☾';
       if (themeToggleLbl)  themeToggleLbl.textContent  = isDark ? 'Switch to light mode' : 'Switch to dark mode';
@@ -360,12 +357,12 @@
 
     // Restore saved preference; fall back to OS preference
     const saved = (() => { try { return localStorage.getItem('color-scheme'); } catch {} })();
-    const preferred = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const preferred = saved || (globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     applyTheme(preferred);
 
     if (themeToggleBtn) {
       themeToggleBtn.addEventListener('click', () => {
-        applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        applyTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
       });
     }
 
