@@ -40,28 +40,29 @@
           spellcheck="false"
         >
       </div>
-      <div class="type-filters" id="type-filters" role="group" aria-label="Filter by element type"></div>
+      <fieldset class="type-filters" id="type-filters"><legend class="sr-only">Filter by element type</legend></fieldset>
     </div>
 
     <div class="results-bar">
       <span class="results-count" id="results-count" aria-live="polite"></span>
-      <div class="view-toggle" id="view-toggle" role="group" aria-label="View mode">
+      <fieldset class="view-toggle" id="view-toggle">
+        <legend class="sr-only">View mode</legend>
         <button class="view-btn active" data-view="grid"   aria-pressed="true">Cards</button>
         <button class="view-btn"        data-view="list"   aria-pressed="false">List</button>
         <button class="view-btn"        data-view="detail" aria-pressed="false">Detail</button>
-      </div>
+      </fieldset>
     </div>
 
-    <div class="elements-grid" id="elements-grid" role="list"></div>
+    <ul class="elements-grid" id="elements-grid"></ul>
 
   </main>
 
-  <div id="element-modal" class="modal" hidden aria-modal="true" role="dialog" aria-labelledby="modal-title">
+  <dialog id="element-modal" class="modal" aria-labelledby="modal-title">
     <div class="modal-overlay" id="modal-overlay"></div>
     <div class="modal-dialog">
       <header class="modal-header">
         <div class="modal-heading">
-          <h2 class="modal-title" id="modal-title"></h2>
+          <h2 class="modal-title" id="modal-title">Loading…</h2>
           <span class="modal-type"></span>
         </div>
         <div class="modal-meta">
@@ -77,7 +78,7 @@
         <a class="btn btn-github" id="btn-github" target="_blank" rel="noopener noreferrer">View on GitHub</a>
       </footer>
     </div>
-  </div>
+  </dialog>
 
   <footer class="site-footer">
     <div class="footer-inner">
