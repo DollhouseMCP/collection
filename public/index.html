@@ -45,6 +45,11 @@
 
     <div class="results-bar">
       <span class="results-count" id="results-count" aria-live="polite"></span>
+      <div class="view-toggle" id="view-toggle" role="group" aria-label="View mode">
+        <button class="view-btn active" data-view="grid"   aria-pressed="true">Cards</button>
+        <button class="view-btn"        data-view="list"   aria-pressed="false">List</button>
+        <button class="view-btn"        data-view="detail" aria-pressed="false">Detail</button>
+      </div>
     </div>
 
     <div class="elements-grid" id="elements-grid" role="list"></div>

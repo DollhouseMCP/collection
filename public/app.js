@@ -170,9 +170,10 @@
           : ''}
         <footer class="card-footer">
           <div class="card-meta">
-            ${el.author   ? `<span class="meta-author">by ${escapeHtml(el.author)}</span>` : ''}
+            ${el.author   ? `<span class="meta-author">${escapeHtml(el.author)}</span>` : ''}
             ${el.version  ? `<span class="meta-version">v${escapeHtml(el.version)}</span>` : ''}
             ${el.category ? `<span class="meta-category">${escapeHtml(el.category)}</span>` : ''}
+            ${el.created  ? `<span class="meta-date">${formatDate(el.created)}</span>` : ''}
           </div>
           ${el.tags?.length
             ? `<ul class="card-tags" aria-label="Tags">${
@@ -367,6 +368,29 @@
         applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
       });
     }
+
+    // View toggle
+    const viewToggle = document.getElementById('view-toggle');
+    const elemGrid   = document.getElementById('elements-grid');
+    let activeView = (() => { try { return localStorage.getItem('collection-view') || 'grid'; } catch { return 'grid'; } })();
+
+    function applyView(view) {
+      activeView = view;
+      if (elemGrid) elemGrid.dataset.view = view;
+      viewToggle?.querySelectorAll('.view-btn').forEach(btn => {
+        const on = btn.dataset.view === view;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on);
+      });
+      try { localStorage.setItem('collection-view', view); } catch {}
+    }
+
+    applyView(activeView);
+
+    viewToggle?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-view]');
+      if (btn) applyView(btn.dataset.view);
+    });
 
     // Search
     const searchInput = document.getElementById('search-input');
