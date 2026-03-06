@@ -7,18 +7,16 @@ on:
       - 'library/**/*'
       - 'showcase/**/*'
       - 'catalog/**/*'
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'library/**/*'
-      - 'showcase/**/*'
-      - 'catalog/**/*'
 
+# Security: pull_request_target removed — it granted elevated permissions while running
+# fork code, enabling pwn request attacks. See DollhouseMCP/collection#227.
+# Contributions go via the issue submission form, not fork PRs, so this is acceptable.
+# Internal branch PRs still get full validation via pull_request trigger above.
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
-  statuses: write
+  pull-requests: read
+  checks: read
+  statuses: read
 
 env:
   NODE_VERSION: '20'
