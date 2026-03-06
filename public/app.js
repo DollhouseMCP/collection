@@ -48,7 +48,11 @@
 
     } catch (err) {
       showGridMessage('error', `Could not load collection: ${err.message}`);
-      console.error('[DollhouseMCP]', err);
+      console.error('[DollhouseMCP]', {
+        error: err.message,
+        context: 'collectionLoad',
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 
@@ -134,6 +138,7 @@
   function renderResults() {
     const grid = document.getElementById('elements-grid');
     const countEl = document.getElementById('results-count');
+    const announcer = document.getElementById('results-announcer');
     if (!grid) return;
 
     if (countEl) {
@@ -142,6 +147,12 @@
       } else {
         countEl.textContent = `${filteredElements.length} of ${allElements.length} elements`;
       }
+    }
+
+    if (announcer) {
+      announcer.textContent = filteredElements.length === allElements.length
+        ? `Showing all ${allElements.length} elements`
+        : `Found ${filteredElements.length} of ${allElements.length} elements`;
     }
 
     if (filteredElements.length === 0) {
@@ -257,6 +268,12 @@
             View on GitHub directly
           </a>
         </p>`;
+      console.error('[DollhouseMCP]', {
+        error: err.message,
+        context: 'modalLoad',
+        element: element.path,
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 
@@ -283,6 +300,7 @@
         });
         document.body.appendChild(ta);
         ta.select();
+        // NOSONAR - Intentional fallback for non-HTTPS contexts where Clipboard API is unavailable
         document.execCommand('copy');
         ta.remove();
         btn.textContent = 'Copied!';

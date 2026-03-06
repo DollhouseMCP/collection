@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DollhouseMCP Collection</title>
   <meta name="description" content="Browse and discover community AI elements for the DollhouseMCP platform">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
   <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -45,6 +47,7 @@
 
     <div class="results-bar">
       <span class="results-count" id="results-count" aria-live="polite"></span>
+      <span class="sr-only" id="results-announcer" role="status" aria-live="polite" aria-atomic="true"></span>
       <fieldset class="view-toggle" id="view-toggle">
         <legend class="sr-only">View mode</legend>
         <button class="view-btn active" data-view="grid"   aria-pressed="true">Cards</button>
