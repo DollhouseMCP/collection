@@ -641,7 +641,6 @@ fieldset.view-toggle {
 
 dialog.modal {
   /* Reset browser-native dialog chrome */
-  padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
