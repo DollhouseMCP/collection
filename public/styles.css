@@ -1174,6 +1174,50 @@ body.modal-open { overflow: hidden; }
 .modal-body .loading,
 .modal-body .error { padding: 1.5rem 0.5rem; border-radius: var(--radius-md); }
 
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.25rem 0 0.5rem;
+}
+
+.pagination-btn {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink-600);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--paper-strong);
+  color: var(--ink-700);
+  border-color: var(--ink-300);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pagination-btn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.pagination-info {
+  font-size: 0.82rem;
+  color: var(--ink-500);
+  min-width: 8ch;
+  text-align: center;
+}
+
 /* ── Site footer ─────────────────────────────────────────────────────────── */
 
 .site-footer {
