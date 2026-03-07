@@ -859,11 +859,13 @@
       const paramRows = Object.entries(fm.parameters).map(([name, def]) => {
         const d = typeof def === 'object' && def !== null ? def : {};
         return `<div class="detail-param">
-          <span class="detail-param-name">${escapeHtml(name)}</span>
+          <div class="detail-param-header">
+            <span class="detail-param-name">${escapeHtml(name)}</span>
+            ${d.type ? `<span class="detail-pill pill-meta">${escapeHtml(d.type)}</span>` : ''}
+            ${d.required ? `<span class="detail-pill pill-required">required</span>` : ''}
+            ${d.default !== undefined ? `<span class="detail-pill">default: ${escapeHtml(String(d.default))}</span>` : ''}
+          </div>
           ${d.description ? `<span class="detail-param-desc">${escapeHtml(d.description)}</span>` : ''}
-          ${d.type ? `<span class="detail-pill pill-meta">${escapeHtml(d.type)}</span>` : ''}
-          ${d.required ? `<span class="detail-pill pill-required">required</span>` : ''}
-          ${d.default !== undefined ? `<span class="detail-label">default: </span><span class="detail-value">${escapeHtml(String(d.default))}</span>` : ''}
         </div>`;
       }).join('');
       if (paramRows) html += section('Parameters', paramRows);
@@ -900,10 +902,12 @@
           goalHtml += `<h5 class="detail-subsection-title">Parameters</h5>`;
           goalHtml += fm.goal.parameters.map(p =>
             `<div class="detail-param">
-              <span class="detail-param-name">${escapeHtml(p.name || '')}</span>
+              <div class="detail-param-header">
+                <span class="detail-param-name">${escapeHtml(p.name || '')}</span>
+                ${p.type ? `<span class="detail-pill pill-meta">${escapeHtml(p.type)}</span>` : ''}
+                ${p.required ? `<span class="detail-pill pill-required">required</span>` : '<span class="detail-pill">optional</span>'}
+              </div>
               ${p.description ? `<span class="detail-param-desc">${escapeHtml(p.description)}</span>` : ''}
-              ${p.type ? `<span class="detail-pill pill-meta">${escapeHtml(p.type)}</span>` : ''}
-              ${p.required ? `<span class="detail-pill pill-required">required</span>` : '<span class="detail-pill">optional</span>'}
             </div>`
           ).join('');
         }
