@@ -30,6 +30,7 @@
   let filteredElements = [];   // currently displayed after search + type filter
   let currentPage = 1;         // pagination — reset on every filter/search change
   let activeTypes = new Set(); // empty = show all; multi-select
+  let openElementIndex = -1;   // index of currently open modal element in filteredElements
   let activeTopic = 'all';
 
   // Normalize plural index keys → singular CSS/display type names
@@ -439,7 +440,8 @@
 
     const card = e.target.closest('[data-index]');
     if (!card) return;
-    const el = filteredElements[Number.parseInt(card.dataset.index, 10)];
+    const idx = Number.parseInt(card.dataset.index, 10);
+    const el = filteredElements[idx];
     const grid = document.getElementById('elements-grid');
     const isListView = grid?.dataset.view === 'list';
 
@@ -448,7 +450,7 @@
       if (e.target.closest('.card-inline-detail')) return;
       toggleInlineExpand(card, el);
     } else {
-      if (!card.dataset.unavailable) openModal(el);
+      if (!card.dataset.unavailable) openModal(el, idx);
     }
   }
 
@@ -524,9 +526,31 @@
     }
   }
 
-  async function openModal(element) {
+  async function openModal(element, index = -1) {
     const modal = document.getElementById('element-modal');
     if (!modal) return;
+
+    openElementIndex = index;
+
+    // Prev/Next navigation
+    const prevElBtn = document.getElementById('btn-prev-element');
+    const nextElBtn = document.getElementById('btn-next-element');
+    const navCount  = document.getElementById('modal-nav-count');
+    if (prevElBtn) {
+      prevElBtn.disabled = index <= 0;
+      prevElBtn.onclick = () => {
+        if (openElementIndex > 0) openModal(filteredElements[openElementIndex - 1], openElementIndex - 1);
+      };
+    }
+    if (nextElBtn) {
+      nextElBtn.disabled = index < 0 || index >= filteredElements.length - 1;
+      nextElBtn.onclick = () => {
+        if (openElementIndex < filteredElements.length - 1) openModal(filteredElements[openElementIndex + 1], openElementIndex + 1);
+      };
+    }
+    if (navCount) {
+      navCount.textContent = index >= 0 ? `${index + 1} / ${filteredElements.length}` : '';
+    }
 
     // Populate static metadata immediately
     modal.querySelector('.modal-title').textContent = element.name;
@@ -1078,6 +1102,21 @@
       if (e.key === 'Escape') {
         closeModal();
         return;
+      }
+      const modal = document.getElementById('element-modal');
+      const modalOpen = modal?.open;
+      // Arrow keys navigate between elements when modal is open
+      if (modalOpen && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+        if (e.key === 'ArrowLeft' && openElementIndex > 0) {
+          e.preventDefault();
+          openModal(filteredElements[openElementIndex - 1], openElementIndex - 1);
+          return;
+        }
+        if (e.key === 'ArrowRight' && openElementIndex < filteredElements.length - 1) {
+          e.preventDefault();
+          openModal(filteredElements[openElementIndex + 1], openElementIndex + 1);
+          return;
+        }
       }
       // Press / to focus search (unless already in an input)
       if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {

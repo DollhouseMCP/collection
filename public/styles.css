@@ -953,7 +953,8 @@ body.modal-open { overflow: hidden; }
 .modal-dialog {
   position: relative;
   width: min(54rem, 100%);
-  margin: auto;
+  margin: 0 auto;          /* horizontal centering only — no vertical centering */
+  align-self: flex-start;  /* pin to top so toolbar stays at a fixed screen position */
   border-radius: var(--radius-lg);
   background: var(--paper-strong);
   border: 1px solid var(--line);
@@ -1124,6 +1125,40 @@ body.modal-open { overflow: hidden; }
 }
 
 /* Submit button — accent amber for local elements */
+.modal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--line);
+}
+
+.modal-nav-btn {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 0.32rem;
+  background: transparent;
+  color: var(--ink-600);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.modal-nav-btn:hover:not(:disabled) { background: var(--paper-strong); color: var(--ink-700); }
+.modal-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.modal-nav-btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+.modal-nav-count {
+  font-size: 0.75rem;
+  color: var(--ink-400);
+  min-width: 5ch;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .modal-action-btn--submit {
   color: color-mix(in srgb, #a16207 90%, var(--ink-900));
   border-color: color-mix(in srgb, #f5b942 55%, transparent);
