@@ -1064,6 +1064,10 @@ body.modal-open { overflow: hidden; }
   padding: 1rem;
 }
 
+/* Reset the global p,li max-width readability rule inside the modal */
+.modal-body p,
+.modal-body li { max-width: none; }
+
 .element-source {
   background: color-mix(in srgb, var(--ink-950) 18%, #0b1629);
   border-radius: var(--radius-md);
