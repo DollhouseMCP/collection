@@ -277,11 +277,20 @@ p, li { max-width: 69ch; }
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal-2) 15%, transparent);
 }
 
+/* Type filter row — filter chips + portfolio button side by side */
+.type-filter-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 /* Type filter chips */
 .type-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  flex: 1;
 }
 
 .type-filter {
@@ -323,7 +332,6 @@ p, li { max-width: 69ch; }
 .type-filter[data-type="ensemble"].active { background: linear-gradient(120deg, #f5893a, #b43410); }
 .type-filter[data-type="prompt"].active   { background: linear-gradient(120deg, #2dd4bf, #0f766e); }
 .type-filter[data-type="tool"].active     { background: linear-gradient(120deg, #94a3b8, #334155); }
-.type-filter[data-type="memorie"].active  { background: linear-gradient(120deg, #f5b942, #a16207); }
 
 /* Dark mode filter chips — lighter stop colors */
 [data-theme="dark"] .type-filter[data-type="agent"].active    { background: linear-gradient(120deg, #93bbfd, #4a80e6); }
@@ -353,6 +361,54 @@ p, li { max-width: 69ch; }
   margin-left: auto;
 }
 
+/* LOCAL badge — shown on portfolio elements */
+.source-badge {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 0.08rem 0.38rem;
+  border-radius: 0.2rem;
+  background: color-mix(in srgb, #f5b942 28%, var(--paper-strong));
+  color: color-mix(in srgb, #a16207 90%, var(--ink-800));
+  border: 1px solid color-mix(in srgb, #f5b942 55%, transparent);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .source-badge {
+  background: color-mix(in srgb, #fcd34d 18%, var(--paper-strong));
+  color: #fcd34d;
+  border-color: color-mix(in srgb, #fcd34d 35%, transparent);
+}
+
+/* Portfolio button in browse controls */
+.portfolio-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 0.32rem;
+  padding: 0.38rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink-600);
+  background: var(--paper-strong);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+.portfolio-btn:hover {
+  background: color-mix(in srgb, var(--surface-1) 55%, var(--paper-strong));
+  border-color: color-mix(in srgb, var(--ink-600) 35%, var(--line));
+}
+.portfolio-btn[data-loaded="true"] {
+  border-color: color-mix(in srgb, #f5b942 60%, var(--line));
+  color: color-mix(in srgb, #a16207 90%, var(--ink-800));
+}
+[data-theme="dark"] .portfolio-btn[data-loaded="true"] {
+  border-color: color-mix(in srgb, #fcd34d 50%, var(--line));
+  color: #fcd34d;
+}
+
 .filter-count { opacity: 0.68; }
 .type-filter.active .filter-count { opacity: 0.82; }
 
@@ -364,7 +420,7 @@ p, li { max-width: 69ch; }
   gap: 0.5rem;
   margin-bottom: 0.8rem;
 }
-.results-bar .sort-select { margin-left: auto; }
+.results-bar .source-toggle { margin-left: auto; }
 
 .results-count {
   font-family: var(--font-mono);
@@ -428,6 +484,39 @@ p, li { max-width: 69ch; }
   outline: 2px solid var(--signal);
   outline-offset: 2px;
 }
+
+/* Source toggle — All / Collection / Portfolio */
+.source-toggle {
+  display: flex;
+  gap: 0.22rem;
+  border: 1px solid color-mix(in srgb, var(--line) 85%, var(--paper-strong));
+  border-radius: 0.4rem;
+  padding: 0.18rem;
+  background: color-mix(in srgb, var(--surface-2) 65%, var(--paper-strong));
+}
+
+.source-btn {
+  appearance: none;
+  border: none;
+  border-radius: 0.28rem;
+  background: transparent;
+  color: var(--ink-500);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.52rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.source-btn:hover { color: var(--ink-700); background: color-mix(in srgb, var(--paper-strong) 60%, transparent); }
+.source-btn.active {
+  background: var(--paper-strong);
+  color: var(--signal);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.source-btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
 /* ── Element grid — base (cards view) ───────────────────────────────────── */
 
@@ -496,7 +585,6 @@ p, li { max-width: 69ch; }
 .element-card[data-type="ensemble"] { --family-1: #f5893a; --family-2: #b43410; --family-3: #f97316; --family-4: #ea580c; }
 .element-card[data-type="prompt"]   { --family-1: #2dd4bf; --family-2: #0f766e; --family-3: #14b8a6; --family-4: #0d9488; }
 .element-card[data-type="tool"]     { --family-1: #94a3b8; --family-2: #334155; --family-3: #64748b; --family-4: #475569; }
-.element-card[data-type="memorie"]  { --family-1: #f5b942; --family-2: #a16207; --family-3: #f59e0b; --family-4: #d97706; }
 
 /* Per-type family tokens — dark mode (elevated lightness, reduced saturation per ui-visual-design-expert) */
 [data-theme="dark"] .element-card[data-type="agent"]    { --family-1: #93bbfd; --family-2: #4a80e6; --family-3: #a5c4fe; --family-4: #6ea3f7; }
@@ -581,6 +669,15 @@ p, li { max-width: 69ch; }
   background: color-mix(in srgb, var(--family-1) 22%, var(--paper-strong));
   padding: 0.12rem 0.42rem;
   white-space: nowrap;
+}
+
+/* Badge group — stacks type + source badges vertically, right-aligned */
+.card-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
 }
 
 .card-description {
@@ -669,7 +766,7 @@ p, li { max-width: 69ch; }
   gap: 0.65rem;
   padding: 0.42rem 0.65rem 0.42rem 0.75rem;
   border-radius: var(--radius-sm);
-  border-left: 3px solid var(--family-2);
+  border-left: 4px solid var(--family-1);
 }
 
 /* Hide corner accent in list view */
@@ -685,8 +782,13 @@ p, li { max-width: 69ch; }
   overflow: hidden;
 }
 
-/* Move badge visually before title */
-.elements-grid[data-view="list"] .type-badge { order: -1; flex-shrink: 0; }
+/* Move badge group visually before title in list view */
+.elements-grid[data-view="list"] .card-badges {
+  order: -1;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.18rem;
+}
 
 .elements-grid[data-view="list"] .card-title {
   font-size: var(--step--1);
@@ -769,14 +871,14 @@ p, li { max-width: 69ch; }
   align-items: flex-start;
 }
 
-/* Inline detail action bar */
+/* Inline detail action bar — sits at the TOP of expanded content */
 .inline-detail-actions {
   display: flex;
   gap: 0.3rem;
   flex-wrap: wrap;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--line);
-  margin-top: 0.5rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0.5rem;
 }
 .card-expand-icon {
   display: none; /* hidden unless in list view */
@@ -1022,6 +1124,27 @@ body.modal-open { overflow: hidden; }
   border-color: color-mix(in srgb, var(--signal) 30%, var(--line));
 }
 
+/* Submit button — accent amber for local elements */
+.modal-action-btn--submit {
+  color: color-mix(in srgb, #a16207 90%, var(--ink-900));
+  border-color: color-mix(in srgb, #f5b942 55%, transparent);
+  background: color-mix(in srgb, #f5b942 14%, var(--paper-strong));
+}
+.modal-action-btn--submit:hover {
+  background: color-mix(in srgb, #f5b942 22%, var(--paper-strong));
+  color: color-mix(in srgb, #a16207 100%, transparent);
+  border-color: color-mix(in srgb, #f5b942 70%, transparent);
+}
+
+/* Modal date */
+.modal-date {
+  font-size: var(--step--1);
+  color: var(--ink-500);
+}
+
+/* Hide source badge when empty */
+.modal-source:empty { display: none; }
+
 /* ── State messages ──────────────────────────────────────────────────────── */
 
 .loading, .empty-state, .error {
@@ -1110,6 +1233,29 @@ fieldset.topic-filters {
   border-color: var(--accent);
   color: var(--accent);
   font-weight: 600;
+}
+
+/* Detail view — created date header */
+.detail-created {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0 0 0.7rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0.2rem;
+}
+.detail-created-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-500);
+}
+.detail-created-value {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-900);
 }
 
 /* ── Detail view sections ────────────────────────────────────────────────── */

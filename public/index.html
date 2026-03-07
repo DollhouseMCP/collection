@@ -42,13 +42,22 @@
           spellcheck="false"
         >
       </div>
-      <fieldset class="type-filters" id="type-filters"><legend class="sr-only">Filter by element type</legend></fieldset>
+      <div class="type-filter-row">
+        <fieldset class="type-filters" id="type-filters"><legend class="sr-only">Filter by element type</legend></fieldset>
+        <button id="btn-portfolio" class="portfolio-btn" type="button" title="Browse your local ~/.dollhouse/portfolio/ directory">📁 Portfolio</button>
+      </div>
       <fieldset class="topic-filters" id="topic-filters" hidden><legend class="sr-only">Filter by topic</legend></fieldset>
     </div>
 
     <div class="results-bar">
       <span class="results-count" id="results-count" aria-live="polite"></span>
       <output class="sr-only" id="results-announcer" aria-live="polite" aria-atomic="true"></output>
+      <fieldset class="source-toggle" id="source-toggle">
+        <legend class="sr-only">Filter by source</legend>
+        <button class="source-btn active" data-source="all"        aria-pressed="true">All</button>
+        <button class="source-btn"        data-source="collection" aria-pressed="false">Collection</button>
+        <button class="source-btn"        data-source="portfolio"  aria-pressed="false">Portfolio</button>
+      </fieldset>
       <label for="sort-select" class="sr-only">Sort by</label>
       <select id="sort-select" class="sort-select" aria-label="Sort elements">
         <option value="name-asc">Name A–Z</option>
@@ -80,6 +89,8 @@
         <div class="modal-meta">
           <span class="modal-author"></span>
           <span class="modal-version"></span>
+          <span class="modal-date"></span>
+          <span class="modal-source source-badge"></span>
         </div>
         <button class="modal-close" id="modal-close" aria-label="Close element detail">&#x2715;</button>
       </header>
@@ -88,6 +99,7 @@
         <button class="modal-action-btn" id="btn-copy"   aria-label="Copy to clipboard">⎘ Copy</button>
         <button class="modal-action-btn" id="btn-download" aria-label="Download as markdown">⤓ Download</button>
         <a class="modal-action-btn" id="btn-github" target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">↗ GitHub</a>
+        <a class="modal-action-btn modal-action-btn--submit" id="btn-submit" target="_blank" rel="noopener noreferrer" aria-label="Submit to collection" style="display:none">↑ Submit</a>
       </div>
       <div class="modal-body" id="modal-body"></div>
     </div>

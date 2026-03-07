@@ -17,11 +17,21 @@
 
   // ── State ──────────────────────────────────────────────────────────────────
 
-  let allElements = [];     // flat array of all IndexedElement objects
-  let filteredElements = []; // currently displayed after search + type filter
-  let activeType = 'all';
+  let collectionElements = []; // from collection-index.json
+  let localElements = [];      // loaded from local portfolio (~/.dollhouse/portfolio/)
+  let allElements = [];        // collectionElements + localElements
+  let filteredElements = [];   // currently displayed after search + type filter
+  let activeTypes = new Set(); // empty = show all; multi-select
   let activeTopic = 'all';
+
+  // Normalize plural index keys → singular CSS/display type names
+  const SINGULAR_TYPE = {
+    agents: 'agent', personas: 'persona', skills: 'skill',
+    templates: 'template', memories: 'memory', ensembles: 'ensemble',
+    prompts: 'prompt', tools: 'tool',
+  };
   let activeSort = 'date-desc';
+  let activeSource = 'all'; // 'all' | 'collection' | 'portfolio'
   let searchQuery = '';
 
   // ── Bootstrap ──────────────────────────────────────────────────────────────
@@ -33,10 +43,11 @@
       if (!res.ok) throw new Error(`HTTP ${res.status} fetching collection-index.json`);
       const data = await res.json();
 
-      // Flatten { type: [elements] } → single array with type injected
-      allElements = Object.entries(data.index).flatMap(([type, elements]) =>
-        elements.map(el => ({ ...el, type }))
+      // Flatten { type: [elements] } → single array with singular type injected
+      collectionElements = Object.entries(data.index).flatMap(([type, elements]) =>
+        elements.map(el => ({ ...el, type: SINGULAR_TYPE[type] || type }))
       );
+      allElements = [...collectionElements, ...localElements];
 
       // Probe a sample to detect branch availability (HEAD request, non-blocking)
       checkBranchAvailability();
@@ -68,7 +79,7 @@
     // Probe each element's path; mark unavailable ones so the grid can show them dimmed.
     // Uses HEAD requests in parallel, capped at 8 concurrent to avoid rate limits.
     const CONCURRENCY = 8;
-    const queue = [...allElements];
+    const queue = allElements.filter(el => !el._local);
     let dirty = false;
 
     async function probe(el) {
@@ -110,9 +121,10 @@
 
     const types = ['all', ...Object.keys(typeCounts).sort((a, b) => a.localeCompare(b))];
 
+    const isAllActive = activeTypes.size === 0;
     container.innerHTML = types.map(type => {
       const count = type === 'all' ? allElements.length : typeCounts[type];
-      const isActive = type === activeType;
+      const isActive = type === 'all' ? isAllActive : activeTypes.has(type);
       return `<button
         class="type-filter${isActive ? ' active' : ''}"
         data-type="${escapeAttr(type)}"
@@ -120,12 +132,23 @@
       >${capitalize(type)} <span class="filter-count">${count}</span></button>`;
     }).join('');
 
-    container.addEventListener('click', e => {
+    // Replace listener (clone node removes old listeners)
+    const fresh = container.cloneNode(true);
+    container.parentNode.replaceChild(fresh, container);
+    fresh.addEventListener('click', e => {
       const btn = e.target.closest('[data-type]');
       if (!btn) return;
-      activeType = btn.dataset.type;
-      container.querySelectorAll('.type-filter').forEach(b => {
-        const active = b.dataset.type === activeType;
+      const t = btn.dataset.type;
+      if (t === 'all') {
+        activeTypes.clear();
+      } else if (activeTypes.has(t)) {
+        activeTypes.delete(t);
+      } else {
+        activeTypes.add(t);
+      }
+      fresh.querySelectorAll('.type-filter').forEach(b => {
+        const isAll = b.dataset.type === 'all';
+        const active = isAll ? activeTypes.size === 0 : activeTypes.has(b.dataset.type);
         b.classList.toggle('active', active);
         b.setAttribute('aria-pressed', active);
       });
@@ -215,8 +238,10 @@
 
   function applyFilters() {
     filteredElements = allElements.filter(el => {
-      if (activeType !== 'all' && el.type !== activeType) return false;
+      if (activeTypes.size > 0 && !activeTypes.has(el.type)) return false;
       if (activeTopic !== 'all' && getTopicForElement(el) !== activeTopic) return false;
+      if (activeSource === 'collection' && el._local) return false;
+      if (activeSource === 'portfolio' && !el._local) return false;
       if (!searchQuery) return true;
       return (
         el.name?.toLowerCase().includes(searchQuery) ||
@@ -237,8 +262,16 @@
     switch (activeSort) {
       case 'name-asc':  return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       case 'name-desc': return sorted.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
-      case 'date-asc':  return sorted.sort((a, b) => (a.created || '').localeCompare(b.created || ''));
-      case 'date-desc': return sorted.sort((a, b) => (b.created || '').localeCompare(a.created || ''));
+      case 'date-asc':  return sorted.sort((a, b) => {
+        const da = a.created ? new Date(a.created).getTime() : 0;
+        const db = b.created ? new Date(b.created).getTime() : 0;
+        return da - db;
+      });
+      case 'date-desc': return sorted.sort((a, b) => {
+        const da = a.created ? new Date(a.created).getTime() : 0;
+        const db = b.created ? new Date(b.created).getTime() : 0;
+        return db - da;
+      });
       case 'type-asc':  return sorted.sort((a, b) => (a.type || '').localeCompare(b.type || '') || (a.name || '').localeCompare(b.name || ''));
       default:          return sorted;
     }
@@ -288,8 +321,11 @@
       >
         <div class="card-header">
           <h3 class="card-title">${escapeHtml(el.name)}</h3>
-          <span class="type-badge" data-type="${escapeAttr(el.type)}">${capitalize(el.type)}</span>
-          ${unavailable ? '<span class="unavailable-badge">unavailable</span>' : ''}
+          <div class="card-badges">
+            <span class="type-badge" data-type="${escapeAttr(el.type)}">${capitalize(el.type)}</span>
+            ${el._local ? '<span class="source-badge">LOCAL</span>' : ''}
+            ${unavailable ? '<span class="unavailable-badge">unavailable</span>' : ''}
+          </div>
           <span class="card-expand-icon" aria-hidden="true">▾</span>
         </div>
         ${el.description
@@ -344,11 +380,15 @@
       const el = filteredElements[Number.parseInt(card.dataset.index, 10)];
       const btn = e.target.closest('[data-action="download"]');
       const prev = btn.textContent;
-      btn.textContent = '…';
-      fetch(`${RAW_BASE}/${el.path}`)
-        .then(r => r.ok ? r.text() : Promise.reject(r.status))
-        .then(content => { downloadFile(el.name, content); btn.textContent = prev; })
-        .catch(() => { btn.textContent = '✗'; setTimeout(() => { btn.textContent = prev; }, 1500); });
+      if (el._local && el._content) {
+        downloadFile(el.name, el._content);
+      } else {
+        btn.textContent = '…';
+        fetch(`${RAW_BASE}/${el.path}`)
+          .then(r => r.ok ? r.text() : Promise.reject(r.status))
+          .then(content => { downloadFile(el.name, content); btn.textContent = prev; })
+          .catch(() => { btn.textContent = '✗'; setTimeout(() => { btn.textContent = prev; }, 1500); });
+      }
       return;
     }
 
@@ -378,19 +418,22 @@
     }
 
     card.dataset.expanded = '';
-    detail.innerHTML = '<p class="loading" style="font-size:0.8rem;padding:0.4rem 0">Loading…</p>';
+    if (!el._local) {
+      detail.innerHTML = '<p class="loading" style="font-size:0.8rem;padding:0.4rem 0">Loading…</p>';
+    }
 
     try {
-      const url = `${RAW_BASE}/${el.path}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const content = await res.text();
-      detail.innerHTML = renderDetailView(content, el.type);
-      detail.querySelectorAll('pre code').forEach(block => {
-        if (globalThis.hljs) hljs.highlightElement(block);
-      });
+      let content;
+      if (el._local) {
+        content = el._content;
+      } else {
+        const res = await fetch(`${RAW_BASE}/${el.path}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        content = await res.text();
+      }
+      detail.innerHTML = '';
 
-      // Action bar at bottom of expanded content
+      // Action bar at TOP of expanded content
       const actions = document.createElement('div');
       actions.className = 'inline-detail-actions';
       const copyBtn = document.createElement('button');
@@ -403,17 +446,34 @@
       dlBtn.textContent = '⤓ Download';
       dlBtn.onclick = e => { e.stopPropagation(); downloadFile(el.name, content); };
 
-      const ghLink = document.createElement('a');
-      ghLink.className = 'modal-action-btn';
-      ghLink.href = `${GITHUB_BASE}/${el.path}`;
-      ghLink.target = '_blank';
-      ghLink.rel = 'noopener noreferrer';
-      ghLink.textContent = '↗ GitHub';
-
       actions.appendChild(copyBtn);
       actions.appendChild(dlBtn);
-      actions.appendChild(ghLink);
+
+      if (el._local) {
+        const submitLink = document.createElement('a');
+        submitLink.className = 'modal-action-btn modal-action-btn--submit';
+        submitLink.href = `https://github.com/DollhouseMCP/collection/issues/new?title=${encodeURIComponent(`Submit: ${el.name}`)}&labels=submission&body=${encodeURIComponent(`**Element type:** ${el.type}\n**Name:** ${el.name}\n\nPaste your element content below:\n\n\`\`\`\n${content}\n\`\`\``)}`;
+        submitLink.target = '_blank';
+        submitLink.rel = 'noopener noreferrer';
+        submitLink.textContent = '↑ Submit';
+        actions.appendChild(submitLink);
+      } else {
+        const ghLink = document.createElement('a');
+        ghLink.className = 'modal-action-btn';
+        ghLink.href = `${GITHUB_BASE}/${el.path}`;
+        ghLink.target = '_blank';
+        ghLink.rel = 'noopener noreferrer';
+        ghLink.textContent = '↗ GitHub';
+        actions.appendChild(ghLink);
+      }
       detail.appendChild(actions);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.innerHTML = renderDetailView(content, el.type);
+      contentDiv.querySelectorAll('pre code').forEach(block => {
+        if (globalThis.hljs) hljs.highlightElement(block);
+      });
+      detail.appendChild(contentDiv);
 
     } catch (err) {
       detail.innerHTML = `<p class="error" style="font-size:0.8rem">Could not load: ${escapeHtml(err.message)}</p>`;
@@ -429,11 +489,32 @@
     modal.querySelector('.modal-type').textContent  = capitalize(element.type);
     modal.querySelector('.modal-author').textContent = element.author ? `by ${element.author}` : '';
     modal.querySelector('.modal-version').textContent = element.version ? `v${element.version}` : '';
+    const modalDate = modal.querySelector('.modal-date');
+    if (modalDate) modalDate.textContent = element.created ? formatDate(element.created) : '';
+    const modalSource = modal.querySelector('.modal-source');
+    if (modalSource) modalSource.textContent = element._local ? 'LOCAL' : '';
 
-    // GitHub link
+    // GitHub link — hidden for local portfolio elements
     const ghLink = modal.querySelector('#btn-github');
     if (ghLink) {
-      ghLink.href = `${GITHUB_BASE}/${element.path}`;
+      if (element._local) {
+        ghLink.style.display = 'none';
+      } else {
+        ghLink.style.display = '';
+        ghLink.href = `${GITHUB_BASE}/${element.path}`;
+      }
+    }
+
+    // Submit button — shown only for local elements, hidden otherwise
+    const submitBtn = modal.querySelector('#btn-submit');
+    if (submitBtn) {
+      if (element._local) {
+        submitBtn.style.display = '';
+        submitBtn.dataset.elementName = element.name;
+        submitBtn.dataset.elementType = element.type;
+      } else {
+        submitBtn.style.display = 'none';
+      }
     }
 
     // Reset action buttons
@@ -450,12 +531,16 @@
     document.body.classList.add('modal-open');
     modal.querySelector('.modal-close').focus();
 
-    // Fetch full .md file
+    // Fetch full .md file (or use cached local content)
     try {
-      const url = `${RAW_BASE}/${element.path}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const content = await res.text();
+      let content;
+      if (element._local) {
+        content = element._content;
+      } else {
+        const res = await fetch(`${RAW_BASE}/${element.path}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        content = await res.text();
+      }
 
       let showRaw = false;
       const renderBtn = modal.querySelector('#btn-render');
@@ -487,6 +572,10 @@
 
       copyBtn.onclick     = () => copyToClipboard(content, copyBtn);
       downloadBtn.onclick = () => downloadFile(element.name, content);
+
+      if (element._local && submitBtn) {
+        submitBtn.href = `https://github.com/DollhouseMCP/collection/issues/new?title=${encodeURIComponent(`Submit: ${element.name}`)}&labels=submission&body=${encodeURIComponent(`**Element type:** ${element.type}\n**Name:** ${element.name}\n\nPaste your element content below:\n\n\`\`\`\n${content}\n\`\`\``)}`;
+      }
 
     } catch (err) {
       body.innerHTML = `<p class="error">Could not load content: ${escapeHtml(err.message)}</p>
@@ -551,12 +640,19 @@
 
     let html = '';
 
+    // ── Created date — prominent header line ──
+    const createdVal = fm.created || fm.created_date;
+    if (createdVal) {
+      html += `<div class="detail-created"><span class="detail-created-label">Created</span><span class="detail-created-value">${escapeHtml(formatDate(createdVal))}</span></div>`;
+    }
+
     // ── Core metadata ──
     const coreFields = [
+      field('Author', fm.author),
+      field('Version', fm.version ? `v${fm.version}` : null),
       field('Category', fm.category),
       field('License', fm.license),
       field('Age rating', fm.age_rating),
-      field('Created', formatDate(fm.created || fm.created_date)),
     ].filter(Boolean).join('');
     if (coreFields) html += section('Details', coreFields);
 
@@ -608,6 +704,21 @@
         .map(([lvl, desc]) => field(capitalize(lvl), desc)).join('');
       if (levels) html += section('Proficiency levels', levels);
     }
+
+    // ── Catch-all: any remaining frontmatter fields ──
+    const knownFields = new Set([
+      'name','type','description','author','version','category','license','age_rating',
+      'created','created_date','updated','tags','triggers','use_cases','parameters',
+      'proficiency_levels','coordination_strategy',
+      'personas','skills','tools','templates','prompts','memories',
+    ]);
+    const extraFields = Object.entries(fm)
+      .filter(([k]) => !knownFields.has(k))
+      .map(([k, v]) => {
+        const display = Array.isArray(v) ? v.join(', ') : (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v));
+        return field(k.replace(/_/g, ' '), display);
+      }).filter(Boolean).join('');
+    if (extraFields) html += section('Additional metadata', extraFields);
 
     // ── Body content ──
     if (body) {
@@ -694,6 +805,101 @@
       });
     } catch {
       return iso;
+    }
+  }
+
+  // ── Local portfolio ────────────────────────────────────────────────────────
+
+  // Recursively collect files matching extensions from a directory handle
+  async function collectLocalFiles(dirHandle, extensions, maxDepth = 4) {
+    const results = [];
+    try {
+      for await (const [name, handle] of dirHandle.entries()) {
+        if (handle.kind === 'file' && extensions.some(ext => name.endsWith(ext))) {
+          results.push({ name, handle });
+        } else if (handle.kind === 'directory' && maxDepth > 0) {
+          const sub = await collectLocalFiles(handle, extensions, maxDepth - 1);
+          results.push(...sub);
+        }
+      }
+    } catch { /* permission or read error */ }
+    return results;
+  }
+
+  // Parse file content — pure YAML files vs frontmatter markdown
+  function parseLocalFile(content, name) {
+    if (name.endsWith('.yaml') || name.endsWith('.yml')) {
+      try {
+        const fm = (globalThis.jsyaml ? jsyaml.load(content) : {}) || {};
+        return { frontmatter: typeof fm === 'object' && fm !== null ? fm : {}, body: '' };
+      } catch {
+        return { frontmatter: {}, body: '' };
+      }
+    }
+    return parseFrontmatter(content);
+  }
+
+  async function loadLocalPortfolio() {
+    if (!window.showDirectoryPicker) {
+      alert('Your browser does not support the File System Access API.\nTry Chrome or Edge on desktop.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-portfolio');
+    const prevText = btn?.textContent;
+    if (btn) btn.textContent = '…';
+
+    try {
+      const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+
+      // memories use .yaml/.yml and may be nested in date subdirs; others use .md
+      const TYPE_EXTENSIONS = {
+        agents: ['.md'], personas: ['.md'], skills: ['.md'],
+        templates: ['.md'], ensembles: ['.md'], prompts: ['.md'],
+        memories: ['.yaml', '.yml'],
+      };
+      const loaded = [];
+
+      for (const [subdirName, type] of Object.entries(SINGULAR_TYPE)) {
+        const extensions = TYPE_EXTENSIONS[subdirName] || ['.md'];
+        try {
+          const subdir = await dirHandle.getDirectoryHandle(subdirName);
+          const files = await collectLocalFiles(subdir, extensions);
+          for (const { name, handle } of files) {
+            try {
+              const file = await handle.getFile();
+              const content = await file.text();
+              const { frontmatter: fm } = parseLocalFile(content, name);
+              loaded.push({
+                name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
+                type,
+                description: fm.description || '',
+                author: fm.author || '',
+                version: fm.version ? String(fm.version) : '',
+                tags: Array.isArray(fm.tags) ? fm.tags : [],
+                created: fm.created_date || fm.created || null,
+                _local: true,
+                _content: content,
+                path: name,
+              });
+            } catch { /* skip unreadable file */ }
+          }
+        } catch { /* subdir may not exist */ }
+      }
+
+      localElements = loaded;
+      allElements = [...collectionElements, ...localElements];
+      renderTypeFilters();
+      renderTopicFilters();
+      applyFilters();
+
+      if (btn) {
+        btn.textContent = loaded.length > 0 ? `📁 Portfolio (${loaded.length})` : '📁 Portfolio (empty)';
+        btn.dataset.loaded = 'true';
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error('[DollhouseMCP] Portfolio load error:', err);
+      if (btn) btn.textContent = prevText;
     }
   }
 
@@ -785,6 +991,25 @@
         searchInput?.focus();
       }
     });
+
+    // Source toggle
+    const sourceToggle = document.getElementById('source-toggle');
+    if (sourceToggle) {
+      sourceToggle.addEventListener('click', e => {
+        const btn = e.target.closest('[data-source]');
+        if (!btn) return;
+        activeSource = btn.dataset.source;
+        sourceToggle.querySelectorAll('[data-source]').forEach(b => {
+          const on = b.dataset.source === activeSource;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on);
+        });
+        applyFilters();
+      });
+    }
+
+    // Portfolio button
+    document.getElementById('btn-portfolio')?.addEventListener('click', loadLocalPortfolio);
 
     init();
   });
