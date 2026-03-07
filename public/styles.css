@@ -1352,12 +1352,14 @@ fieldset.topic-filters {
 
 .detail-section-title {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--ink-400);
-  margin: 0 0 0.5rem;
+  color: var(--ink-500);
+  margin: 0 0 0.55rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
 }
 
 .detail-section-body { font-size: var(--step--1); }
@@ -1366,19 +1368,21 @@ fieldset.topic-filters {
   display: flex;
   gap: 0.5rem;
   align-items: baseline;
-  padding: 0.18rem 0;
+  padding: 0.22rem 0;
 }
 
 .detail-label {
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  color: var(--ink-400);
+  /* Signal-tinted blue — distinct from values, like YAML key color */
+  color: color-mix(in srgb, var(--signal) 60%, var(--ink-400));
   min-width: 7rem;
   flex-shrink: 0;
 }
 
 .detail-value {
-  color: var(--ink-700);
+  color: var(--ink-800);
+  font-size: 0.82rem;
 }
 
 .detail-pills {
