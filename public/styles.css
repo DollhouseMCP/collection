@@ -1422,6 +1422,20 @@ fieldset.topic-filters {
 }
 .detail-list li { margin-bottom: 0.2rem; }
 
+.detail-multiline {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: color-mix(in srgb, var(--ink-900) 6%, var(--paper));
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  margin: 0;
+  overflow-x: auto;
+  color: var(--ink-700);
+}
+
 .detail-param {
   display: flex;
   flex-wrap: wrap;
