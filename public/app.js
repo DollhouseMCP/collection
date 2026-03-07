@@ -864,18 +864,24 @@
            name.endsWith('.backup');   // explicit backup extension
   }
 
+  // Extract a YYYY-MM-DD date string from a relative file path.
+  // Handles both slash-separated dirs (2026/01/15/) and hyphen-prefixed filenames (2026-01-15_topic.yaml).
+  function dateFromPath(path) {
+    const m = path.match(/(\d{4})[\/\-](\d{2})[\/\-](\d{2})/);
+    return m ? `${m[1]}-${m[2]}-${m[3]}` : null;
+  }
+
   // Recursively collect files matching extensions from a directory handle.
-  // maxFiles caps total results to avoid hanging on huge directories (e.g. 63k memory files).
-  async function collectLocalFiles(dirHandle, extensions, maxDepth = PORTFOLIO_MAX_DEPTH, maxFiles = Infinity) {
+  // Returns { name, handle, path } where path is relative to the type subdir (e.g. "2026/01/15/note.yaml").
+  async function collectLocalFiles(dirHandle, extensions, maxDepth = PORTFOLIO_MAX_DEPTH, prefix = '') {
     const results = [];
     try {
       for await (const [name, handle] of dirHandle.entries()) {
-        if (results.length >= maxFiles) break;
         if (isPortfolioSkip(name)) continue;
         if (handle.kind === 'file' && extensions.some(ext => name.endsWith(ext))) {
-          results.push({ name, handle });
+          results.push({ name, handle, path: prefix + name });
         } else if (handle.kind === 'directory' && maxDepth > 0) {
-          const sub = await collectLocalFiles(handle, extensions, maxDepth - 1, maxFiles - results.length);
+          const sub = await collectLocalFiles(handle, extensions, maxDepth - 1, prefix + name + '/');
           results.push(...sub);
         }
       }
@@ -924,11 +930,13 @@
         try {
           const subdir = await dirHandle.getDirectoryHandle(subdirName);
           const fileEntries = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH);
+          // Sort descending so newest date-prefixed dirs/files load into page 1 first
+          fileEntries.sort((a, b) => b.path.localeCompare(a.path));
 
           // Read files in parallel batches; update UI every batch so progress is visible
           for (let i = 0; i < fileEntries.length; i += FILE_READ_CONCURRENCY) {
             const batch = fileEntries.slice(i, i + FILE_READ_CONCURRENCY);
-            await Promise.all(batch.map(async ({ name, handle }) => {
+            await Promise.all(batch.map(async ({ name, handle, path }) => {
               try {
                 const file = await handle.getFile();
                 const content = await file.text();
@@ -940,10 +948,10 @@
                   author: fm.author || '',
                   version: fm.version ? String(fm.version) : '',
                   tags: Array.isArray(fm.tags) ? fm.tags : [],
-                  created: fm.created_date || fm.created || null,
+                  created: fm.created_date || fm.created || fm.date || dateFromPath(path) || null,
                   _local: true,
                   _content: content,
-                  path: name,
+                  path,
                 });
               } catch { /* skip unreadable file */ }
             }));
