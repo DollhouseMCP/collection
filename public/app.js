@@ -816,6 +816,15 @@
 
   // ── Local portfolio ────────────────────────────────────────────────────────
 
+  // Skip hidden files, index/meta files, and backup entries
+  function isPortfolioSkip(name) {
+    const lower = name.toLowerCase();
+    return name.startsWith('.') ||     // hidden (.DS_Store, etc.)
+           name.startsWith('_') ||     // meta (_index.json, etc.)
+           lower.includes('backup') || // backup dirs/files
+           name.endsWith('.backup');   // explicit backup extension
+  }
+
   // Recursively collect files matching extensions from a directory handle.
   // maxFiles caps total results to avoid hanging on huge directories (e.g. 63k memory files).
   async function collectLocalFiles(dirHandle, extensions, maxDepth = PORTFOLIO_MAX_DEPTH, maxFiles = Infinity) {
@@ -823,6 +832,7 @@
     try {
       for await (const [name, handle] of dirHandle.entries()) {
         if (results.length >= maxFiles) break;
+        if (isPortfolioSkip(name)) continue;
         if (handle.kind === 'file' && extensions.some(ext => name.endsWith(ext))) {
           results.push({ name, handle });
         } else if (handle.kind === 'directory' && maxDepth > 0) {
