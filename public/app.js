@@ -16,10 +16,11 @@
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
   // ── Constants ──────────────────────────────────────────────────────────────
-  const BRANCH_CHECK_CONCURRENCY = 8;  // max parallel HEAD requests
+  const BRANCH_CHECK_CONCURRENCY = 8;   // max parallel HEAD requests
   const SEARCH_DEBOUNCE_MS       = 150; // ms delay before search fires
-  const PORTFOLIO_MAX_MEMORIES   = 200; // cap on loaded memory files (portfolios can have 60k+)
   const PORTFOLIO_MAX_DEPTH      = 3;   // max directory recursion depth
+  const FILE_READ_CONCURRENCY    = 20;  // parallel file reads for portfolio loading
+  const PAGE_SIZE                = 50;  // cards per page
 
   // ── State ──────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@
   let localElements = [];      // loaded from local portfolio (~/.dollhouse/portfolio/)
   let allElements = [];        // collectionElements + localElements
   let filteredElements = [];   // currently displayed after search + type filter
+  let currentPage = 1;         // pagination — reset on every filter/search change
   let activeTypes = new Set(); // empty = show all; multi-select
   let activeTopic = 'all';
 
@@ -243,6 +245,7 @@
   // ── Filter + render pipeline ───────────────────────────────────────────────
 
   function applyFilters() {
+    currentPage = 1;
     filteredElements = allElements.filter(el => {
       if (activeTypes.size > 0 && !activeTypes.has(el.type)) return false;
       if (activeTopic !== 'all' && getTopicForElement(el) !== activeTopic) return false;
@@ -291,34 +294,43 @@
 
     filteredElements = sortElements(filteredElements);
 
+    const total = filteredElements.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const pageStart = (currentPage - 1) * PAGE_SIZE;
+    const pageEnd   = Math.min(pageStart + PAGE_SIZE, total);
+    const pageItems = filteredElements.slice(pageStart, pageEnd);
+
     if (countEl) {
-      if (filteredElements.length === allElements.length) {
-        countEl.textContent = `${allElements.length} elements`;
-      } else {
-        countEl.textContent = `${filteredElements.length} of ${allElements.length} elements`;
-      }
+      const base = total === allElements.length
+        ? `${allElements.length} elements`
+        : `${total} of ${allElements.length} elements`;
+      const pageNote = totalPages > 1 ? ` · page ${currentPage} of ${totalPages}` : '';
+      countEl.textContent = base + pageNote;
     }
 
     if (announcer) {
-      announcer.textContent = filteredElements.length === allElements.length
+      announcer.textContent = total === allElements.length
         ? `Showing all ${allElements.length} elements`
-        : `Found ${filteredElements.length} of ${allElements.length} elements`;
+        : `Found ${total} of ${allElements.length} elements`;
     }
 
-    if (filteredElements.length === 0) {
+    if (total === 0) {
       showGridMessage('empty-state', searchQuery
         ? `No elements match "${searchQuery}".`
         : 'No elements found.');
+      renderPagination(0, 1);
       return;
     }
 
-    grid.innerHTML = filteredElements.map((el, i) => {
+    grid.innerHTML = pageItems.map((el, i) => {
+      const idx = pageStart + i; // absolute index into filteredElements
       const unavailable = el._unavailable;
       const compSummary = renderComponentSummary(el);
       return `
       <article
         class="element-card"
-        data-index="${i}"
+        data-index="${idx}"
         data-type="${escapeAttr(el.type)}"
         ${unavailable ? 'data-unavailable=""' : ''}
         role="listitem button"
@@ -368,6 +380,33 @@
         handleCardClick(e);
       }
     };
+
+    renderPagination(total, totalPages);
+  }
+
+  function renderPagination(total, totalPages) {
+    const nav = document.getElementById('pagination');
+    const prevBtn = document.getElementById('btn-prev-page');
+    const nextBtn = document.getElementById('btn-next-page');
+    const info    = document.getElementById('page-info');
+    if (!nav) return;
+
+    if (totalPages <= 1) { nav.hidden = true; return; }
+
+    nav.hidden = false;
+    if (prevBtn) {
+      prevBtn.disabled = currentPage <= 1;
+      prevBtn.onclick = () => { currentPage--; renderResults(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    }
+    if (nextBtn) {
+      nextBtn.disabled = currentPage >= totalPages;
+      nextBtn.onclick = () => { currentPage++; renderResults(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    }
+    if (info) {
+      const pageStart = (currentPage - 1) * PAGE_SIZE + 1;
+      const pageEnd   = Math.min(currentPage * PAGE_SIZE, total);
+      info.textContent = `${pageStart}–${pageEnd} of ${total}`;
+    }
   }
 
   function showGridMessage(cls, text) {
@@ -872,65 +911,59 @@
     try {
       const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
 
-      // memories use .yaml/.yml and may be nested in date subdirs; others use .md
-      // memories are capped because portfolios can contain 60k+ memory files
-      const TYPE_CONFIG = {
-        agents:    { extensions: ['.md'],            maxFiles: Infinity },
-        personas:  { extensions: ['.md'],            maxFiles: Infinity },
-        skills:    { extensions: ['.md'],            maxFiles: Infinity },
-        templates: { extensions: ['.md'],            maxFiles: Infinity },
-        ensembles: { extensions: ['.md'],            maxFiles: Infinity },
-        prompts:   { extensions: ['.md'],            maxFiles: Infinity },
-        memories:  { extensions: ['.yaml', '.yml'],  maxFiles: PORTFOLIO_MAX_MEMORIES },
-        tools:     { extensions: ['.md'],            maxFiles: Infinity },
+      const TYPE_EXTENSIONS = {
+        agents: ['.md'], personas: ['.md'], skills: ['.md'],
+        templates: ['.md'], ensembles: ['.md'], prompts: ['.md'],
+        memories: ['.yaml', '.yml'], tools: ['.md'],
       };
 
       localElements = [];
-      let memoriesCapped = false;
 
       for (const [subdirName, type] of Object.entries(SINGULAR_TYPE)) {
-        const { extensions, maxFiles } = TYPE_CONFIG[subdirName] || { extensions: ['.md'], maxFiles: Infinity };
+        const extensions = TYPE_EXTENSIONS[subdirName] || ['.md'];
         try {
           const subdir = await dirHandle.getDirectoryHandle(subdirName);
-          const files = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH, maxFiles);
+          const fileEntries = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH);
 
-          if (subdirName === 'memories' && files.length >= maxFiles) memoriesCapped = true;
+          // Read files in parallel batches; update UI every batch so progress is visible
+          for (let i = 0; i < fileEntries.length; i += FILE_READ_CONCURRENCY) {
+            const batch = fileEntries.slice(i, i + FILE_READ_CONCURRENCY);
+            await Promise.all(batch.map(async ({ name, handle }) => {
+              try {
+                const file = await handle.getFile();
+                const content = await file.text();
+                const { frontmatter: fm } = parseLocalFile(content, name);
+                localElements.push({
+                  name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
+                  type,
+                  description: fm.description || '',
+                  author: fm.author || '',
+                  version: fm.version ? String(fm.version) : '',
+                  tags: Array.isArray(fm.tags) ? fm.tags : [],
+                  created: fm.created_date || fm.created || null,
+                  _local: true,
+                  _content: content,
+                  path: name,
+                });
+              } catch { /* skip unreadable file */ }
+            }));
 
-          for (const { name, handle } of files) {
-            try {
-              const file = await handle.getFile();
-              const content = await file.text();
-              const { frontmatter: fm } = parseLocalFile(content, name);
-              localElements.push({
-                name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
-                type,
-                description: fm.description || '',
-                author: fm.author || '',
-                version: fm.version ? String(fm.version) : '',
-                tags: Array.isArray(fm.tags) ? fm.tags : [],
-                created: fm.created_date || fm.created || null,
-                _local: true,
-                _content: content,
-                path: name,
-              });
-            } catch { /* skip unreadable file */ }
+            // Update UI after each batch so user sees content appear progressively
+            allElements = [...collectionElements, ...localElements];
+            if (btn) btn.textContent = `📁 Loading… (${localElements.length})`;
+            try { applyFilters(); } catch { /* non-fatal */ }
           }
         } catch { /* subdir may not exist — skip silently */ }
-
-        // Update UI after each type so user sees progress
-        allElements = [...collectionElements, ...localElements];
-        try { applyFilters(); } catch { /* non-fatal */ }
       }
 
-      // Final filter rebuild and button state
+      // Rebuild type/topic filters once with full dataset
       try { renderTypeFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTypeFilters error:', err.message); }
       try { renderTopicFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTopicFilters error:', err.message); }
       applyFilters();
 
       if (btn) {
-        const memNote = memoriesCapped ? ` (memories capped at ${PORTFOLIO_MAX_MEMORIES})` : '';
         btn.textContent = localElements.length > 0
-          ? `📁 Portfolio (${localElements.length}${memNote})`
+          ? `📁 Portfolio (${localElements.length})`
           : '📁 Portfolio (empty)';
         btn.dataset.loaded = 'true';
       }
