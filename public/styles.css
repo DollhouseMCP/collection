@@ -926,15 +926,14 @@ dialog.modal {
   max-width: none;
   max-height: none;
   overflow: visible;
-  /* Layout */
+  /* Layout — full viewport, flex container so dialog is pinned to top */
   position: fixed;
   inset: 0;
   z-index: 100;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: clamp(0.5rem, 3vw, 2rem) var(--gutter);
-  overflow-y: auto;
+  padding: 1rem var(--gutter) 0;
   width: 100%;
 }
 dialog.modal::backdrop { display: none; }
@@ -952,17 +951,20 @@ body.modal-open { overflow: hidden; }
 
 .modal-dialog {
   position: relative;
-  width: min(54rem, 100%);
-  margin: 0 auto;          /* horizontal centering only — no vertical centering */
-  align-self: flex-start;  /* pin to top so toolbar stays at a fixed screen position */
-  border-radius: var(--radius-lg);
+  width: min(72rem, 100%);
+  margin: 0 auto;
+  /* Fixed height = viewport minus top padding; content scrolls inside.
+     This keeps the header and toolbar at a stable screen position
+     regardless of content length or raw/rendered toggle. */
+  height: calc(100vh - 1rem);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--paper-strong);
   border: 1px solid var(--line);
+  border-bottom: none;
   box-shadow: var(--shadow-card);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 3rem);
 }
 
 .modal-header {
@@ -1451,7 +1453,7 @@ fieldset.topic-filters {
   .stat:first-child { display: inline-flex; }
   .elements-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 11.5rem), 1fr)); }
   .elements-grid[data-view="detail"] { grid-template-columns: 1fr; }
-  .modal-dialog { max-height: calc(100vh - 0.5rem); }
+  .modal-dialog { height: calc(100vh - 0.5rem); border-radius: 0; }
   .modal-toolbar { flex-wrap: wrap; }
   .elements-grid[data-view="list"] .card-header { width: 9rem; }
   .elements-grid[data-view="list"] .card-description { display: none; }
