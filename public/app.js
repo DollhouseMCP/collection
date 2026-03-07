@@ -823,8 +823,10 @@
   // Open a GitHub "new issue" submission for a local element.
   // Content is copied to clipboard; only metadata goes in the URL (avoids URL-too-long errors).
   function openSubmitIssue(name, type, content) {
-    navigator.clipboard.writeText(content).catch(() => {});
-    const body = `✅ Your element content has already been copied to your clipboard. Select this entire line and paste (Cmd+V / Ctrl+V) to replace it with your element.`;
+    // Wrap in a code fence so it renders cleanly in the issue.
+    // Reviewers/bots strip the fence markers when processing the submission.
+    navigator.clipboard.writeText('```yaml\n' + content + '\n```').catch(() => {});
+    const body = `✅ Your element content has already been copied to your clipboard, wrapped in a code block. Just paste (Cmd+V / Ctrl+V) to replace this line.`;
     const url  = `https://github.com/DollhouseMCP/collection/issues/new`
                + `?title=${encodeURIComponent(`Submit: ${name}`)}`
                + `&labels=submission`
