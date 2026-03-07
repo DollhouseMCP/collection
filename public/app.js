@@ -823,6 +823,7 @@
       field('Category', fm.category),
       field('License', fm.license),
       field('Age rating', fm.age_rating),
+      field('Modified', fm.modified ? formatDate(fm.modified) : null),
     ].filter(Boolean).join('');
     if (coreFields) html += section('Details', coreFields);
 
@@ -875,12 +876,82 @@
       if (levels) html += section('Proficiency levels', levels);
     }
 
+    // ── Agent fields ──
+    if (type === 'agent') {
+      // instructions — full markdown content, render with marked
+      if (fm.instructions) {
+        const rendered = globalThis.marked
+          ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
+          : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
+        html += section('Instructions', rendered);
+      }
+
+      // goal — template + parameters + success criteria
+      if (fm.goal && typeof fm.goal === 'object') {
+        let goalHtml = '';
+        if (fm.goal.template) {
+          goalHtml += `<div class="detail-goal-template">${escapeHtml(String(fm.goal.template))}</div>`;
+        }
+        if (Array.isArray(fm.goal.successCriteria) && fm.goal.successCriteria.length) {
+          goalHtml += `<h5 class="detail-subsection-title">Success criteria</h5>
+            <ul class="detail-list">${fm.goal.successCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>`;
+        }
+        if (Array.isArray(fm.goal.parameters) && fm.goal.parameters.length) {
+          goalHtml += `<h5 class="detail-subsection-title">Parameters</h5>`;
+          goalHtml += fm.goal.parameters.map(p =>
+            `<div class="detail-param">
+              <span class="detail-param-name">${escapeHtml(p.name || '')}</span>
+              ${p.description ? `<span class="detail-param-desc">${escapeHtml(p.description)}</span>` : ''}
+              ${p.type ? `<span class="detail-pill pill-meta">${escapeHtml(p.type)}</span>` : ''}
+              ${p.required ? `<span class="detail-pill pill-required">required</span>` : '<span class="detail-pill">optional</span>'}
+            </div>`
+          ).join('');
+        }
+        if (goalHtml) html += section('Goal', goalHtml);
+      }
+
+      // autonomy — step limits, risk, auto-approve/requires-approval
+      if (fm.autonomy && typeof fm.autonomy === 'object') {
+        const a = fm.autonomy;
+        let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
+          .filter(k => a[k] != null)
+          .map(k => field(k.replace(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
+          .join('');
+        if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
+          aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
+        }
+        if (Array.isArray(a.requiresApproval) && a.requiresApproval.length) {
+          aHtml += `<div class="detail-field"><span class="detail-label">requires approval</span><span class="detail-value">${a.requiresApproval.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
+        }
+        if (aHtml) html += section('Autonomy', aHtml);
+      }
+
+      // gatekeeper — allow / confirm / deny operation lists
+      if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
+        const g = fm.gatekeeper;
+        let gHtml = '';
+        if (Array.isArray(g.allow)   && g.allow.length)   gHtml += `<div class="detail-field"><span class="detail-label">allow</span><span class="detail-value">${g.allow.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
+        if (Array.isArray(g.confirm) && g.confirm.length) gHtml += `<div class="detail-field"><span class="detail-label">confirm</span><span class="detail-value">${g.confirm.map(v => pill(v, 'pill-meta')).join(' ')}</span></div>`;
+        if (Array.isArray(g.deny)    && g.deny.length)    gHtml += `<div class="detail-field"><span class="detail-label">deny</span><span class="detail-value">${g.deny.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
+        if (gHtml) html += section('Gatekeeper', gHtml);
+      }
+
+      // scalar config fields
+      const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
+        .map(k => field(k.replace(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] != null ? String(fm[k]) : null))
+        .filter(Boolean).join('');
+      if (agentConfig) html += section('Configuration', agentConfig);
+    }
+
     // ── Catch-all: any remaining frontmatter fields ──
     const knownFields = new Set([
       'name','type','description','author','version','category','license','age_rating',
-      'created','created_date','updated','tags','triggers','use_cases','parameters',
+      'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
       'proficiency_levels','coordination_strategy',
       'personas','skills','tools','templates','prompts','memories',
+      // agent fields handled above
+      'instructions','goal','autonomy','gatekeeper',
+      'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
     ]);
     const extraFields = Object.entries(fm)
       .filter(([k]) => !knownFields.has(k))

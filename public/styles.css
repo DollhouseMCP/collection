@@ -1461,6 +1461,26 @@ fieldset.topic-filters {
   font-weight: 500;
 }
 
+.detail-goal-template {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-700);
+  background: color-mix(in srgb, var(--signal) 8%, var(--paper));
+  border-left: 3px solid var(--signal);
+  padding: 0.45rem 0.75rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 0.6rem;
+}
+
+.detail-subsection-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-500);
+  margin: 0.75rem 0 0.35rem;
+}
+
 .detail-multiline {
   font-family: var(--font-mono);
   font-size: 0.8rem;
