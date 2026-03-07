@@ -824,7 +824,7 @@
   // Content is copied to clipboard; only metadata goes in the URL (avoids URL-too-long errors).
   function openSubmitIssue(name, type, content) {
     navigator.clipboard.writeText(content).catch(() => {});
-    const body = `(replace this with your element content from the clipboard)`;
+    const body = `✅ Your element content has already been copied to your clipboard. Select this entire line and paste (Cmd+V / Ctrl+V) to replace it with your element.`;
     const url  = `https://github.com/DollhouseMCP/collection/issues/new`
                + `?title=${encodeURIComponent(`Submit: ${name}`)}`
                + `&labels=submission`
