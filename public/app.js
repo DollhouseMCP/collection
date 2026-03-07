@@ -495,13 +495,12 @@
       actions.appendChild(dlBtn);
 
       if (el._local) {
-        const submitLink = document.createElement('a');
-        submitLink.className = 'modal-action-btn modal-action-btn--submit';
-        submitLink.href = `https://github.com/DollhouseMCP/collection/issues/new?title=${encodeURIComponent(`Submit: ${el.name}`)}&labels=submission&body=${encodeURIComponent(`**Element type:** ${el.type}\n**Name:** ${el.name}\n\nPaste your element content below:\n\n\`\`\`\n${content}\n\`\`\``)}`;
-        submitLink.target = '_blank';
-        submitLink.rel = 'noopener noreferrer';
-        submitLink.textContent = '↑ Submit';
-        actions.appendChild(submitLink);
+        const submitBtn2 = document.createElement('button');
+        submitBtn2.className = 'modal-action-btn modal-action-btn--submit';
+        submitBtn2.type = 'button';
+        submitBtn2.textContent = '↑ Submit';
+        submitBtn2.onclick = e => { e.stopPropagation(); openSubmitIssue(el.name, el.type, content); };
+        actions.appendChild(submitBtn2);
       } else {
         const ghLink = document.createElement('a');
         ghLink.className = 'modal-action-btn';
@@ -619,7 +618,7 @@
       downloadBtn.onclick = () => downloadFile(element.name, content);
 
       if (element._local && submitBtn) {
-        submitBtn.href = `https://github.com/DollhouseMCP/collection/issues/new?title=${encodeURIComponent(`Submit: ${element.name}`)}&labels=submission&body=${encodeURIComponent(`**Element type:** ${element.type}\n**Name:** ${element.name}\n\nPaste your element content below:\n\n\`\`\`\n${content}\n\`\`\``)}`;
+        submitBtn.onclick = e => { e.preventDefault(); openSubmitIssue(element.name, element.type, content); };
       }
 
     } catch (err) {
@@ -819,6 +818,18 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  // Open a GitHub "new issue" submission for a local element.
+  // Content is copied to clipboard; only metadata goes in the URL (avoids URL-too-long errors).
+  function openSubmitIssue(name, type, content) {
+    navigator.clipboard.writeText(content).catch(() => {});
+    const body = `**Element type:** ${type}\n**Name:** ${name}\n\n---\n*Your element content has been copied to the clipboard — paste it below:*\n\n`;
+    const url  = `https://github.com/DollhouseMCP/collection/issues/new`
+               + `?title=${encodeURIComponent(`Submit: ${name}`)}`
+               + `&labels=submission`
+               + `&body=${encodeURIComponent(body)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
