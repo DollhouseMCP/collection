@@ -31,6 +31,7 @@
   let currentPage = 1;         // pagination — reset on every filter/search change
   let activeTypes = new Set(); // empty = show all; multi-select
   let openElementIndex = -1;   // index of currently open modal element in filteredElements
+  let modalShowRaw = false;    // sticky raw/rendered toggle — persists across prev/next navigation
   let activeTopic = 'all';
 
   // Normalize plural index keys → singular CSS/display type names
@@ -610,11 +611,10 @@
         content = await res.text();
       }
 
-      let showRaw = false;
       const renderBtn = modal.querySelector('#btn-render');
 
       function renderModalBody() {
-        if (showRaw) {
+        if (modalShowRaw) {
           body.innerHTML = `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
           if (globalThis.hljs) body.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
         } else {
@@ -628,12 +628,13 @@
       renderModalBody();
 
       if (renderBtn) {
-        renderBtn.textContent = '⇄ Raw';
-        renderBtn.dataset.mode = 'rendered';
+        // Reflect current sticky state so button label matches on navigation
+        renderBtn.textContent = modalShowRaw ? '⇄ Rendered' : '⇄ Raw';
+        renderBtn.dataset.mode = modalShowRaw ? 'raw' : 'rendered';
         renderBtn.onclick = () => {
-          showRaw = !showRaw;
-          renderBtn.textContent = showRaw ? '⇄ Rendered' : '⇄ Raw';
-          renderBtn.dataset.mode = showRaw ? 'raw' : 'rendered';
+          modalShowRaw = !modalShowRaw;
+          renderBtn.textContent = modalShowRaw ? '⇄ Rendered' : '⇄ Raw';
+          renderBtn.dataset.mode = modalShowRaw ? 'raw' : 'rendered';
           renderModalBody();
         };
       }
@@ -686,7 +687,82 @@
     return `<p class="card-components">${counts.join(' · ')}</p>`;
   }
 
+  // Fields whose string values are assumed to contain markdown content
+  const MEMORY_MARKDOWN_FIELDS = new Set([
+    'content', 'body', 'text', 'notes', 'summary', 'context', 'observations',
+    'insights', 'instructions', 'thoughts', 'analysis', 'reflection', 'outcome',
+    'details', 'log', 'data', 'value', 'message', 'description',
+  ]);
+
+  // Heuristic: does a multi-line string look like it has markdown syntax?
+  function looksLikeMarkdown(str) {
+    if (typeof str !== 'string' || !str.includes('\n')) return false;
+    return /^(#{1,6}\s|\s*[-*+]\s|\s*\d+\.\s|>\s|```|\*\*|__|!\[)/m.test(str);
+  }
+
+  // Render a pure-YAML memory file: parse each field, detect markdown, render appropriately
+  function renderMemoryView(content) {
+    let parsed;
+    try { parsed = globalThis.jsyaml ? jsyaml.load(content) : null; } catch { parsed = null; }
+    if (!parsed || typeof parsed !== 'object') {
+      return `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
+    }
+
+    const section = (label, html) =>
+      `<section class="detail-section"><h4 class="detail-section-title">${escapeHtml(label)}</h4><div class="detail-section-body">${html}</div></section>`;
+    const pill = (text, cls = '') =>
+      `<span class="detail-pill${cls ? ` ${cls}` : ''}">${escapeHtml(String(text))}</span>`;
+    const fieldRow = (label, value) =>
+      value != null && value !== '' ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
+
+    let html = '';
+
+    // Standard metadata at top
+    const createdVal = parsed.created || parsed.created_date;
+    if (createdVal) {
+      html += `<div class="detail-created"><span class="detail-created-label">Created</span><span class="detail-created-value">${escapeHtml(formatDate(createdVal))}</span></div>`;
+    }
+    const meta = [fieldRow('Author', parsed.author), fieldRow('ID', parsed.unique_id || parsed.id)].filter(Boolean).join('');
+    if (meta) html += section('Details', meta);
+    if (Array.isArray(parsed.tags) && parsed.tags.length) {
+      html += section('Tags', `<div class="detail-pills">${parsed.tags.map(t => pill(t, 'pill-tag')).join('')}</div>`);
+    }
+
+    // Render all remaining fields
+    const SKIP = new Set(['name','type','created','created_date','updated','author','version','tags','unique_id','id']);
+    for (const [key, value] of Object.entries(parsed)) {
+      if (SKIP.has(key)) continue;
+      const label = key.replace(/_/g, ' ');
+      if (typeof value === 'string') {
+        const isMarkdown = MEMORY_MARKDOWN_FIELDS.has(key) || looksLikeMarkdown(value);
+        if (isMarkdown && globalThis.marked) {
+          html += section(label, `<div class="element-rendered">${marked.parse(value)}</div>`);
+        } else if (value.includes('\n')) {
+          html += section(label, `<pre class="detail-multiline">${escapeHtml(value)}</pre>`);
+        } else {
+          html += section(label, `<p class="detail-prose">${escapeHtml(value)}</p>`);
+        }
+      } else if (Array.isArray(value)) {
+        const items = value.map(item =>
+          `<li>${typeof item === 'object' ? `<pre class="detail-multiline">${escapeHtml(JSON.stringify(item, null, 2))}</pre>` : escapeHtml(String(item))}</li>`
+        ).join('');
+        html += section(label, `<ul class="detail-list">${items}</ul>`);
+      } else if (typeof value === 'object' && value !== null) {
+        const rows = Object.entries(value).map(([k, v]) =>
+          fieldRow(k.replace(/_/g, ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
+        ).filter(Boolean).join('');
+        if (rows) html += section(label, rows);
+      } else if (value != null && value !== '') {
+        html += section(label, `<p class="detail-prose">${escapeHtml(String(value))}</p>`);
+      }
+    }
+    return html || `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
+  }
+
   function renderDetailView(content, type) {
+    // Memories are pure YAML — use dedicated renderer
+    if (type === 'memory') return renderMemoryView(content);
+
     const { frontmatter: fm, body } = parseFrontmatter(content);
 
     const section = (label, html) =>
