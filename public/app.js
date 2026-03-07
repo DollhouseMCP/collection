@@ -892,7 +892,10 @@
       if (fm.goal && typeof fm.goal === 'object') {
         let goalHtml = '';
         if (fm.goal.template) {
-          goalHtml += `<div class="detail-goal-template">${escapeHtml(String(fm.goal.template))}</div>`;
+          // Highlight {placeholder} tokens so the fill-in-the-blank structure is obvious
+          const tplHtml = escapeHtml(String(fm.goal.template))
+            .replace(/\{([^}]+)\}/g, '<span class="detail-template-param">{$1}</span>');
+          goalHtml += `<div class="detail-goal-template">${tplHtml}</div>`;
         }
         if (Array.isArray(fm.goal.successCriteria) && fm.goal.successCriteria.length) {
           goalHtml += `<h5 class="detail-subsection-title">Success criteria</h5>
