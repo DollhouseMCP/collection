@@ -15,6 +15,12 @@
   const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const BRANCH_CHECK_CONCURRENCY = 8;  // max parallel HEAD requests
+  const SEARCH_DEBOUNCE_MS       = 150; // ms delay before search fires
+  const PORTFOLIO_MAX_MEMORIES   = 200; // cap on loaded memory files (portfolios can have 60k+)
+  const PORTFOLIO_MAX_DEPTH      = 3;   // max directory recursion depth
+
   // ── State ──────────────────────────────────────────────────────────────────
 
   let collectionElements = []; // from collection-index.json
@@ -78,7 +84,7 @@
   async function checkBranchAvailability() {
     // Probe each element's path; mark unavailable ones so the grid can show them dimmed.
     // Uses HEAD requests in parallel, capped at 8 concurrent to avoid rate limits.
-    const CONCURRENCY = 8;
+    const CONCURRENCY = BRANCH_CHECK_CONCURRENCY;
     const queue = allElements.filter(el => !el._local);
     let dirty = false;
 
@@ -231,7 +237,7 @@
     searchTimer = setTimeout(() => {
       searchQuery = e.target.value.trim().toLowerCase();
       applyFilters();
-    }, 150);
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   // ── Filter + render pipeline ───────────────────────────────────────────────
@@ -810,19 +816,23 @@
 
   // ── Local portfolio ────────────────────────────────────────────────────────
 
-  // Recursively collect files matching extensions from a directory handle
-  async function collectLocalFiles(dirHandle, extensions, maxDepth = 4) {
+  // Recursively collect files matching extensions from a directory handle.
+  // maxFiles caps total results to avoid hanging on huge directories (e.g. 63k memory files).
+  async function collectLocalFiles(dirHandle, extensions, maxDepth = PORTFOLIO_MAX_DEPTH, maxFiles = Infinity) {
     const results = [];
     try {
       for await (const [name, handle] of dirHandle.entries()) {
+        if (results.length >= maxFiles) break;
         if (handle.kind === 'file' && extensions.some(ext => name.endsWith(ext))) {
           results.push({ name, handle });
         } else if (handle.kind === 'directory' && maxDepth > 0) {
-          const sub = await collectLocalFiles(handle, extensions, maxDepth - 1);
+          const sub = await collectLocalFiles(handle, extensions, maxDepth - 1, maxFiles - results.length);
           results.push(...sub);
         }
       }
-    } catch { /* permission or read error */ }
+    } catch (err) {
+      console.warn('[DollhouseMCP] Portfolio directory read error:', err.message);
+    }
     return results;
   }
 
@@ -853,24 +863,35 @@
       const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
 
       // memories use .yaml/.yml and may be nested in date subdirs; others use .md
-      const TYPE_EXTENSIONS = {
-        agents: ['.md'], personas: ['.md'], skills: ['.md'],
-        templates: ['.md'], ensembles: ['.md'], prompts: ['.md'],
-        memories: ['.yaml', '.yml'],
+      // memories are capped because portfolios can contain 60k+ memory files
+      const TYPE_CONFIG = {
+        agents:    { extensions: ['.md'],            maxFiles: Infinity },
+        personas:  { extensions: ['.md'],            maxFiles: Infinity },
+        skills:    { extensions: ['.md'],            maxFiles: Infinity },
+        templates: { extensions: ['.md'],            maxFiles: Infinity },
+        ensembles: { extensions: ['.md'],            maxFiles: Infinity },
+        prompts:   { extensions: ['.md'],            maxFiles: Infinity },
+        memories:  { extensions: ['.yaml', '.yml'],  maxFiles: PORTFOLIO_MAX_MEMORIES },
+        tools:     { extensions: ['.md'],            maxFiles: Infinity },
       };
-      const loaded = [];
+
+      localElements = [];
+      let memoriesCapped = false;
 
       for (const [subdirName, type] of Object.entries(SINGULAR_TYPE)) {
-        const extensions = TYPE_EXTENSIONS[subdirName] || ['.md'];
+        const { extensions, maxFiles } = TYPE_CONFIG[subdirName] || { extensions: ['.md'], maxFiles: Infinity };
         try {
           const subdir = await dirHandle.getDirectoryHandle(subdirName);
-          const files = await collectLocalFiles(subdir, extensions);
+          const files = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH, maxFiles);
+
+          if (subdirName === 'memories' && files.length >= maxFiles) memoriesCapped = true;
+
           for (const { name, handle } of files) {
             try {
               const file = await handle.getFile();
               const content = await file.text();
               const { frontmatter: fm } = parseLocalFile(content, name);
-              loaded.push({
+              localElements.push({
                 name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
                 type,
                 description: fm.description || '',
@@ -884,22 +905,32 @@
               });
             } catch { /* skip unreadable file */ }
           }
-        } catch { /* subdir may not exist */ }
+        } catch { /* subdir may not exist — skip silently */ }
+
+        // Update UI after each type so user sees progress
+        allElements = [...collectionElements, ...localElements];
+        try { applyFilters(); } catch { /* non-fatal */ }
       }
 
-      localElements = loaded;
-      allElements = [...collectionElements, ...localElements];
-      renderTypeFilters();
-      renderTopicFilters();
+      // Final filter rebuild and button state
+      try { renderTypeFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTypeFilters error:', err.message); }
+      try { renderTopicFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTopicFilters error:', err.message); }
       applyFilters();
 
       if (btn) {
-        btn.textContent = loaded.length > 0 ? `📁 Portfolio (${loaded.length})` : '📁 Portfolio (empty)';
+        const memNote = memoriesCapped ? ` (memories capped at ${PORTFOLIO_MAX_MEMORIES})` : '';
+        btn.textContent = localElements.length > 0
+          ? `📁 Portfolio (${localElements.length}${memNote})`
+          : '📁 Portfolio (empty)';
         btn.dataset.loaded = 'true';
       }
     } catch (err) {
-      if (err.name !== 'AbortError') console.error('[DollhouseMCP] Portfolio load error:', err);
-      if (btn) btn.textContent = prevText;
+      if (err.name !== 'AbortError') {
+        console.error('[DollhouseMCP] Portfolio load error:', err.message);
+        if (btn) btn.textContent = '📁 Portfolio (error)';
+      } else {
+        if (btn) btn.textContent = prevText;
+      }
     }
   }
 

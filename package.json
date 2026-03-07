@@ -12,6 +12,9 @@
     "test:unit": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs",
     "test:integration": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.integration.config.cjs --forceExit",
     "test:security": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.security.config.cjs",
+    "test:browser": "playwright test",
+    "test:browser:ui": "playwright test --ui",
+    "test:browser:headed": "playwright test --headed",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:security",
     "test:watch": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs --watch",
     "test:coverage": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs --coverage",
@@ -57,6 +60,7 @@
   "homepage": "https://github.com/DollhouseMCP/collection#readme",
   "devDependencies": {
     "@jest/globals": "^30.1.2",
+    "@playwright/test": "^1.58.2",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.9.1",
