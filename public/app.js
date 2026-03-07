@@ -743,10 +743,29 @@
           html += section(label, `<p class="detail-prose">${escapeHtml(value)}</p>`);
         }
       } else if (Array.isArray(value)) {
-        const items = value.map(item =>
-          `<li>${typeof item === 'object' ? `<pre class="detail-multiline">${escapeHtml(JSON.stringify(item, null, 2))}</pre>` : escapeHtml(String(item))}</li>`
-        ).join('');
-        html += section(label, `<ul class="detail-list">${items}</ul>`);
+        const items = value.map(item => {
+          if (typeof item !== 'object' || item === null) {
+            return `<li>${escapeHtml(String(item))}</li>`;
+          }
+          // Object entry (e.g. a memory entry) — render markdown fields prominently,
+          // collapse remaining scalar metadata into a compact footer row
+          let entryBody = '';
+          const metaParts = [];
+          for (const [k, v] of Object.entries(item)) {
+            if (typeof v === 'string' && (MEMORY_MARKDOWN_FIELDS.has(k) || looksLikeMarkdown(v))) {
+              entryBody += globalThis.marked
+                ? `<div class="element-rendered memory-entry-content">${marked.parse(v)}</div>`
+                : `<pre class="detail-multiline">${escapeHtml(v)}</pre>`;
+            } else if (Array.isArray(v)) {
+              if (v.length) metaParts.push(`<span class="memory-meta-key">${escapeHtml(k)}</span> ${v.map(i => escapeHtml(String(i))).join(', ')}`);
+            } else if (typeof v !== 'object' && v != null && v !== '') {
+              metaParts.push(`<span class="memory-meta-key">${escapeHtml(k.replace(/_/g, ' '))}</span> ${escapeHtml(String(v))}`);
+            }
+          }
+          const metaRow = metaParts.length ? `<div class="memory-entry-meta">${metaParts.join(' · ')}</div>` : '';
+          return `<li class="memory-entry">${entryBody}${metaRow}</li>`;
+        }).join('');
+        html += section(label, `<ul class="memory-entries-list">${items}</ul>`);
       } else if (typeof value === 'object' && value !== null) {
         const rows = Object.entries(value).map(([k, v]) =>
           fieldRow(k.replace(/_/g, ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
