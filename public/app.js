@@ -822,27 +822,9 @@
 
   // Open a GitHub "new issue" submission for a local element.
   // Content is copied to clipboard; only metadata goes in the URL (avoids URL-too-long errors).
-  // Wrap only the YAML frontmatter in a code fence; leave the markdown body as-is
-  // so GitHub renders headings, lists, etc. normally in the issue.
-  // Pure YAML files (memories) have no body so the whole content is wrapped.
-  function wrapForSubmission(content) {
-    if (content.startsWith('---\n')) {
-      const fmEnd = content.indexOf('\n---', 4);
-      if (fmEnd !== -1) {
-        const frontmatter = content.slice(0, fmEnd + 4); // up to and including closing ---
-        const body = content.slice(fmEnd + 4).trimStart();
-        return body
-          ? '```yaml\n' + frontmatter + '\n```\n\n' + body
-          : '```yaml\n' + frontmatter + '\n```';
-      }
-    }
-    return '```yaml\n' + content + '\n```'; // pure YAML / no frontmatter
-  }
-
   function openSubmitIssue(name, type, content) {
-    // Wrap frontmatter in a yaml code fence; body renders as markdown in the issue.
-    // Reviewers/bots strip the fence markers when extracting the raw file.
-    navigator.clipboard.writeText(wrapForSubmission(content)).catch(() => {});
+    // Copy raw content to clipboard — no fencing until frontmatter detection is reliable.
+    navigator.clipboard.writeText(content).catch(() => {});
     const body = `✅ Your element content has already been copied to your clipboard, wrapped in a code block. Just paste (Cmd+V / Ctrl+V) to replace this line.`;
     const url  = `https://github.com/DollhouseMCP/collection/issues/new`
                + `?title=${encodeURIComponent(`Submit: ${name}`)}`
