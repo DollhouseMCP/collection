@@ -779,8 +779,15 @@
   }
 
   function renderDetailView(content, type) {
-    // Memories are pure YAML — use dedicated renderer
-    if (type === 'memory') return renderMemoryView(content);
+    if (type === 'memory') {
+      // Portfolio memories are pure YAML — jsyaml.load succeeds.
+      // Collection memories are markdown-with-frontmatter — jsyaml.load throws on the
+      // second `---` document marker, so we fall through to the standard renderer below.
+      try {
+        const parsed = globalThis.jsyaml ? jsyaml.load(content) : null;
+        if (parsed && typeof parsed === 'object') return renderMemoryView(content);
+      } catch { /* not pure YAML — fall through */ }
+    }
 
     const { frontmatter: fm, body } = parseFrontmatter(content);
 
