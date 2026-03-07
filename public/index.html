@@ -43,11 +43,20 @@
         >
       </div>
       <fieldset class="type-filters" id="type-filters"><legend class="sr-only">Filter by element type</legend></fieldset>
+      <fieldset class="topic-filters" id="topic-filters" hidden><legend class="sr-only">Filter by topic</legend></fieldset>
     </div>
 
     <div class="results-bar">
       <span class="results-count" id="results-count" aria-live="polite"></span>
       <output class="sr-only" id="results-announcer" aria-live="polite" aria-atomic="true"></output>
+      <label for="sort-select" class="sr-only">Sort by</label>
+      <select id="sort-select" class="sort-select" aria-label="Sort elements">
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+        <option value="date-desc" selected>Newest first</option>
+        <option value="date-asc">Oldest first</option>
+        <option value="type-asc">By type</option>
+      </select>
       <fieldset class="view-toggle" id="view-toggle">
         <legend class="sr-only">View mode</legend>
         <button class="view-btn active" data-view="grid"   aria-pressed="true">Cards</button>
@@ -74,12 +83,13 @@
         </div>
         <button class="modal-close" id="modal-close" aria-label="Close element detail">&#x2715;</button>
       </header>
+      <div class="modal-toolbar" id="modal-toolbar">
+        <button class="modal-action-btn" id="btn-render" aria-label="Toggle raw/rendered view">⇄ Raw</button>
+        <button class="modal-action-btn" id="btn-copy"   aria-label="Copy to clipboard">⎘ Copy</button>
+        <button class="modal-action-btn" id="btn-download" aria-label="Download as markdown">⤓ Download</button>
+        <a class="modal-action-btn" id="btn-github" target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">↗ GitHub</a>
+      </div>
       <div class="modal-body" id="modal-body"></div>
-      <footer class="modal-footer">
-        <button class="btn btn-copy" id="btn-copy">Copy to clipboard</button>
-        <button class="btn btn-download" id="btn-download">Download .md</button>
-        <a class="btn btn-github" id="btn-github" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-      </footer>
     </div>
   </dialog>
 
@@ -92,6 +102,21 @@
     </div>
   </footer>
 
+  <!-- Markdown rendering (same libs as Merview) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"
+          integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+          integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"
+          crossorigin="anonymous"></script>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+        id="hljs-theme-light">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+        id="hljs-theme-dark" disabled>
   <script src="app.js"></script>
 </body>
 </html>
