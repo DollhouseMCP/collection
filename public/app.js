@@ -359,6 +359,8 @@
     const isListView = grid?.dataset.view === 'list';
 
     if (isListView) {
+      // Don't collapse when clicking inside expanded content
+      if (e.target.closest('.card-inline-detail')) return;
       toggleInlineExpand(card, el);
     } else {
       if (!card.dataset.unavailable) openModal(el);
@@ -387,6 +389,32 @@
       detail.querySelectorAll('pre code').forEach(block => {
         if (globalThis.hljs) hljs.highlightElement(block);
       });
+
+      // Action bar at bottom of expanded content
+      const actions = document.createElement('div');
+      actions.className = 'inline-detail-actions';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'modal-action-btn';
+      copyBtn.textContent = '⎘ Copy';
+      copyBtn.onclick = e => { e.stopPropagation(); copyToClipboard(content, copyBtn); };
+
+      const dlBtn = document.createElement('button');
+      dlBtn.className = 'modal-action-btn';
+      dlBtn.textContent = '⤓ Download';
+      dlBtn.onclick = e => { e.stopPropagation(); downloadFile(el.name, content); };
+
+      const ghLink = document.createElement('a');
+      ghLink.className = 'modal-action-btn';
+      ghLink.href = `${GITHUB_BASE}/${el.path}`;
+      ghLink.target = '_blank';
+      ghLink.rel = 'noopener noreferrer';
+      ghLink.textContent = '↗ GitHub';
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(dlBtn);
+      actions.appendChild(ghLink);
+      detail.appendChild(actions);
+
     } catch (err) {
       detail.innerHTML = `<p class="error" style="font-size:0.8rem">Could not load: ${escapeHtml(err.message)}</p>`;
     }
