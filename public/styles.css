@@ -1366,7 +1366,7 @@ fieldset.topic-filters {
 
 .detail-field {
   display: flex;
-  gap: 0.5rem;
+  gap: 1.25rem;
   align-items: baseline;
   padding: 0.22rem 0;
 }
@@ -1376,7 +1376,7 @@ fieldset.topic-filters {
   font-size: 0.68rem;
   /* Signal-tinted blue — distinct from values, like YAML key color */
   color: color-mix(in srgb, var(--signal) 60%, var(--ink-400));
-  min-width: 7rem;
+  min-width: 9rem;
   flex-shrink: 0;
 }
 
@@ -1501,25 +1501,31 @@ fieldset.topic-filters {
 
 .detail-param {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  align-items: center;
-  padding: 0.35rem 0;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.45rem 0;
   border-bottom: 1px solid var(--ink-100);
 }
 .detail-param:last-child { border-bottom: 0; }
+
+/* Name + type/required pills on one stable row */
+.detail-param-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
 .detail-param-name {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: var(--ink-700);
-  min-width: 8rem;
+  color: color-mix(in srgb, var(--signal) 60%, var(--ink-400));
 }
+/* Description stacked below, never displacing the pills */
 .detail-param-desc {
   color: var(--ink-500);
   font-size: 0.75rem;
-  flex: 1;
-  min-width: 10rem;
+  padding-left: 0.1rem;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
