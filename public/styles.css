@@ -446,13 +446,13 @@ p, li { max-width: 69ch; }
   --family-4: var(--violet);
 
   border-radius: var(--radius-angled);
-  border: 1px solid color-mix(in srgb, var(--family-2) 14%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--family-2) 22%, var(--line));
   background:
     radial-gradient(circle at 95% 6%,
-      color-mix(in srgb, var(--family-1) 8%, transparent), transparent 38%),
+      color-mix(in srgb, var(--family-1) 16%, transparent), transparent 42%),
     linear-gradient(168deg,
-      color-mix(in srgb, var(--family-1) 3%, var(--paper-strong)),
-      var(--paper-strong) 50%);
+      color-mix(in srgb, var(--family-1) 7%, var(--paper-strong)),
+      var(--paper-strong) 55%);
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -566,19 +566,20 @@ p, li { max-width: 69ch; }
   line-height: 1.25;
 }
 
-/* Type badge — Atelier pill style */
+/* Type badge — filled color pill */
 .type-badge {
   flex-shrink: 0;
   align-self: flex-start;
-  border: 1px solid color-mix(in srgb, var(--family-2) 28%, var(--line));
-  border-radius: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--family-2) 45%, transparent);
+  border-radius: 0.28rem;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.63rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: color-mix(in srgb, var(--family-2) 75%, var(--ink-700));
-  background: color-mix(in srgb, var(--family-1) 10%, var(--paper-strong));
-  padding: 0.1rem 0.36rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--family-2) 100%, var(--ink-950));
+  background: color-mix(in srgb, var(--family-1) 22%, var(--paper-strong));
+  padding: 0.12rem 0.42rem;
   white-space: nowrap;
 }
 
@@ -659,15 +660,16 @@ p, li { max-width: 69ch; }
 .elements-grid[data-view="list"] {
   display: flex;
   flex-direction: column;
-  gap: 0.28rem;
+  gap: 0.38rem;
 }
 
 .elements-grid[data-view="list"] .element-card {
   flex-direction: row;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.4rem 0.65rem;
+  padding: 0.42rem 0.65rem 0.42rem 0.75rem;
   border-radius: var(--radius-sm);
+  border-left: 3px solid var(--family-2);
 }
 
 /* Hide corner accent in list view */
@@ -765,6 +767,16 @@ p, li { max-width: 69ch; }
 }
 .elements-grid[data-view="list"] .element-card[data-expanded] {
   align-items: flex-start;
+}
+
+/* Inline detail action bar */
+.inline-detail-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--line);
+  margin-top: 0.5rem;
 }
 .card-expand-icon {
   display: none; /* hidden unless in list view */
