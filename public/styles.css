@@ -1476,6 +1476,15 @@ fieldset.topic-filters {
   margin-bottom: 0.6rem;
 }
 
+.detail-template-param {
+  background: color-mix(in srgb, var(--signal) 18%, transparent);
+  color: color-mix(in srgb, var(--signal) 90%, var(--ink-700));
+  border: 1px solid color-mix(in srgb, var(--signal) 35%, transparent);
+  border-radius: 0.25rem;
+  padding: 0.05em 0.3em;
+  font-size: 0.9em;
+}
+
 .detail-subsection-title {
   font-size: 0.7rem;
   font-weight: 600;
