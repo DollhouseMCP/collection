@@ -32,8 +32,8 @@ const MOCK_LOCAL_ELEMENTS = [
 async function setupMocks(page: Page) {
   await page.addInitScript(({ mockIndex, mockLocal }) => {
     // Override fetch for collection-index.json
-    const orig = window.fetch.bind(window);
-    window.fetch = async (input, init) => {
+    const orig = globalThis.fetch.bind(globalThis);
+    globalThis.fetch = async (input, init) => {
       const url = typeof input === 'string' ? input : (input as Request).url;
       if (url.includes('collection-index.json')) {
         return new Response(JSON.stringify(mockIndex), { headers: { 'Content-Type': 'application/json' } });
@@ -45,14 +45,14 @@ async function setupMocks(page: Page) {
       return orig(input, init);
     };
     // Inject local elements directly after init
-    (window as any).__TEST_LOCAL_ELEMENTS__ = mockLocal;
+    (globalThis as any).__TEST_LOCAL_ELEMENTS__ = mockLocal;
   }, { mockIndex: MOCK_COLLECTION_INDEX, mockLocal: MOCK_LOCAL_ELEMENTS });
 }
 
 /** Inject local elements into the app state after page load */
 async function injectLocalElements(page: Page) {
   await page.evaluate(() => {
-    const local: any[] = (window as any).__TEST_LOCAL_ELEMENTS__ || [];
+    const local: any[] = (globalThis as any).__TEST_LOCAL_ELEMENTS__ || [];
     if (local.length === 0) return;
     // Dispatch a custom event that the test harness in app.js can listen to
     // Since we can't directly set module state, we simulate the portfolio button effect
