@@ -450,8 +450,8 @@
       // Don't collapse when clicking inside expanded content
       if (e.target.closest('.card-inline-detail')) return;
       toggleInlineExpand(card, el);
-    } else {
-      if (!card.dataset.unavailable) openModal(el, idx);
+    } else if (!card.dataset.unavailable) {
+      openModal(el, idx);
     }
   }
 
@@ -710,8 +710,10 @@
 
     const section = (label, html) =>
       `<section class="detail-section"><h4 class="detail-section-title">${escapeHtml(label)}</h4><div class="detail-section-body">${html}</div></section>`;
-    const pill = (text, cls = '') =>
-      `<span class="detail-pill${cls ? ` ${cls}` : ''}">${escapeHtml(String(text))}</span>`;
+    const pill = (text, cls = '') => {
+      const clsSuffix = cls ? ` ${cls}` : '';
+      return `<span class="detail-pill${clsSuffix}">${escapeHtml(String(text))}</span>`;
+    };
     const fieldRow = (label, value) =>
       value != null && value !== '' ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
 
@@ -732,7 +734,7 @@
     const SKIP = new Set(['name','type','created','created_date','updated','author','version','tags','unique_id','id']);
     for (const [key, value] of Object.entries(parsed)) {
       if (SKIP.has(key)) continue;
-      const label = key.replace(/_/g, ' ');
+      const label = key.replaceAll('_', ' ');
       if (typeof value === 'string') {
         const isMarkdown = MEMORY_MARKDOWN_FIELDS.has(key) || looksLikeMarkdown(value);
         if (isMarkdown && globalThis.marked) {
@@ -759,7 +761,7 @@
             } else if (Array.isArray(v)) {
               if (v.length) metaParts.push(`<span class="memory-meta-key">${escapeHtml(k)}</span> ${v.map(i => escapeHtml(String(i))).join(', ')}`);
             } else if (typeof v !== 'object' && v != null && v !== '') {
-              metaParts.push(`<span class="memory-meta-key">${escapeHtml(k.replace(/_/g, ' '))}</span> ${escapeHtml(String(v))}`);
+              metaParts.push(`<span class="memory-meta-key">${escapeHtml(k.replaceAll('_', ' '))}</span> ${escapeHtml(String(v))}`);
             }
           }
           const metaRow = metaParts.length ? `<div class="memory-entry-meta">${metaParts.join(' · ')}</div>` : '';
@@ -768,7 +770,7 @@
         html += section(label, `<ul class="memory-entries-list">${items}</ul>`);
       } else if (typeof value === 'object' && value !== null) {
         const rows = Object.entries(value).map(([k, v]) =>
-          fieldRow(k.replace(/_/g, ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
+          fieldRow(k.replaceAll('_', ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
         ).filter(Boolean).join('');
         if (rows) html += section(label, rows);
       } else if (value != null && value !== '') {
@@ -797,8 +799,10 @@
         <div class="detail-section-body">${html}</div>
       </section>`;
 
-    const pill = (text, cls = '') =>
-      `<span class="detail-pill${cls ? ` ${cls}` : ''}">${escapeHtml(String(text))}</span>`;
+    const pill = (text, cls = '') => {
+      const clsSuffix = cls ? ` ${cls}` : '';
+      return `<span class="detail-pill${clsSuffix}">${escapeHtml(String(text))}</span>`;
+    };
 
     const field = (label, value) =>
       value ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
@@ -863,7 +867,7 @@
             <span class="detail-param-name">${escapeHtml(name)}</span>
             ${d.type ? `<span class="detail-pill pill-meta">${escapeHtml(d.type)}</span>` : ''}
             ${d.required ? `<span class="detail-pill pill-required">required</span>` : ''}
-            ${d.default !== undefined ? `<span class="detail-pill">default: ${escapeHtml(String(d.default))}</span>` : ''}
+            ${d.default === undefined ? '' : `<span class="detail-pill">default: ${escapeHtml(String(d.default))}</span>`}
           </div>
           ${d.description ? `<span class="detail-param-desc">${escapeHtml(d.description)}</span>` : ''}
         </div>`;
@@ -894,12 +898,13 @@
         if (fm.goal.template) {
           // Highlight {placeholder} tokens so the fill-in-the-blank structure is obvious
           const tplHtml = escapeHtml(String(fm.goal.template))
-            .replace(/\{([^}]+)\}/g, '<span class="detail-template-param">{$1}</span>');
+            .replaceAll(/\{([^}]+)\}/g, '<span class="detail-template-param">{$1}</span>');
           goalHtml += `<div class="detail-goal-template">${tplHtml}</div>`;
         }
         if (Array.isArray(fm.goal.successCriteria) && fm.goal.successCriteria.length) {
+          const criteriaItems = fm.goal.successCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('');
           goalHtml += `<h5 class="detail-subsection-title">Success criteria</h5>
-            <ul class="detail-list">${fm.goal.successCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>`;
+            <ul class="detail-list">${criteriaItems}</ul>`;
         }
         if (Array.isArray(fm.goal.parameters) && fm.goal.parameters.length) {
           goalHtml += `<h5 class="detail-subsection-title">Parameters</h5>`;
@@ -922,7 +927,7 @@
         const a = fm.autonomy;
         let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
           .filter(k => a[k] != null)
-          .map(k => field(k.replace(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
+          .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
           .join('');
         if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
           aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
@@ -945,7 +950,7 @@
 
       // scalar config fields
       const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
-        .map(k => field(k.replace(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] != null ? String(fm[k]) : null))
+        .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] != null ? String(fm[k]) : null))
         .filter(Boolean).join('');
       if (agentConfig) html += section('Configuration', agentConfig);
     }
@@ -963,8 +968,11 @@
     const extraFields = Object.entries(fm)
       .filter(([k]) => !knownFields.has(k))
       .map(([k, v]) => {
-        const display = Array.isArray(v) ? v.join(', ') : (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v));
-        return field(k.replace(/_/g, ' '), display);
+        let display;
+        if (Array.isArray(v)) display = v.join(', ');
+        else if (typeof v === 'object' && v !== null) display = JSON.stringify(v);
+        else display = String(v);
+        return field(k.replaceAll('_', ' '), display);
       }).filter(Boolean).join('');
     if (extraFields) html += section('Additional metadata', extraFields);
 
@@ -1030,11 +1038,12 @@
     // Copy raw content to clipboard — no fencing until frontmatter detection is reliable.
     navigator.clipboard.writeText(content).catch(() => {});
     const body = `✅ Your element content has already been copied to your clipboard, wrapped in a code block. Just paste (Cmd+V / Ctrl+V) to replace this line.`;
+    const issueTitle = `Submit: ${name}`;
     const url  = `https://github.com/DollhouseMCP/collection/issues/new`
-               + `?title=${encodeURIComponent(`Submit: ${name}`)}`
+               + `?title=${encodeURIComponent(issueTitle)}`
                + `&labels=submission`
                + `&body=${encodeURIComponent(body)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    globalThis.open(url, '_blank', 'noopener,noreferrer');
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -1083,7 +1092,7 @@
   // Extract a YYYY-MM-DD date string from a relative file path.
   // Handles both slash-separated dirs (2026/01/15/) and hyphen-prefixed filenames (2026-01-15_topic.yaml).
   function dateFromPath(path) {
-    const m = path.match(/(\d{4})[\/\-](\d{2})[\/\-](\d{2})/);
+    const m = path.match(/(\d{4})[-/](\d{2})[-/](\d{2})/);
     return m ? `${m[1]}-${m[2]}-${m[3]}` : null;
   }
 
@@ -1121,7 +1130,7 @@
   }
 
   async function loadLocalPortfolio() {
-    if (!window.showDirectoryPicker) {
+    if (!globalThis.showDirectoryPicker) {
       alert('Your browser does not support the File System Access API.\nTry Chrome or Edge on desktop.');
       return;
     }
@@ -1131,7 +1140,7 @@
     if (btn) btn.textContent = '…';
 
     try {
-      const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+      const dirHandle = await globalThis.showDirectoryPicker({ mode: 'read' });
 
       const TYPE_EXTENSIONS = {
         agents: ['.md'], personas: ['.md'], skills: ['.md'],
@@ -1192,11 +1201,11 @@
         btn.dataset.loaded = 'true';
       }
     } catch (err) {
-      if (err.name !== 'AbortError') {
+      if (err.name === 'AbortError') {
+        if (btn) btn.textContent = prevText;
+      } else {
         console.error('[DollhouseMCP] Portfolio load error:', err.message);
         if (btn) btn.textContent = '📁 Portfolio (error)';
-      } else {
-        if (btn) btn.textContent = prevText;
       }
     }
   }
