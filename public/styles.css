@@ -596,6 +596,23 @@ p, li { max-width: 69ch; }
 [data-theme="dark"] .element-card[data-type="prompt"]   { --family-1: #5eead4; --family-2: #0d9488; --family-3: #99f6e4; --family-4: #2dd4bf; }
 [data-theme="dark"] .element-card[data-type="tool"]     { --family-1: #94a3b8; --family-2: #64748b; --family-3: #cbd5e1; --family-4: #94a3b8; }
 
+/* Dark mode: pull color accents back — the type label pill carries identity;
+   card surfaces should be calm. Light mode keeps fuller saturation. */
+[data-theme="dark"] .element-card {
+  border: 1px solid color-mix(in srgb, var(--family-2) 8%, var(--line));
+  background:
+    radial-gradient(circle at 95% 6%,
+      color-mix(in srgb, var(--family-1) 5%, transparent), transparent 40%),
+    var(--surface-1);
+}
+[data-theme="dark"] .element-card::before {
+  background: color-mix(in srgb, var(--family-1) 28%, var(--surface-2));
+  opacity: 0.45;
+}
+[data-theme="dark"] .elements-grid[data-view="list"] .element-card {
+  border-left: 3px solid color-mix(in srgb, var(--family-1) 45%, var(--line));
+}
+
 .card-components {
   font-size: 0.68rem;
   font-family: var(--font-mono);
