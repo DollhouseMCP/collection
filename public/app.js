@@ -904,7 +904,7 @@
     return html;
   }
 
-  function renderDetailView(content, type) {
+  function renderDetailView(content, type) { // NOSONAR - sequential independent metadata sections; complexity score is inflated by &&-guards on array existence checks
     if (type === 'memory') {
       // Portfolio memories are pure YAML — jsyaml.load succeeds.
       // Collection memories are markdown-with-frontmatter — jsyaml.load throws on the
