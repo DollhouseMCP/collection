@@ -527,13 +527,7 @@
     }
   }
 
-  async function openModal(element, index = -1) {
-    const modal = document.getElementById('element-modal');
-    if (!modal) return;
-
-    openElementIndex = index;
-
-    // Prev/Next navigation
+  function setupModalNav(index) {
     const prevElBtn = document.getElementById('btn-prev-element');
     const nextElBtn = document.getElementById('btn-next-element');
     const navCount  = document.getElementById('modal-nav-count');
@@ -552,6 +546,16 @@
     if (navCount) {
       navCount.textContent = index >= 0 ? `${index + 1} / ${filteredElements.length}` : '';
     }
+  }
+
+  async function openModal(element, index = -1) {
+    const modal = document.getElementById('element-modal');
+    if (!modal) return;
+
+    openElementIndex = index;
+
+    // Prev/Next navigation
+    setupModalNav(index);
 
     // Populate static metadata immediately
     modal.querySelector('.modal-title').textContent = element.name;
@@ -700,6 +704,28 @@
     return /^(?:#{1,6}\s|\s{0,3}[-*+]\s|\s{0,3}\d+\.\s|>\s|```|\*\*|__|!\[)/m.test(str);
   }
 
+  // Render a single memory entry object — markdown fields prominent, scalars in meta footer.
+  function renderMemoryEntry(item) {
+    if (typeof item !== 'object' || item === null) {
+      return `<li>${escapeHtml(String(item))}</li>`;
+    }
+    let entryBody = '';
+    const metaParts = [];
+    for (const [k, v] of Object.entries(item)) {
+      if (typeof v === 'string' && (MEMORY_MARKDOWN_FIELDS.has(k) || looksLikeMarkdown(v))) {
+        entryBody += globalThis.marked
+          ? `<div class="element-rendered memory-entry-content">${marked.parse(v)}</div>`
+          : `<pre class="detail-multiline">${escapeHtml(v)}</pre>`;
+      } else if (Array.isArray(v)) {
+        if (v.length) metaParts.push(`<span class="memory-meta-key">${escapeHtml(k)}</span> ${v.map(i => escapeHtml(String(i))).join(', ')}`);
+      } else if (typeof v !== 'object' && v != null && v !== '') {
+        metaParts.push(`<span class="memory-meta-key">${escapeHtml(k.replaceAll('_', ' '))}</span> ${escapeHtml(String(v))}`);
+      }
+    }
+    const metaRow = metaParts.length ? `<div class="memory-entry-meta">${metaParts.join(' · ')}</div>` : '';
+    return `<li class="memory-entry">${entryBody}${metaRow}</li>`;
+  }
+
   // Render a pure-YAML memory file: parse each field, detect markdown, render appropriately
   function renderMemoryView(content) {
     let parsed;
@@ -745,28 +771,7 @@
           html += section(label, `<p class="detail-prose">${escapeHtml(value)}</p>`);
         }
       } else if (Array.isArray(value)) {
-        const items = value.map(item => {
-          if (typeof item !== 'object' || item === null) {
-            return `<li>${escapeHtml(String(item))}</li>`;
-          }
-          // Object entry (e.g. a memory entry) — render markdown fields prominently,
-          // collapse remaining scalar metadata into a compact footer row
-          let entryBody = '';
-          const metaParts = [];
-          for (const [k, v] of Object.entries(item)) {
-            if (typeof v === 'string' && (MEMORY_MARKDOWN_FIELDS.has(k) || looksLikeMarkdown(v))) {
-              entryBody += globalThis.marked
-                ? `<div class="element-rendered memory-entry-content">${marked.parse(v)}</div>`
-                : `<pre class="detail-multiline">${escapeHtml(v)}</pre>`;
-            } else if (Array.isArray(v)) {
-              if (v.length) metaParts.push(`<span class="memory-meta-key">${escapeHtml(k)}</span> ${v.map(i => escapeHtml(String(i))).join(', ')}`);
-            } else if (typeof v !== 'object' && v != null && v !== '') {
-              metaParts.push(`<span class="memory-meta-key">${escapeHtml(k.replaceAll('_', ' '))}</span> ${escapeHtml(String(v))}`);
-            }
-          }
-          const metaRow = metaParts.length ? `<div class="memory-entry-meta">${metaParts.join(' · ')}</div>` : '';
-          return `<li class="memory-entry">${entryBody}${metaRow}</li>`;
-        }).join('');
+        const items = value.map(item => renderMemoryEntry(item)).join('');
         html += section(label, `<ul class="memory-entries-list">${items}</ul>`);
       } else if (typeof value === 'object' && value !== null) {
         const rows = Object.entries(value).map(([k, v]) =>
@@ -778,6 +783,74 @@
       }
     }
     return html || `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
+  }
+
+  function renderGoalSection(goal, section, pill) {
+    let goalHtml = '';
+    if (goal.template) {
+      const tplHtml = escapeHtml(String(goal.template))
+        .replaceAll(/\{([^}]{1,100})\}/g, '<span class="detail-template-param">{$1}</span>');
+      goalHtml += `<div class="detail-goal-template">${tplHtml}</div>`;
+    }
+    if (Array.isArray(goal.successCriteria) && goal.successCriteria.length) {
+      const criteriaItems = goal.successCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+      goalHtml += `<h5 class="detail-subsection-title">Success criteria</h5>
+        <ul class="detail-list">${criteriaItems}</ul>`;
+    }
+    if (Array.isArray(goal.parameters) && goal.parameters.length) {
+      goalHtml += `<h5 class="detail-subsection-title">Parameters</h5>`;
+      goalHtml += goal.parameters.map(p =>
+        `<div class="detail-param">
+          <div class="detail-param-header">
+            <span class="detail-param-name">${escapeHtml(p.name || '')}</span>
+            ${p.type ? `<span class="detail-pill pill-meta">${escapeHtml(p.type)}</span>` : ''}
+            ${p.required ? `<span class="detail-pill pill-required">required</span>` : '<span class="detail-pill">optional</span>'}
+          </div>
+          ${p.description ? `<span class="detail-param-desc">${escapeHtml(p.description)}</span>` : ''}
+        </div>`
+      ).join('');
+    }
+    return goalHtml ? section('Goal', goalHtml) : '';
+  }
+
+  function renderAgentSection(fm, section, pill, field) {
+    let html = '';
+    if (fm.instructions) {
+      const rendered = globalThis.marked
+        ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
+        : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
+      html += section('Instructions', rendered);
+    }
+    if (fm.goal && typeof fm.goal === 'object') {
+      html += renderGoalSection(fm.goal, section, pill);
+    }
+    if (fm.autonomy && typeof fm.autonomy === 'object') {
+      const a = fm.autonomy;
+      let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
+        .filter(k => a[k] != null)
+        .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
+        .join('');
+      if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
+        aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
+      }
+      if (Array.isArray(a.requiresApproval) && a.requiresApproval.length) {
+        aHtml += `<div class="detail-field"><span class="detail-label">requires approval</span><span class="detail-value">${a.requiresApproval.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
+      }
+      if (aHtml) html += section('Autonomy', aHtml);
+    }
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
+      const g = fm.gatekeeper;
+      let gHtml = '';
+      if (Array.isArray(g.allow)   && g.allow.length)   gHtml += `<div class="detail-field"><span class="detail-label">allow</span><span class="detail-value">${g.allow.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
+      if (Array.isArray(g.confirm) && g.confirm.length) gHtml += `<div class="detail-field"><span class="detail-label">confirm</span><span class="detail-value">${g.confirm.map(v => pill(v, 'pill-meta')).join(' ')}</span></div>`;
+      if (Array.isArray(g.deny)    && g.deny.length)    gHtml += `<div class="detail-field"><span class="detail-label">deny</span><span class="detail-value">${g.deny.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
+      if (gHtml) html += section('Gatekeeper', gHtml);
+    }
+    const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
+      .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
+      .filter(Boolean).join('');
+    if (agentConfig) html += section('Configuration', agentConfig);
+    return html;
   }
 
   function renderDetailView(content, type) {
@@ -854,8 +927,8 @@
 
     // ── Use cases ──
     if (Array.isArray(fm.use_cases) && fm.use_cases.length) {
-      html += section('Use cases',
-        `<ul class="detail-list">${fm.use_cases.map(u => `<li>${escapeHtml(u)}</li>`).join('')}</ul>`);
+      const useCaseItems = fm.use_cases.map(u => `<li>${escapeHtml(u)}</li>`).join('');
+      html += section('Use cases', `<ul class="detail-list">${useCaseItems}</ul>`);
     }
 
     // ── Parameters (skills/tools) ──
@@ -884,75 +957,7 @@
 
     // ── Agent fields ──
     if (type === 'agent') {
-      // instructions — full markdown content, render with marked
-      if (fm.instructions) {
-        const rendered = globalThis.marked
-          ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
-          : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
-        html += section('Instructions', rendered);
-      }
-
-      // goal — template + parameters + success criteria
-      if (fm.goal && typeof fm.goal === 'object') {
-        let goalHtml = '';
-        if (fm.goal.template) {
-          // Highlight {placeholder} tokens so the fill-in-the-blank structure is obvious
-          const tplHtml = escapeHtml(String(fm.goal.template))
-            .replaceAll(/\{([^}]{1,100})\}/g, '<span class="detail-template-param">{$1}</span>');
-          goalHtml += `<div class="detail-goal-template">${tplHtml}</div>`;
-        }
-        if (Array.isArray(fm.goal.successCriteria) && fm.goal.successCriteria.length) {
-          const criteriaItems = fm.goal.successCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('');
-          goalHtml += `<h5 class="detail-subsection-title">Success criteria</h5>
-            <ul class="detail-list">${criteriaItems}</ul>`;
-        }
-        if (Array.isArray(fm.goal.parameters) && fm.goal.parameters.length) {
-          goalHtml += `<h5 class="detail-subsection-title">Parameters</h5>`;
-          goalHtml += fm.goal.parameters.map(p =>
-            `<div class="detail-param">
-              <div class="detail-param-header">
-                <span class="detail-param-name">${escapeHtml(p.name || '')}</span>
-                ${p.type ? `<span class="detail-pill pill-meta">${escapeHtml(p.type)}</span>` : ''}
-                ${p.required ? `<span class="detail-pill pill-required">required</span>` : '<span class="detail-pill">optional</span>'}
-              </div>
-              ${p.description ? `<span class="detail-param-desc">${escapeHtml(p.description)}</span>` : ''}
-            </div>`
-          ).join('');
-        }
-        if (goalHtml) html += section('Goal', goalHtml);
-      }
-
-      // autonomy — step limits, risk, auto-approve/requires-approval
-      if (fm.autonomy && typeof fm.autonomy === 'object') {
-        const a = fm.autonomy;
-        let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
-          .filter(k => a[k] != null)
-          .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
-          .join('');
-        if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
-          aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
-        }
-        if (Array.isArray(a.requiresApproval) && a.requiresApproval.length) {
-          aHtml += `<div class="detail-field"><span class="detail-label">requires approval</span><span class="detail-value">${a.requiresApproval.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
-        }
-        if (aHtml) html += section('Autonomy', aHtml);
-      }
-
-      // gatekeeper — allow / confirm / deny operation lists
-      if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
-        const g = fm.gatekeeper;
-        let gHtml = '';
-        if (Array.isArray(g.allow)   && g.allow.length)   gHtml += `<div class="detail-field"><span class="detail-label">allow</span><span class="detail-value">${g.allow.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
-        if (Array.isArray(g.confirm) && g.confirm.length) gHtml += `<div class="detail-field"><span class="detail-label">confirm</span><span class="detail-value">${g.confirm.map(v => pill(v, 'pill-meta')).join(' ')}</span></div>`;
-        if (Array.isArray(g.deny)    && g.deny.length)    gHtml += `<div class="detail-field"><span class="detail-label">deny</span><span class="detail-value">${g.deny.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
-        if (gHtml) html += section('Gatekeeper', gHtml);
-      }
-
-      // scalar config fields
-      const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
-        .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] != null ? String(fm[k]) : null))
-        .filter(Boolean).join('');
-      if (agentConfig) html += section('Configuration', agentConfig);
+      html += renderAgentSection(fm, section, pill, field);
     }
 
     // ── Catch-all: any remaining frontmatter fields ──
@@ -1129,6 +1134,44 @@
     return parseFrontmatter(content);
   }
 
+  async function loadTypeDirectory(dirHandle, subdirName, type, extensions, btn) {
+    try {
+      const subdir = await dirHandle.getDirectoryHandle(subdirName);
+      const fileEntries = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH);
+      // Sort descending so newest date-prefixed dirs/files load into page 1 first
+      fileEntries.sort((a, b) => b.path.localeCompare(a.path));
+
+      // Read files in parallel batches; update UI every batch so progress is visible
+      for (let i = 0; i < fileEntries.length; i += FILE_READ_CONCURRENCY) {
+        const batch = fileEntries.slice(i, i + FILE_READ_CONCURRENCY);
+        await Promise.all(batch.map(async ({ name, handle, path }) => {
+          try {
+            const file = await handle.getFile();
+            const content = await file.text();
+            const { frontmatter: fm } = parseLocalFile(content, name);
+            localElements.push({
+              name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
+              type,
+              description: fm.description || '',
+              author: fm.author || '',
+              version: fm.version ? String(fm.version) : '',
+              tags: Array.isArray(fm.tags) ? fm.tags : [],
+              created: fm.created_date || fm.created || fm.date || dateFromPath(path) || null,
+              _local: true,
+              _content: content,
+              path,
+            });
+          } catch { /* skip unreadable file */ }
+        }));
+
+        // Update UI after each batch so user sees content appear progressively
+        allElements = [...collectionElements, ...localElements];
+        if (btn) btn.textContent = `📁 Loading… (${localElements.length})`;
+        try { applyFilters(); } catch { /* non-fatal */ }
+      }
+    } catch { /* subdir may not exist — skip silently */ }
+  }
+
   async function loadLocalPortfolio() {
     if (!globalThis.showDirectoryPicker) {
       alert('Your browser does not support the File System Access API.\nTry Chrome or Edge on desktop.');
@@ -1152,41 +1195,7 @@
 
       for (const [subdirName, type] of Object.entries(SINGULAR_TYPE)) {
         const extensions = TYPE_EXTENSIONS[subdirName] || ['.md'];
-        try {
-          const subdir = await dirHandle.getDirectoryHandle(subdirName);
-          const fileEntries = await collectLocalFiles(subdir, extensions, PORTFOLIO_MAX_DEPTH);
-          // Sort descending so newest date-prefixed dirs/files load into page 1 first
-          fileEntries.sort((a, b) => b.path.localeCompare(a.path));
-
-          // Read files in parallel batches; update UI every batch so progress is visible
-          for (let i = 0; i < fileEntries.length; i += FILE_READ_CONCURRENCY) {
-            const batch = fileEntries.slice(i, i + FILE_READ_CONCURRENCY);
-            await Promise.all(batch.map(async ({ name, handle, path }) => {
-              try {
-                const file = await handle.getFile();
-                const content = await file.text();
-                const { frontmatter: fm } = parseLocalFile(content, name);
-                localElements.push({
-                  name: fm.name || name.replace(/\.(md|yaml|yml)$/, ''),
-                  type,
-                  description: fm.description || '',
-                  author: fm.author || '',
-                  version: fm.version ? String(fm.version) : '',
-                  tags: Array.isArray(fm.tags) ? fm.tags : [],
-                  created: fm.created_date || fm.created || fm.date || dateFromPath(path) || null,
-                  _local: true,
-                  _content: content,
-                  path,
-                });
-              } catch { /* skip unreadable file */ }
-            }));
-
-            // Update UI after each batch so user sees content appear progressively
-            allElements = [...collectionElements, ...localElements];
-            if (btn) btn.textContent = `📁 Loading… (${localElements.length})`;
-            try { applyFilters(); } catch { /* non-fatal */ }
-          }
-        } catch { /* subdir may not exist — skip silently */ }
+        await loadTypeDirectory(dirHandle, subdirName, type, extensions, btn);
       }
 
       // Rebuild type/topic filters once with full dataset
