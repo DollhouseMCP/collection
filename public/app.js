@@ -697,7 +697,7 @@
   // Heuristic: does a multi-line string look like it has markdown syntax?
   function looksLikeMarkdown(str) {
     if (typeof str !== 'string' || !str.includes('\n')) return false;
-    return /^(#{1,6}\s|\s*[-*+]\s|\s*\d+\.\s|>\s|```|\*\*|__|!\[)/m.test(str);
+    return /^(?:#{1,6}\s|\s{0,3}[-*+]\s|\s{0,3}\d+\.\s|>\s|```|\*\*|__|!\[)/m.test(str);
   }
 
   // Render a pure-YAML memory file: parse each field, detect markdown, render appropriately
@@ -898,7 +898,7 @@
         if (fm.goal.template) {
           // Highlight {placeholder} tokens so the fill-in-the-blank structure is obvious
           const tplHtml = escapeHtml(String(fm.goal.template))
-            .replaceAll(/\{([^}]+)\}/g, '<span class="detail-template-param">{$1}</span>');
+            .replaceAll(/\{([^}]{1,100})\}/g, '<span class="detail-template-param">{$1}</span>');
           goalHtml += `<div class="detail-goal-template">${tplHtml}</div>`;
         }
         if (Array.isArray(fm.goal.successCriteria) && fm.goal.successCriteria.length) {
