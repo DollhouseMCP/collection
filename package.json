@@ -12,6 +12,9 @@
     "test:unit": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs",
     "test:integration": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.integration.config.cjs --forceExit",
     "test:security": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.security.config.cjs",
+    "test:browser": "playwright test",
+    "test:browser:ui": "playwright test --ui",
+    "test:browser:headed": "playwright test --headed",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:security",
     "test:watch": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs --watch",
     "test:coverage": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --config jest.unit.config.cjs --coverage",
@@ -56,27 +59,28 @@
   },
   "homepage": "https://github.com/DollhouseMCP/collection#readme",
   "devDependencies": {
-    "@jest/globals": "^30.0.5",
+    "@jest/globals": "^30.1.2",
+    "@playwright/test": "^1.58.2",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.9.1",
     "@types/sanitize-html": "^2.16.0",
-    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.39.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.33.0",
-    "jest": "^30.1.1",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.38.0",
+    "jest": "^30.1.3",
     "sanitize-html": "^2.17.0",
-    "ts-jest": "^29.2.6",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.4",
+    "tsx": "^4.20.5",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0",
-    "zod": "^4.1.4"
+    "zod": "^4.1.12"
   },
   "engines": {
     "node": ">=22.0.0"
