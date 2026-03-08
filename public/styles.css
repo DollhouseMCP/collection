@@ -44,10 +44,10 @@
 }
 
 [data-theme="dark"] {
-  --ink-950: #e6eaf0;
-  --ink-900: #bbc5d2;
-  --ink-700: #7f90a3;
-  --ink-500: #566474;
+  --ink-950: #f1f5fa;
+  --ink-900: #cdd8e8;
+  --ink-700: #96abc2;
+  --ink-500: #6a7f93;
   --line:    #2b3445;
   --paper:   #111318;
   --paper-strong: #161b24;
