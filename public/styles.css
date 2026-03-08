@@ -44,21 +44,21 @@
 }
 
 [data-theme="dark"] {
-  --ink-950: #edf4ff;
-  --ink-900: #cddaf0;
-  --ink-700: #94aed0;
-  --ink-500: #6b89b0;
-  --line:    #253a5a;
-  --paper:   #0d1a2e;
-  --paper-strong: #132139;
-  --surface-1: #162847;
-  --surface-2: #1a2f50;
+  --ink-950: #e6eaf0;
+  --ink-900: #bbc5d2;
+  --ink-700: #7f90a3;
+  --ink-500: #566474;
+  --line:    #2b3445;
+  --paper:   #111318;
+  --paper-strong: #161b24;
+  --surface-1: #1c2230;
+  --surface-2: #212838;
   --signal:   #6fa3f5;
   --signal-2: #4f8eef;
   --accent:   #f5883a;
-  --accent-soft: #2e1e0f;
-  --shadow-soft: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.6);
-  --shadow-card: 0 1.55rem 2.95rem -1.2rem rgba(0, 0, 0, 0.72);
+  --accent-soft: #281b0c;
+  --shadow-soft: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1.55rem 2.95rem -1.2rem rgba(0, 0, 0, 0.5);
 }
 
 /* ── Reset ───────────────────────────────────────────────────────────────── */
@@ -87,9 +87,9 @@ body {
   color-scheme: dark;
   background:
     radial-gradient(110% 55% at 0% 0%,
-      color-mix(in srgb, var(--signal-2) 4%, transparent), transparent 55%),
+      color-mix(in srgb, var(--signal-2) 2%, transparent), transparent 55%),
     radial-gradient(85% 45% at 100% 0%,
-      color-mix(in srgb, var(--accent) 3%, transparent), transparent 50%),
+      color-mix(in srgb, var(--accent) 2%, transparent), transparent 50%),
     var(--paper);
 }
 
