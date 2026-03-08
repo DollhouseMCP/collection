@@ -11,7 +11,7 @@
 
 (() => {
   const REPO    = 'DollhouseMCP/collection';
-  const BRANCH  = 'develop';
+  const BRANCH  = 'main';
   const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
@@ -548,26 +548,18 @@
     }
   }
 
-  async function openModal(element, index = -1) {
-    const modal = document.getElementById('element-modal');
-    if (!modal) return;
-
-    openElementIndex = index;
-
-    // Prev/Next navigation
-    setupModalNav(index);
-
-    // Populate static metadata immediately
-    modal.querySelector('.modal-title').textContent = element.name;
-    modal.querySelector('.modal-type').textContent  = capitalize(element.type);
-    modal.querySelector('.modal-author').textContent = element.author ? `by ${element.author}` : '';
+  function setupModalMeta(element, modal) {
+    modal.querySelector('.modal-title').textContent   = element.name;
+    modal.querySelector('.modal-type').textContent    = capitalize(element.type);
+    modal.querySelector('.modal-author').textContent  = element.author ? `by ${element.author}` : '';
     modal.querySelector('.modal-version').textContent = element.version ? `v${element.version}` : '';
-    const modalDate = modal.querySelector('.modal-date');
-    if (modalDate) modalDate.textContent = element.created ? formatDate(element.created) : '';
+    const modalDate   = modal.querySelector('.modal-date');
     const modalSource = modal.querySelector('.modal-source');
+    if (modalDate)   modalDate.textContent   = element.created ? formatDate(element.created) : '';
     if (modalSource) modalSource.textContent = element._local ? 'LOCAL' : '';
+  }
 
-    // GitHub link — hidden for local portfolio elements
+  function setupModalLinks(element, modal) {
     const ghLink = modal.querySelector('#btn-github');
     if (ghLink) {
       if (element._local) {
@@ -577,8 +569,6 @@
         ghLink.href = `${GITHUB_BASE}/${element.path}`;
       }
     }
-
-    // Submit button — shown only for local elements, hidden otherwise
     const submitBtn = modal.querySelector('#btn-submit');
     if (submitBtn) {
       if (element._local) {
@@ -589,6 +579,17 @@
         submitBtn.style.display = 'none';
       }
     }
+    return submitBtn;
+  }
+
+  async function openModal(element, index = -1) {
+    const modal = document.getElementById('element-modal');
+    if (!modal) return;
+
+    openElementIndex = index;
+    setupModalNav(index);
+    setupModalMeta(element, modal);
+    const submitBtn = setupModalLinks(element, modal);
 
     // Reset action buttons
     const copyBtn     = modal.querySelector('#btn-copy');
@@ -726,6 +727,34 @@
     return `<li class="memory-entry">${entryBody}${metaRow}</li>`;
   }
 
+  function renderMemoryField(key, value) {
+    const label = key.replaceAll('_', ' ');
+    if (typeof value === 'string') {
+      const isMarkdown = MEMORY_MARKDOWN_FIELDS.has(key) || looksLikeMarkdown(value);
+      if (isMarkdown && globalThis.marked) {
+        return detailSection(label, `<div class="element-rendered">${marked.parse(value)}</div>`);
+      }
+      if (value.includes('\n')) {
+        return detailSection(label, `<pre class="detail-multiline">${escapeHtml(value)}</pre>`);
+      }
+      return detailSection(label, `<p class="detail-prose">${escapeHtml(value)}</p>`);
+    }
+    if (Array.isArray(value)) {
+      const items = value.map(item => renderMemoryEntry(item)).join('');
+      return detailSection(label, `<ul class="memory-entries-list">${items}</ul>`);
+    }
+    if (typeof value === 'object' && value !== null) {
+      const rows = Object.entries(value).map(([k, v]) =>
+        detailField(k.replaceAll('_', ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
+      ).filter(Boolean).join('');
+      return rows ? detailSection(label, rows) : '';
+    }
+    if (value != null && value !== '') {
+      return detailSection(label, `<p class="detail-prose">${escapeHtml(String(value))}</p>`);
+    }
+    return '';
+  }
+
   // Render a pure-YAML memory file: parse each field, detect markdown, render appropriately
   function renderMemoryView(content) {
     let parsed;
@@ -734,15 +763,6 @@
       return `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
     }
 
-    const section = (label, html) =>
-      `<section class="detail-section"><h4 class="detail-section-title">${escapeHtml(label)}</h4><div class="detail-section-body">${html}</div></section>`;
-    const pill = (text, cls = '') => {
-      const clsSuffix = cls ? ` ${cls}` : '';
-      return `<span class="detail-pill${clsSuffix}">${escapeHtml(String(text))}</span>`;
-    };
-    const fieldRow = (label, value) =>
-      value != null && value !== '' ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
-
     let html = '';
 
     // Standard metadata at top
@@ -750,42 +770,22 @@
     if (createdVal) {
       html += `<div class="detail-created"><span class="detail-created-label">Created</span><span class="detail-created-value">${escapeHtml(formatDate(createdVal))}</span></div>`;
     }
-    const meta = [fieldRow('Author', parsed.author), fieldRow('ID', parsed.unique_id || parsed.id)].filter(Boolean).join('');
-    if (meta) html += section('Details', meta);
+    const meta = [detailField('Author', parsed.author), detailField('ID', parsed.unique_id || parsed.id)].filter(Boolean).join('');
+    if (meta) html += detailSection('Details', meta);
     if (Array.isArray(parsed.tags) && parsed.tags.length) {
-      html += section('Tags', `<div class="detail-pills">${parsed.tags.map(t => pill(t, 'pill-tag')).join('')}</div>`);
+      html += detailSection('Tags', detailPillList(parsed.tags, 'pill-tag'));
     }
 
     // Render all remaining fields
     const SKIP = new Set(['name','type','created','created_date','updated','author','version','tags','unique_id','id']);
     for (const [key, value] of Object.entries(parsed)) {
       if (SKIP.has(key)) continue;
-      const label = key.replaceAll('_', ' ');
-      if (typeof value === 'string') {
-        const isMarkdown = MEMORY_MARKDOWN_FIELDS.has(key) || looksLikeMarkdown(value);
-        if (isMarkdown && globalThis.marked) {
-          html += section(label, `<div class="element-rendered">${marked.parse(value)}</div>`);
-        } else if (value.includes('\n')) {
-          html += section(label, `<pre class="detail-multiline">${escapeHtml(value)}</pre>`);
-        } else {
-          html += section(label, `<p class="detail-prose">${escapeHtml(value)}</p>`);
-        }
-      } else if (Array.isArray(value)) {
-        const items = value.map(item => renderMemoryEntry(item)).join('');
-        html += section(label, `<ul class="memory-entries-list">${items}</ul>`);
-      } else if (typeof value === 'object' && value !== null) {
-        const rows = Object.entries(value).map(([k, v]) =>
-          fieldRow(k.replaceAll('_', ' '), typeof v === 'object' ? JSON.stringify(v) : String(v))
-        ).filter(Boolean).join('');
-        if (rows) html += section(label, rows);
-      } else if (value != null && value !== '') {
-        html += section(label, `<p class="detail-prose">${escapeHtml(String(value))}</p>`);
-      }
+      html += renderMemoryField(key, value);
     }
     return html || `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
   }
 
-  function renderGoalSection(goal, section, pill) {
+  function renderGoalSection(goal) {
     let goalHtml = '';
     if (goal.template) {
       const tplHtml = escapeHtml(String(goal.template))
@@ -810,46 +810,97 @@
         </div>`
       ).join('');
     }
-    return goalHtml ? section('Goal', goalHtml) : '';
+    return goalHtml ? detailSection('Goal', goalHtml) : '';
   }
 
-  function renderAgentSection(fm, section, pill, field) {
+  function renderAutonomySection(a) {
+    let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
+      .filter(k => a[k] != null)
+      .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
+      .join('');
+    if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
+      aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
+    }
+    if (Array.isArray(a.requiresApproval) && a.requiresApproval.length) {
+      aHtml += `<div class="detail-field"><span class="detail-label">requires approval</span><span class="detail-value">${a.requiresApproval.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
+    }
+    return aHtml ? detailSection('Autonomy', aHtml) : '';
+  }
+
+  function renderGatekeeperSection(g) {
+    let gHtml = '';
+    if (Array.isArray(g.allow)   && g.allow.length)   gHtml += `<div class="detail-field"><span class="detail-label">allow</span><span class="detail-value">${g.allow.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
+    if (Array.isArray(g.confirm) && g.confirm.length) gHtml += `<div class="detail-field"><span class="detail-label">confirm</span><span class="detail-value">${g.confirm.map(v => detailPill(v, 'pill-meta')).join(' ')}</span></div>`;
+    if (Array.isArray(g.deny)    && g.deny.length)    gHtml += `<div class="detail-field"><span class="detail-label">deny</span><span class="detail-value">${g.deny.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
+    return gHtml ? detailSection('Gatekeeper', gHtml) : '';
+  }
+
+  function renderAgentSection(fm) {
     let html = '';
     if (fm.instructions) {
       const rendered = globalThis.marked
         ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
         : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
-      html += section('Instructions', rendered);
+      html += detailSection('Instructions', rendered);
     }
     if (fm.goal && typeof fm.goal === 'object') {
-      html += renderGoalSection(fm.goal, section, pill);
+      html += renderGoalSection(fm.goal);
     }
     if (fm.autonomy && typeof fm.autonomy === 'object') {
-      const a = fm.autonomy;
-      let aHtml = ['maxSteps','maxAutonomousSteps','safetyTier','riskTolerance']
-        .filter(k => a[k] != null)
-        .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(a[k])))
-        .join('');
-      if (Array.isArray(a.autoApprove) && a.autoApprove.length) {
-        aHtml += `<div class="detail-field"><span class="detail-label">auto approve</span><span class="detail-value">${a.autoApprove.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
-      }
-      if (Array.isArray(a.requiresApproval) && a.requiresApproval.length) {
-        aHtml += `<div class="detail-field"><span class="detail-label">requires approval</span><span class="detail-value">${a.requiresApproval.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
-      }
-      if (aHtml) html += section('Autonomy', aHtml);
+      html += renderAutonomySection(fm.autonomy);
     }
     if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
-      const g = fm.gatekeeper;
-      let gHtml = '';
-      if (Array.isArray(g.allow)   && g.allow.length)   gHtml += `<div class="detail-field"><span class="detail-label">allow</span><span class="detail-value">${g.allow.map(v => pill(v, 'pill-tag')).join(' ')}</span></div>`;
-      if (Array.isArray(g.confirm) && g.confirm.length) gHtml += `<div class="detail-field"><span class="detail-label">confirm</span><span class="detail-value">${g.confirm.map(v => pill(v, 'pill-meta')).join(' ')}</span></div>`;
-      if (Array.isArray(g.deny)    && g.deny.length)    gHtml += `<div class="detail-field"><span class="detail-label">deny</span><span class="detail-value">${g.deny.map(v => pill(v, 'pill-required')).join(' ')}</span></div>`;
-      if (gHtml) html += section('Gatekeeper', gHtml);
+      html += renderGatekeeperSection(fm.gatekeeper);
     }
     const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
-      .map(k => field(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
+      .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
       .filter(Boolean).join('');
-    if (agentConfig) html += section('Configuration', agentConfig);
+    if (agentConfig) html += detailSection('Configuration', agentConfig);
+    return html;
+  }
+
+  function renderDetailParameters(fm) {
+    if (!fm.parameters || typeof fm.parameters !== 'object' || Array.isArray(fm.parameters)) return '';
+    const paramRows = Object.entries(fm.parameters).map(([name, def]) => {
+      const d = typeof def === 'object' && def !== null ? def : {};
+      return `<div class="detail-param">
+        <div class="detail-param-header">
+          <span class="detail-param-name">${escapeHtml(name)}</span>
+          ${d.type ? `<span class="detail-pill pill-meta">${escapeHtml(d.type)}</span>` : ''}
+          ${d.required ? `<span class="detail-pill pill-required">required</span>` : ''}
+          ${d.default === undefined ? '' : `<span class="detail-pill">default: ${escapeHtml(String(d.default))}</span>`}
+        </div>
+        ${d.description ? `<span class="detail-param-desc">${escapeHtml(d.description)}</span>` : ''}
+      </div>`;
+    }).join('');
+    return paramRows ? detailSection('Parameters', paramRows) : '';
+  }
+
+  function renderDetailExtra(fm, body) {
+    const knownFields = new Set([
+      'name','type','description','author','version','category','license','age_rating',
+      'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
+      'proficiency_levels','coordination_strategy',
+      'personas','skills','tools','templates','prompts','memories',
+      'instructions','goal','autonomy','gatekeeper',
+      'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
+    ]);
+    const extraFields = Object.entries(fm)
+      .filter(([k]) => !knownFields.has(k))
+      .map(([k, v]) => {
+        let display;
+        if (Array.isArray(v)) display = v.join(', ');
+        else if (typeof v === 'object' && v !== null) display = JSON.stringify(v);
+        else display = String(v);
+        return detailField(k.replaceAll('_', ' '), display);
+      }).filter(Boolean).join('');
+    let html = extraFields ? detailSection('Additional metadata', extraFields) : '';
+    if (body) {
+      const rendered = globalThis.marked
+        ? `<div class="element-rendered">${marked.parse(body)}</div>`
+        : `<pre class="element-source"><code class="element-code">${escapeHtml(body)}</code></pre>`;
+      html += detailSection('Content', rendered);
+    }
     return html;
   }
 
@@ -865,26 +916,6 @@
     }
 
     const { frontmatter: fm, body } = parseFrontmatter(content);
-
-    const section = (label, html) =>
-      `<section class="detail-section">
-        <h4 class="detail-section-title">${escapeHtml(label)}</h4>
-        <div class="detail-section-body">${html}</div>
-      </section>`;
-
-    const pill = (text, cls = '') => {
-      const clsSuffix = cls ? ` ${cls}` : '';
-      return `<span class="detail-pill${clsSuffix}">${escapeHtml(String(text))}</span>`;
-    };
-
-    const field = (label, value) =>
-      value ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
-
-    const pillList = (items, cls) =>
-      Array.isArray(items) && items.length
-        ? `<div class="detail-pills">${items.map(t => pill(t, cls)).join('')}</div>`
-        : '';
-
     let html = '';
 
     // ── Created date — prominent header line ──
@@ -895,99 +926,59 @@
 
     // ── Core metadata ──
     const coreFields = [
-      field('Author', fm.author),
-      field('Version', fm.version ? `v${fm.version}` : null),
-      field('Category', fm.category),
-      field('License', fm.license),
-      field('Age rating', fm.age_rating),
-      field('Modified', fm.modified ? formatDate(fm.modified) : null),
+      detailField('Author', fm.author),
+      detailField('Version', fm.version ? `v${fm.version}` : null),
+      detailField('Category', fm.category),
+      detailField('License', fm.license),
+      detailField('Age rating', fm.age_rating),
+      detailField('Modified', fm.modified ? formatDate(fm.modified) : null),
     ].filter(Boolean).join('');
-    if (coreFields) html += section('Details', coreFields);
+    if (coreFields) html += detailSection('Details', coreFields);
 
     // ── Tags ──
     if (Array.isArray(fm.tags) && fm.tags.length) {
-      html += section('Tags', pillList(fm.tags, 'pill-tag'));
+      html += detailSection('Tags', detailPillList(fm.tags, 'pill-tag'));
     }
 
     // ── Triggers (personas) ──
     if (Array.isArray(fm.triggers) && fm.triggers.length) {
-      html += section('Trigger words', pillList(fm.triggers, 'pill-trigger'));
+      html += detailSection('Trigger words', detailPillList(fm.triggers, 'pill-trigger'));
     }
 
     // ── Components (ensembles) ──
     const compTypes = ['personas','skills','tools','templates','prompts','memories'];
     const compEntries = compTypes
       .filter(k => Array.isArray(fm[k]) && fm[k].length)
-      .map(k => `<div class="detail-field"><span class="detail-label">${capitalize(k)}</span><span class="detail-value">${pillList(fm[k])}</span></div>`)
+      .map(k => `<div class="detail-field"><span class="detail-label">${capitalize(k)}</span><span class="detail-value">${detailPillList(fm[k])}</span></div>`)
       .join('');
-    if (compEntries) html += section('Components', compEntries);
+    if (compEntries) html += detailSection('Components', compEntries);
 
     // ── Ensemble coordination ──
-    if (fm.coordination_strategy) html += section('Coordination', `<p class="detail-prose">${escapeHtml(fm.coordination_strategy)}</p>`);
+    if (fm.coordination_strategy) html += detailSection('Coordination', `<p class="detail-prose">${escapeHtml(fm.coordination_strategy)}</p>`);
 
     // ── Use cases ──
     if (Array.isArray(fm.use_cases) && fm.use_cases.length) {
       const useCaseItems = fm.use_cases.map(u => `<li>${escapeHtml(u)}</li>`).join('');
-      html += section('Use cases', `<ul class="detail-list">${useCaseItems}</ul>`);
+      html += detailSection('Use cases', `<ul class="detail-list">${useCaseItems}</ul>`);
     }
 
     // ── Parameters (skills/tools) ──
-    if (fm.parameters && typeof fm.parameters === 'object' && !Array.isArray(fm.parameters)) {
-      const paramRows = Object.entries(fm.parameters).map(([name, def]) => {
-        const d = typeof def === 'object' && def !== null ? def : {};
-        return `<div class="detail-param">
-          <div class="detail-param-header">
-            <span class="detail-param-name">${escapeHtml(name)}</span>
-            ${d.type ? `<span class="detail-pill pill-meta">${escapeHtml(d.type)}</span>` : ''}
-            ${d.required ? `<span class="detail-pill pill-required">required</span>` : ''}
-            ${d.default === undefined ? '' : `<span class="detail-pill">default: ${escapeHtml(String(d.default))}</span>`}
-          </div>
-          ${d.description ? `<span class="detail-param-desc">${escapeHtml(d.description)}</span>` : ''}
-        </div>`;
-      }).join('');
-      if (paramRows) html += section('Parameters', paramRows);
-    }
+    html += renderDetailParameters(fm);
 
     // ── Proficiency levels (skills) ──
     if (fm.proficiency_levels && typeof fm.proficiency_levels === 'object') {
       const levels = Object.entries(fm.proficiency_levels)
-        .map(([lvl, desc]) => field(capitalize(lvl), desc)).join('');
-      if (levels) html += section('Proficiency levels', levels);
+        .map(([lvl, desc]) => detailField(capitalize(lvl), desc)).join('');
+      if (levels) html += detailSection('Proficiency levels', levels);
     }
 
     // ── Agent fields ──
     if (type === 'agent') {
-      html += renderAgentSection(fm, section, pill, field);
+      html += renderAgentSection(fm);
     }
 
-    // ── Catch-all: any remaining frontmatter fields ──
-    const knownFields = new Set([
-      'name','type','description','author','version','category','license','age_rating',
-      'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
-      'proficiency_levels','coordination_strategy',
-      'personas','skills','tools','templates','prompts','memories',
-      // agent fields handled above
-      'instructions','goal','autonomy','gatekeeper',
-      'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
-    ]);
-    const extraFields = Object.entries(fm)
-      .filter(([k]) => !knownFields.has(k))
-      .map(([k, v]) => {
-        let display;
-        if (Array.isArray(v)) display = v.join(', ');
-        else if (typeof v === 'object' && v !== null) display = JSON.stringify(v);
-        else display = String(v);
-        return field(k.replaceAll('_', ' '), display);
-      }).filter(Boolean).join('');
-    if (extraFields) html += section('Additional metadata', extraFields);
-
-    // ── Body content ──
-    if (body) {
-      const rendered = globalThis.marked
-        ? `<div class="element-rendered">${marked.parse(body)}</div>`
-        : `<pre class="element-source"><code class="element-code">${escapeHtml(body)}</code></pre>`;
-      html += section('Content', rendered);
-    }
+    // ── Catch-all + body ──
+    html += renderDetailExtra(fm, body);
 
     return html || `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
   }
@@ -1083,6 +1074,24 @@
     }
   }
 
+  // ── Shared detail-view building blocks ────────────────────────────────────
+
+  const detailSection = (label, html) =>
+    `<section class="detail-section"><h4 class="detail-section-title">${escapeHtml(label)}</h4><div class="detail-section-body">${html}</div></section>`;
+
+  const detailPill = (text, cls = '') => {
+    const clsSuffix = cls ? ` ${cls}` : '';
+    return `<span class="detail-pill${clsSuffix}">${escapeHtml(String(text))}</span>`;
+  };
+
+  const detailField = (label, value) =>
+    value != null && value !== '' ? `<div class="detail-field"><span class="detail-label">${escapeHtml(label)}</span><span class="detail-value">${escapeHtml(String(value))}</span></div>` : '';
+
+  const detailPillList = (items, cls) =>
+    Array.isArray(items) && items.length
+      ? `<div class="detail-pills">${items.map(t => detailPill(t, cls)).join('')}</div>`
+      : '';
+
   // ── Local portfolio ────────────────────────────────────────────────────────
 
   // Skip hidden files, index/meta files, and backup entries
@@ -1132,6 +1141,27 @@
       }
     }
     return parseFrontmatter(content);
+  }
+
+  function finalizePortfolioUI(btn) {
+    try { renderTypeFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTypeFilters error:', err.message); }
+    try { renderTopicFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTopicFilters error:', err.message); }
+    applyFilters();
+    if (btn) {
+      btn.textContent = localElements.length > 0
+        ? `📁 Portfolio (${localElements.length})`
+        : '📁 Portfolio (empty)';
+      btn.dataset.loaded = 'true';
+    }
+  }
+
+  function handlePortfolioError(err, btn, prevText) {
+    if (err.name === 'AbortError') {
+      if (btn) btn.textContent = prevText;
+    } else {
+      console.error('[DollhouseMCP] Portfolio load error:', err.message);
+      if (btn) btn.textContent = '📁 Portfolio (error)';
+    }
   }
 
   async function loadTypeDirectory(dirHandle, subdirName, type, extensions, btn) {
@@ -1198,24 +1228,9 @@
         await loadTypeDirectory(dirHandle, subdirName, type, extensions, btn);
       }
 
-      // Rebuild type/topic filters once with full dataset
-      try { renderTypeFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTypeFilters error:', err.message); }
-      try { renderTopicFilters(); } catch (err) { console.warn('[DollhouseMCP] renderTopicFilters error:', err.message); }
-      applyFilters();
-
-      if (btn) {
-        btn.textContent = localElements.length > 0
-          ? `📁 Portfolio (${localElements.length})`
-          : '📁 Portfolio (empty)';
-        btn.dataset.loaded = 'true';
-      }
+      finalizePortfolioUI(btn);
     } catch (err) {
-      if (err.name === 'AbortError') {
-        if (btn) btn.textContent = prevText;
-      } else {
-        console.error('[DollhouseMCP] Portfolio load error:', err.message);
-        if (btn) btn.textContent = '📁 Portfolio (error)';
-      }
+      handlePortfolioError(err, btn, prevText);
     }
   }
 
