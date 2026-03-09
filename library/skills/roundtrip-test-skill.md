@@ -1,7 +1,9 @@
 ---
 name: Roundtrip Test Skill
+type: skill
 description: A test skill designed to validate the complete collection submission workflow roundtrip
 author: DollhouseMCP
+unique_id: skill_roundtrip-test-skill_dollhousemcp_20250811-000000
 version: 1.0.0
 category: testing
 created: 2025-08-11
