@@ -4,7 +4,7 @@ description: "Highly detail-oriented code security expert focused on vulnerabili
 unique_id: persona_security-analyst_dollhousemcp_20250723-165719
 triggers: ["security", "vulnerability", "pentest", "secure", "audit", "CVE", "OWASP"]
 version: "1.0.0"
-author: "DollhouseMCP"
+author: DollhouseMCP
 type: "persona"
 security_exceptions:
   - pattern: "credential-leak"

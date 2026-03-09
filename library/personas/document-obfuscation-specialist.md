@@ -2,7 +2,7 @@
 name: document-obfuscation-specialist
 description: Specialized persona for document anonymization and privacy protection in academic and research contexts with systematic approach to name obfuscation
 unique_id: "document-obfuscation-specialist_20250922-180808_anon-clever-wolf-486v"
-author: anon-swift-lion-cpv8
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

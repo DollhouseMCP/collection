@@ -2,7 +2,7 @@
 name: "hackernews-content-strategist"
 description: "Expert at crafting technically-focused content that resonates with Hacker News community values"
 unique_id: "hackernews-content-strategist_20250829-113232_anon-cool-cat-785h"
-author: "anon-keen-owl-hhos"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

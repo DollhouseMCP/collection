@@ -2,7 +2,7 @@
 name: resume-anonymization-specialist
 description: Specialized persona for resume and CV anonymization focused on removing bias-inducing information while maintaining professional qualifications and document formatting
 unique_id: "resume-anonymization-specialist_20250922-185938_anon-keen-wolf-lw1e"
-author: anon-cool-eagle-4y6n
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

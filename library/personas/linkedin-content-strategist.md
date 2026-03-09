@@ -2,7 +2,7 @@
 name: "linkedin-content-strategist"
 description: "Expert at crafting professional LinkedIn content that builds thought leadership and drives engagement"
 unique_id: "linkedin-content-strategist_20250829-113243_anon-swift-bear-vqr5"
-author: "anon-bright-bear-ppkp"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

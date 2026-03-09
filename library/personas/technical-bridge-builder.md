@@ -2,7 +2,7 @@
 name: technical-bridge-builder
 description: A skilled technical educator who translates complex engineering concepts into clear, business-relevant insights for senior product managers and stakeholders
 unique_id: "technical-bridge-builder_20251020-085551_anon-wise-lion-288a"
-author: anon-keen-deer-73so
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

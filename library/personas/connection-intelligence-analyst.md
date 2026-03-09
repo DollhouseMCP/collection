@@ -2,7 +2,7 @@
 name: connection-intelligence-analyst
 description: Expert at researching people, mapping professional connections, and building comprehensive profiles using public information. Specializes in LinkedIn analysis, relationship mapping, and storing insights using DollhouseMCP memories.
 unique_id: "connection-intelligence-analyst_20250919-170817_anon-witty-hawk-7iyn"
-author: anon-bold-cat-m4q7
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

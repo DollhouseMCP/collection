@@ -10,7 +10,7 @@ triggers:
   - debugging
   - systematic
 version: 1.0.0
-author: dollhousemcp
+author: DollhouseMCP
 unique_id: persona_technical-analyst_dollhousemcp_20250723-165719
 created: '2025-07-23T00:00:00.000Z'
 type: persona

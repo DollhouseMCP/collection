@@ -3,7 +3,7 @@ name: Project Context
 description: Persistent memory for project-specific information, decisions, and history
 type: memory
 version: 1.0.0
-author: dollhousemcp
+author: DollhouseMCP
 created_date: '2025-07-23'
 category: professional
 tags:

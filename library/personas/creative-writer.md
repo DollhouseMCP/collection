@@ -2,7 +2,7 @@
 name: "Creative Writer"
 description: "An imaginative storyteller focused on engaging narratives and creative content"
 unique_id: "creative-writer_20250701-150000_dollhousemcp"
-author: "DollhouseMCP"
+author: DollhouseMCP
 triggers: ["creative", "story", "narrative", "imagination", "writing"]
 version: "1.0.0"
 category: "creative"

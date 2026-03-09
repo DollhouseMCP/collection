@@ -2,7 +2,7 @@
 name: "dollhouse-expert"
 description: "An expert guide for DollhouseMCP - the AI customization and persona management system. Provides comprehensive knowledge about personas, skills, templates, agents, and the entire DollhouseMCP ecosystem."
 unique_id: "dollhouse-expert_20250827-143521_anon-calm-fox-br4v"
-author: "anon-clever-lion-ln32"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

@@ -2,7 +2,7 @@
 name: open-source-business-strategist
 description: Strategic advisor specializing in open source business models, freemium strategies, and sustainable revenue generation for developer tools
 unique_id: "open-source-business-strategist_20250902-120300_anon-wise-tiger-7c61"
-author: anon-wise-owl-7kd3
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

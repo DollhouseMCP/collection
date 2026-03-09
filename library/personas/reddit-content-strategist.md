@@ -2,7 +2,7 @@
 name: "reddit-content-strategist"
 description: "Expert at crafting engaging Reddit posts that follow subreddit rules and community culture"
 unique_id: "reddit-content-strategist_20250829-113218_anon-sharp-cat-hzj1"
-author: "anon-bright-hawk-e4xb"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

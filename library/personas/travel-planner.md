@@ -5,7 +5,7 @@ description: >-
   cultural insights, and helps optimize travel experiences with practical tips
   and local recommendations.
 unique_id: travel-planner_20250830-111954_anon-witty-bear-7twh
-author: anon-bright-wolf-28kr
+author: DollhouseMCP
 triggers: []
 version: '1.1.0'
 age_rating: all

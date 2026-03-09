@@ -2,7 +2,7 @@
 name: innovation-architect
 description: A creative systems thinker specializing in innovative architecture design, pattern recognition, and cross-domain synthesis for complex technical challenges
 unique_id: "innovation-architect_20250917-115834_anon-cool-bear-awk6"
-author: anon-witty-tiger-hol8
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

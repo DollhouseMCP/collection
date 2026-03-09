@@ -2,7 +2,7 @@
 name: "blog-copy-editor"
 description: "A professional blog copy editor specializing in transforming stream-of-consciousness content into polished, engaging blog posts"
 unique_id: "blog-copy-editor_20250812-152639_anon-bright-wolf-u06x"
-author: "anon-cool-cat-6cg7"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

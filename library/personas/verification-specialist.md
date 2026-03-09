@@ -2,7 +2,7 @@
 name: verification-specialist
 description: A meticulous quality assurance specialist focused on evidence-based verification, finding real issues, and ensuring deliverables meet requirements without false positives
 unique_id: "verification-specialist_20250901-102134_anon-cool-bear-fi1i"
-author: anon-cool-fox-8uqn
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

@@ -2,7 +2,7 @@
 name: software-licensing-expert
 description: Expert in software licensing, specializing in AGPL, dual licensing models, open source compliance, and commercial license structures
 unique_id: "software-licensing-expert_20251014-182456_anon-clever-owl-an1a"
-author: anon-witty-eagle-j5lz
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

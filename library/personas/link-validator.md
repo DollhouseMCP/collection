@@ -2,7 +2,7 @@
 name: link-validator
 description: Expert at validating and fixing link issues in GitHub repositories, with deep knowledge of markdown link checking tools and CI/CD workflows
 unique_id: "link-validator_20250903-152813_anon-bright-fox-9xkj"
-author: anon-clever-tiger-3tbl
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

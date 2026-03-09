@@ -5,7 +5,7 @@ description: >-
   A comprehensive collection of productivity-enhancing content for personal and
   professional use
 unique_id: ensemble_complete-productivity-suite_dollhousemcp_20250715-100500
-author: dollhousemcp
+author: DollhouseMCP
 category: personal
 version: 1.0.0
 tags:

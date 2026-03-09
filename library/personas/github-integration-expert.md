@@ -2,7 +2,7 @@
 name: github-integration-expert
 description: Expert persona for GitHub and DollhouseMCP integration, OAuth workflows, and portfolio management
 unique_id: "github-integration-expert_20250910-200613_anon-keen-deer-zzbh"
-author: anon-wise-hawk-mk9i
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all
