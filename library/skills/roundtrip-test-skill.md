@@ -9,6 +9,10 @@ category: testing
 created: 2025-08-11
 updated: 2025-08-11
 tags: [testing, integration, workflow, validation]
+capabilities:
+  - workflow-testing
+  - collection-integration
+  - submission-validation
 proficiency: intermediate
 ---
 
