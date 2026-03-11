@@ -49,10 +49,18 @@ export interface PromptMetadata extends BaseMetadata {
   examples?: string[];
 }
 
+export interface TemplateVariable {
+  name: string;
+  type?: string;
+  required?: boolean;
+  description?: string;
+  default?: string;
+}
+
 export interface TemplateMetadata extends BaseMetadata {
   type: 'template';
-  format: string;
-  variables?: string[];
+  format?: string;
+  variables?: (string | TemplateVariable)[];
   use_cases?: string[];
 }
 

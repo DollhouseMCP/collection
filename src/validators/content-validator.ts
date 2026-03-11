@@ -70,10 +70,21 @@ const PromptMetadataSchema = BaseMetadataSchema.extend({
   examples: z.array(z.string()).optional()
 }).passthrough();
 
+const TemplateVariableSchema = z.union([
+  z.string(),
+  z.object({
+    name: z.string(),
+    type: z.string().optional(),
+    required: z.boolean().optional(),
+    description: z.string().optional(),
+    default: z.string().optional()
+  }).passthrough()
+]);
+
 const TemplateMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('template'),
-  format: z.string(),
-  variables: z.array(z.string()).optional(),
+  format: z.string().optional(),
+  variables: z.array(TemplateVariableSchema).optional(),
   use_cases: z.array(z.string()).optional()
 }).passthrough();
 
