@@ -1,133 +1,101 @@
 ---
-name: Project Proposal Template
-description: Professional template for creating comprehensive project proposals
-type: template
-version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-15'
+name: "Project Proposal"
+description: "Professional template for creating comprehensive project proposals"
+type: "template"
+version: "2.0.0"
+author: "DollhouseMCP"
+created: "2025-07-15"
+category: "business"
+tags: ["business", "project-management", "proposals", "documentation"]
 unique_id: template_project-proposal_dollhousemcp_20250715-100300
-category: professional
-tags:
-  - business
-  - project-management
-  - proposals
-  - documentation
 variables:
-  - project_name
-  - client_name
-  - project_duration
-  - budget_range
-  - team_size
-  - key_deliverables
-format: markdown
-license: MIT
+  - { name: "project_name", type: "string", required: true, description: "Name of the proposed project" }
+  - { name: "client_name", type: "string", required: true, description: "Client or stakeholder name" }
+  - { name: "current_date", type: "string", required: false, description: "Date of the proposal" }
+  - { name: "author_name", type: "string", required: true, description: "Person preparing the proposal" }
+  - { name: "executive_summary", type: "string", required: false, description: "Concise overview of the project, its objectives, and expected outcomes (2-3 paragraphs)" }
+  - { name: "background", type: "string", required: false, description: "Context and need for this project, what problem it solves" }
+  - { name: "objectives", type: "string", required: false, description: "Pre-formatted numbered list of project objectives" }
+  - { name: "in_scope", type: "string", required: false, description: "Pre-formatted bullet list of what is included" }
+  - { name: "out_of_scope", type: "string", required: false, description: "Pre-formatted bullet list of what is not included" }
+  - { name: "key_deliverables", type: "string", required: false, description: "Pre-formatted list of project deliverables with descriptions" }
+  - { name: "project_duration", type: "string", required: true, description: "Total project duration (e.g. 10 weeks)" }
+  - { name: "timeline", type: "string", required: false, description: "Pre-formatted table rows: | Phase | Duration | Key Milestones |" }
+  - { name: "budget_range", type: "string", required: true, description: "Estimated budget range" }
+  - { name: "cost_breakdown", type: "string", required: false, description: "Pre-formatted budget breakdown with category and percentage" }
+  - { name: "team_size", type: "string", required: true, description: "Number of team members" }
+  - { name: "team_roles", type: "string", required: false, description: "Pre-formatted list of key roles and responsibilities" }
+  - { name: "risks", type: "string", required: false, description: "Pre-formatted table rows: | Risk | Probability | Impact | Mitigation |" }
+  - { name: "success_criteria", type: "string", required: false, description: "Pre-formatted numbered list of success criteria" }
+  - { name: "next_steps", type: "string", required: false, description: "Pre-formatted numbered list of next steps after proposal approval" }
+  - { name: "contact_info", type: "string", required: false, description: "Contact details for follow-up" }
 ---
+# Project Proposal: {{project_name}}
 
-# Project Proposal: {project_name}
-
-**Prepared for:** {client_name}  
-**Date:** {current_date}  
-**Prepared by:** {author_name}
+**Prepared for:** {{client_name}}
+**Date:** {{current_date}}
+**Prepared by:** {{author_name}}
 
 ## Executive Summary
 
-[Provide a concise overview of the project, its objectives, and expected outcomes. This should be 2-3 paragraphs that give stakeholders a clear understanding of what you're proposing.]
+{{executive_summary}}
 
 ## Project Overview
 
 ### Background
-[Describe the context and need for this project. What problem does it solve?]
+{{background}}
 
 ### Objectives
-1. [Primary objective]
-2. [Secondary objective]
-3. [Additional objectives as needed]
+{{objectives}}
 
 ### Scope
 **In Scope:**
-- [List what is included]
+{{in_scope}}
 
 **Out of Scope:**
-- [List what is not included]
+{{out_of_scope}}
 
 ## Deliverables
 
-{key_deliverables}
-
-### Phase 1: Planning (Weeks 1-2)
-- [ ] Requirements gathering
-- [ ] Stakeholder interviews
-- [ ] Technical specification
-
-### Phase 2: Development (Weeks 3-8)
-- [ ] Core functionality
-- [ ] Testing and QA
-- [ ] Documentation
-
-### Phase 3: Deployment (Weeks 9-10)
-- [ ] Production deployment
-- [ ] User training
-- [ ] Handover
+{{key_deliverables}}
 
 ## Timeline
 
-**Total Duration:** {project_duration}
+**Total Duration:** {{project_duration}}
 
 | Phase | Duration | Key Milestones |
 |-------|----------|----------------|
-| Planning | 2 weeks | Requirements complete |
-| Development | 6 weeks | MVP ready |
-| Deployment | 2 weeks | Go-live |
+{{timeline}}
 
 ## Budget
 
-**Estimated Range:** {budget_range}
+**Estimated Range:** {{budget_range}}
 
 ### Cost Breakdown
-- Personnel: 60%
-- Infrastructure: 20%
-- Tools & Licenses: 10%
-- Contingency: 10%
+{{cost_breakdown}}
 
 ## Team Structure
 
-**Team Size:** {team_size}
+**Team Size:** {{team_size}}
 
 ### Key Roles
-- **Project Manager**: Overall coordination and delivery
-- **Technical Lead**: Architecture and technical decisions
-- **Developers**: Implementation and testing
-- **QA Engineer**: Quality assurance and testing
+{{team_roles}}
 
 ## Risk Management
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Scope creep | Medium | High | Clear change management process |
-| Technical challenges | Low | Medium | Proof of concept phase |
-| Resource availability | Medium | Medium | Buffer in timeline |
+{{risks}}
 
 ## Success Criteria
 
-1. All deliverables completed on time
-2. Budget variance within 10%
-3. Client satisfaction score > 4.5/5
-4. Zero critical bugs in production
+{{success_criteria}}
 
 ## Next Steps
 
-1. Review and approve proposal
-2. Sign project agreement
-3. Kick-off meeting
-4. Begin requirements gathering
-
-## Appendix
-
-- [Technical specifications]
-- [Reference materials]
-- [Terms and conditions]
+{{next_steps}}
 
 ---
 
-**Contact Information**  
-[Your contact details]
+**Contact Information**
+{{contact_info}}
