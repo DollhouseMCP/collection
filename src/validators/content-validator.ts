@@ -204,9 +204,9 @@ export class ContentValidator {
       // Templates legitimately contain phrases like "Session ID:" as placeholder labels,
       // which trigger context_awareness patterns designed for prompt injection detection.
       const elementType = (parsed.data as Record<string, unknown>).type;
-      const templateSafePatterns = ['session_data_probe', 'developer_mode'];
+      const templateSafePatterns = new Set(['session_data_probe', 'developer_mode']);
       const filteredSecurityIssues = elementType === 'template'
-        ? securityIssues.filter(issue => !templateSafePatterns.includes(issue.pattern))
+        ? securityIssues.filter(issue => !templateSafePatterns.has(issue.pattern))
         : securityIssues;
 
       // Convert SecurityIssue to ValidationIssue format
