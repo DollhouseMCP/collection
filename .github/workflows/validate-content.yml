@@ -90,38 +90,67 @@ jobs:
           fi
       
       - name: Comment PR with results
-        if: failure() && github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.check-needed.outputs.skip != 'true'
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const report = fs.existsSync('validation-report.json') 
+            const passed = '${{ job.status }}' === 'success' || '${{ job.status }}' === 'Success';
+            const report = fs.existsSync('validation-report.json')
               ? JSON.parse(fs.readFileSync('validation-report.json', 'utf8'))
               : null;
-            
-            let body = '## 🔍 Content Validation Report\n\n';
-            body += '❌ **Validation Failed**\n\n';
-            
-            if (report) {
+
+            const icon = passed ? '✅' : '❌';
+            const status = passed ? 'Passed' : 'Failed';
+
+            let body = `## 🔍 Content Validation Report\n\n`;
+            body += `**Status**: ${icon} ${status}\n\n`;
+
+            if (!passed && report) {
               body += 'Please review and fix the issues found in your content.\n\n';
               body += '<details><summary>View detailed report</summary>\n\n';
-              
-              report.forEach(({file, report}) => {
-                if (!report.passed) {
+
+              report.forEach(({file, report: r}) => {
+                if (!r.passed) {
                   body += `### ${file}\n`;
-                  body += report.markdown + '\n';
+                  body += r.markdown + '\n';
                 }
               });
-              
-              body += '</details>';
+
+              body += '</details>\n';
+            } else if (passed) {
+              body += 'All content files passed validation.\n';
             }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+
+            body += '\n---\n<sub>🤖 Automated content check by DollhouseMCP Collection</sub>';
+
+            // Find existing comment to update instead of creating duplicates
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: body
+              issue_number: context.issue.number,
             });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Content Validation Report')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
       
       - name: Upload validation report
         if: always()

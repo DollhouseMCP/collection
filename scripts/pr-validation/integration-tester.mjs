@@ -525,6 +525,19 @@ class IntegrationTester {
       };
     }
 
+    // Warn (not fail) when category is not in the known-good set
+    const knownCategories = [
+      'creative', 'educational', 'gaming', 'personal', 'professional',
+      'business', 'technical', 'security', 'communication', 'testing'
+    ];
+    if (metadata.category && typeof metadata.category === 'string'
+        && !knownCategories.includes(metadata.category.toLowerCase())) {
+      fileResult.warnings = fileResult.warnings || [];
+      fileResult.warnings.push(
+        `Category "${metadata.category}" is not in the known set (${knownCategories.join(', ')}). Consider using a standard category for better discoverability.`
+      );
+    }
+
     return { passed: true, message: 'All enum values are valid' };
   }
 
@@ -657,8 +670,28 @@ class IntegrationTester {
       };
     }
 
-    return { 
-      passed: true, 
+    // Validate structured variable type fields from metadata
+    const metadata = fileResult.metadata;
+    if (metadata?.type === 'template' && Array.isArray(metadata.variables)) {
+      const knownTypes = ['string', 'number', 'boolean', 'array', 'object', 'date'];
+      for (const variable of metadata.variables) {
+        if (typeof variable === 'object' && variable.type && !knownTypes.includes(variable.type)) {
+          issues.push(`Variable "${variable.name || '(unnamed)'}" has unknown type "${variable.type}". Expected one of: ${knownTypes.join(', ')}`);
+        }
+      }
+    }
+
+    if (issues.length > 0) {
+      return {
+        passed: false,
+        message: `Template variable issues: ${issues.join('; ')}`,
+        severity: 'medium',
+        details: { issues, variables: templateVars }
+      };
+    }
+
+    return {
+      passed: true,
       message: `Found ${templateVars.length} valid template variables`,
       details: { variableCount: templateVars.length }
     };
