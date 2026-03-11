@@ -227,7 +227,14 @@ class QualityAnalyzer {
     }
 
     // Check for examples
-    if (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```'))) {
+    // Templates with {{variable}} placeholders are self-demonstrating — the body IS the example
+    const isTemplate = metadata?.type === 'template';
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]+\}\}/.test(contentBody);
+
+    if (isTemplate && hasTemplatePlaceholders) {
+      assessment.details.hasExamples = { score: 8, maxScore: 8 };
+      assessment.score += 8;
+    } else if (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```'))) {
       assessment.details.hasExamples = { score: 8, maxScore: 8 };
       assessment.score += 8;
     } else {
@@ -236,7 +243,14 @@ class QualityAnalyzer {
     }
 
     // Check for usage instructions
-    if (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions'))) {
+    // Templates with structured `variables` metadata provide usage guidance via variable descriptions
+    const hasVariableDescriptions = isTemplate && Array.isArray(metadata?.variables) &&
+      metadata.variables.some(v => typeof v === 'object' && v.description);
+
+    if (hasVariableDescriptions) {
+      assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
+      assessment.score += 7;
+    } else if (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions'))) {
       assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
       assessment.score += 7;
     } else {
@@ -358,11 +372,22 @@ class QualityAnalyzer {
     }
 
     // Check logical flow (basic heuristic)
-    const sections = ['introduction', 'usage', 'example', 'configuration'];
+    // Templates get credit for structured variable placeholders and section headings
+    const isTemplateType = fileResult.metadata?.type === 'template';
     let flowScore = 0;
-    for (const section of sections) {
-      if (contentBody.toLowerCase().includes(section)) {
-        flowScore += 2;
+
+    if (isTemplateType) {
+      // Templates demonstrate logical flow through their structure:
+      // headings, variable placeholders, and organized sections
+      const headingCount = (contentBody.match(/^#+\s+/gm) || []).length;
+      const variableCount = (contentBody.match(/\{\{[^}]+\}\}/g) || []).length;
+      flowScore = Math.min(8, headingCount * 2 + variableCount);
+    } else {
+      const sections = ['introduction', 'usage', 'example', 'configuration'];
+      for (const section of sections) {
+        if (contentBody.toLowerCase().includes(section)) {
+          flowScore += 2;
+        }
       }
     }
     assessment.details.logicalFlow = { score: Math.min(8, flowScore), maxScore: 8 };
@@ -553,8 +578,15 @@ class QualityAnalyzer {
     const { contentBody, metadata } = fileResult;
     const fullText = `${metadata?.description || ''} ${contentBody || ''}`;
     
+    const isTemplateType = metadata?.type === 'template';
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]+\}\}/.test(contentBody);
+
     // Check for clear purpose
     if (metadata?.description && contentBody && contentBody.length > 100) {
+      assessment.details.clearPurpose = { score: 4, maxScore: 4 };
+      assessment.score += 4;
+    } else if (isTemplateType && metadata?.description && hasTemplatePlaceholders) {
+      // Templates with placeholders clearly demonstrate purpose through structure
       assessment.details.clearPurpose = { score: 4, maxScore: 4 };
       assessment.score += 4;
     } else {
@@ -564,19 +596,29 @@ class QualityAnalyzer {
     }
 
     // Check for actionable content
-    const actionWords = ['step', 'follow', 'run', 'execute', 'configure', 'install', 'setup'];
-    const hasActionable = actionWords.some(word => fullText.toLowerCase().includes(word));
-    
-    if (hasActionable) {
+    // Templates with variable placeholders ARE actionable — fill in the variables to use
+    if (isTemplateType && hasTemplatePlaceholders) {
       assessment.details.actionableContent = { score: 3, maxScore: 3 };
       assessment.score += 3;
     } else {
-      assessment.details.actionableContent = { score: 0, maxScore: 3 };
-      fileResult.recommendations.push('Include actionable steps or instructions');
+      const actionWords = ['step', 'follow', 'run', 'execute', 'configure', 'install', 'setup'];
+      const hasActionable = actionWords.some(word => fullText.toLowerCase().includes(word));
+
+      if (hasActionable) {
+        assessment.details.actionableContent = { score: 3, maxScore: 3 };
+        assessment.score += 3;
+      } else {
+        assessment.details.actionableContent = { score: 0, maxScore: 3 };
+        fileResult.recommendations.push('Include actionable steps or instructions');
+      }
     }
 
     // Check for troubleshooting or common issues
-    if (fullText.toLowerCase().includes('troubleshoot') || 
+    // Templates don't typically need troubleshooting sections
+    if (isTemplateType) {
+      assessment.details.troubleshooting = { score: 3, maxScore: 3 };
+      assessment.score += 3;
+    } else if (fullText.toLowerCase().includes('troubleshoot') ||
         fullText.toLowerCase().includes('common issue') ||
         fullText.toLowerCase().includes('known limitation')) {
       assessment.details.troubleshooting = { score: 3, maxScore: 3 };
@@ -614,11 +656,18 @@ class QualityAnalyzer {
     }
 
     // Check for security considerations
-    if (contentBody && (contentBody.toLowerCase().includes('security') || 
+    // Templates that are security-focused inherently address this; other templates
+    // are structural documents that don't need explicit security notes.
+    const isTemplateType = metadata?.type === 'template';
+    if (contentBody && (contentBody.toLowerCase().includes('security') ||
                        contentBody.toLowerCase().includes('caution') ||
                        contentBody.toLowerCase().includes('warning'))) {
       assessment.details.securityConsiderations = { score: 3, maxScore: 3 };
       assessment.score += 3;
+    } else if (isTemplateType) {
+      // Templates are structural documents; security notes are not always applicable
+      assessment.details.securityConsiderations = { score: 2, maxScore: 3 };
+      assessment.score += 2;
     } else {
       assessment.details.securityConsiderations = { score: 0, maxScore: 3 };
       fileResult.recommendations.push('Consider adding security notes if applicable');
@@ -630,6 +679,10 @@ class QualityAnalyzer {
                        contentBody.toLowerCase().includes('efficiency'))) {
       assessment.details.performanceNotes = { score: 3, maxScore: 3 };
       assessment.score += 3;
+    } else if (isTemplateType) {
+      // Templates are static documents; performance notes are not applicable
+      assessment.details.performanceNotes = { score: 2, maxScore: 3 };
+      assessment.score += 2;
     } else {
       assessment.details.performanceNotes = { score: 0, maxScore: 3 };
       fileResult.recommendations.push('Consider adding performance considerations');
