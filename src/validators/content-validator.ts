@@ -199,8 +199,18 @@ export class ContentValidator {
 
       // Security scanning
       const securityIssues = scanForSecurityPatterns(content);
+
+      // Filter out false positives for template files.
+      // Templates legitimately contain phrases like "Session ID:" as placeholder labels,
+      // which trigger context_awareness patterns designed for prompt injection detection.
+      const elementType = (parsed.data as Record<string, unknown>).type;
+      const templateSafePatterns = ['session_data_probe', 'developer_mode'];
+      const filteredSecurityIssues = elementType === 'template'
+        ? securityIssues.filter(issue => !templateSafePatterns.includes(issue.pattern))
+        : securityIssues;
+
       // Convert SecurityIssue to ValidationIssue format
-      const convertedSecurityIssues = securityIssues.map(securityIssue => ({
+      const convertedSecurityIssues = filteredSecurityIssues.map(securityIssue => ({
         severity: securityIssue.severity,
         type: `security_${securityIssue.category}`,
         details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,
