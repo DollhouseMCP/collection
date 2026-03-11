@@ -203,38 +203,15 @@ class QualityAnalyzer {
     const { metadata, contentBody } = fileResult;
     
     // Check for description
-    if (metadata && metadata.description && metadata.description.trim()) {
-      assessment.details.hasDescription = { score: 5, maxScore: 5 };
-      assessment.score += 5;
-      
-      // Check description length
-      if (metadata.description.length >= 20) {
-        assessment.details.descriptionLength = { score: 5, maxScore: 5 };
-        assessment.score += 5;
-      } else {
-        assessment.details.descriptionLength = { score: 2, maxScore: 5 };
-        assessment.score += 2;
-        fileResult.recommendations.push('Expand the description to be more detailed (minimum 20 characters)');
-      }
-    } else {
-      assessment.details.hasDescription = { score: 0, maxScore: 5 };
-      fileResult.issues.push({
-        category: 'documentation',
-        severity: 'high',
-        message: 'Missing or empty description',
-        suggestion: 'Add a clear, descriptive summary of the element\'s purpose'
-      });
-    }
+    this._scoreDescription(metadata, assessment, fileResult);
 
     // Check for examples
     // Templates with {{variable}} placeholders are self-demonstrating — the body IS the example
     const isTemplate = metadata?.type === 'template';
     const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
 
-    if (isTemplate && hasTemplatePlaceholders) {
-      assessment.details.hasExamples = { score: 8, maxScore: 8 };
-      assessment.score += 8;
-    } else if (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```'))) {
+    if ((isTemplate && hasTemplatePlaceholders) ||
+        (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```')))) {
       assessment.details.hasExamples = { score: 8, maxScore: 8 };
       assessment.score += 8;
     } else {
@@ -247,10 +224,8 @@ class QualityAnalyzer {
     const hasVariableDescriptions = isTemplate && Array.isArray(metadata?.variables) &&
       metadata.variables.some(v => typeof v === 'object' && v.description);
 
-    if (hasVariableDescriptions) {
-      assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
-      assessment.score += 7;
-    } else if (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions'))) {
+    if (hasVariableDescriptions ||
+        (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions')))) {
       assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
       assessment.score += 7;
     } else {
@@ -260,6 +235,29 @@ class QualityAnalyzer {
     }
 
     fileResult.metrics.documentation = assessment;
+  }
+
+  /** Score the description sub-metric for documentation assessment */
+  _scoreDescription(metadata, assessment, fileResult) {
+    if (metadata?.description?.trim()) {
+      assessment.details.hasDescription = { score: 5, maxScore: 5 };
+      assessment.score += 5;
+
+      const lengthScore = metadata.description.length >= 20 ? 5 : 2;
+      assessment.details.descriptionLength = { score: lengthScore, maxScore: 5 };
+      assessment.score += lengthScore;
+      if (lengthScore < 5) {
+        fileResult.recommendations.push('Expand the description to be more detailed (minimum 20 characters)');
+      }
+    } else {
+      assessment.details.hasDescription = { score: 0, maxScore: 5 };
+      fileResult.issues.push({
+        category: 'documentation',
+        severity: 'high',
+        message: 'Missing or empty description',
+        suggestion: 'Add a clear, descriptive summary of the element\'s purpose'
+      });
+    }
   }
 
   /**
@@ -582,11 +580,8 @@ class QualityAnalyzer {
     const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
 
     // Check for clear purpose
-    if (metadata?.description && contentBody && contentBody.length > 100) {
-      assessment.details.clearPurpose = { score: 4, maxScore: 4 };
-      assessment.score += 4;
-    } else if (isTemplateType && metadata?.description && hasTemplatePlaceholders) {
-      // Templates with placeholders clearly demonstrate purpose through structure
+    if ((metadata?.description && contentBody && contentBody.length > 100) ||
+        (isTemplateType && metadata?.description && hasTemplatePlaceholders)) {
       assessment.details.clearPurpose = { score: 4, maxScore: 4 };
       assessment.score += 4;
     } else {
@@ -615,12 +610,11 @@ class QualityAnalyzer {
 
     // Check for troubleshooting or common issues
     // Templates don't typically need troubleshooting sections
-    if (isTemplateType) {
-      assessment.details.troubleshooting = { score: 3, maxScore: 3 };
-      assessment.score += 3;
-    } else if (fullText.toLowerCase().includes('troubleshoot') ||
-        fullText.toLowerCase().includes('common issue') ||
-        fullText.toLowerCase().includes('known limitation')) {
+    const lowerText = fullText.toLowerCase();
+    if (isTemplateType ||
+        lowerText.includes('troubleshoot') ||
+        lowerText.includes('common issue') ||
+        lowerText.includes('known limitation')) {
       assessment.details.troubleshooting = { score: 3, maxScore: 3 };
       assessment.score += 3;
     } else {

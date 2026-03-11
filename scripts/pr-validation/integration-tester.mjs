@@ -430,22 +430,24 @@ class IntegrationTester {
 
     const errors = [];
 
+    const typeValidators = {
+      string: v => typeof v === 'string',
+      array: v => Array.isArray(v),
+      object: v => typeof v === 'object' && !Array.isArray(v)
+    };
+
     for (const check of typeChecks) {
       const value = metadata[check.field];
-      
-      if (check.required && (value === undefined || value === null)) {
+
+      if (check.required && value == null) {
         errors.push(`${check.field} is required but missing`);
         continue;
       }
 
-      if (value !== undefined && value !== null) {
-        if (check.type === 'string' && typeof value !== 'string') {
-          errors.push(`${check.field} should be a string, got ${typeof value}`);
-        } else if (check.type === 'array' && !Array.isArray(value)) {
-          errors.push(`${check.field} should be an array, got ${typeof value}`);
-        } else if (check.type === 'object' && (typeof value !== 'object' || Array.isArray(value))) {
-          errors.push(`${check.field} should be an object, got ${Array.isArray(value) ? 'array' : typeof value}`);
-        }
+      const validator = typeValidators[check.type];
+      if (value != null && validator && !validator(value)) {
+        const actual = Array.isArray(value) ? 'array' : typeof value;
+        errors.push(`${check.field} should be a ${check.type}, got ${actual}`);
       }
     }
 
@@ -608,8 +610,8 @@ class IntegrationTester {
     const nameSegment = idParts.length >= 2 ? idParts[1] : metadata.unique_id;
 
     // Check exact match, containment, or word overlap between filename and name segment
-    const fileWords = new Set(fileName.split('-').filter(w => w));
-    const nameWords = new Set(nameSegment.split('-').filter(w => w));
+    const fileWords = new Set(fileName.split('-').filter(Boolean));
+    const nameWords = new Set(nameSegment.split('-').filter(Boolean));
     const overlap = [...fileWords].filter(w => nameWords.has(w)).length;
     const overlapRatio = fileWords.size > 0 ? overlap / fileWords.size : 0;
 
@@ -641,45 +643,14 @@ class IntegrationTester {
 
     // Check for template variables like {{variable}} or {variable}
     const templateVars = contentBody.match(/\{\{?([^}]+)\}?\}/g);
-    
+
     if (!templateVars) {
       return { passed: true, message: 'No template variables found' };
     }
 
     const issues = [];
-    
-    for (const variable of templateVars) {
-      // Check for malformed variables — look for HTML injection patterns,
-      // not false positives from words like "description" containing "script"
-      if (variable.includes('<') || variable.includes('>') || /<script/i.test(variable)) {
-        issues.push(`Potentially malicious template variable: ${variable}`);
-      }
-      
-      // Check for unclosed variables
-      if (!variable.endsWith('}')) {
-        issues.push(`Malformed template variable: ${variable}`);
-      }
-    }
-
-    if (issues.length > 0) {
-      return {
-        passed: false,
-        message: `Template variable issues: ${issues.join('; ')}`,
-        severity: 'medium',
-        details: { issues, variables: templateVars }
-      };
-    }
-
-    // Validate structured variable type fields from metadata
-    const metadata = fileResult.metadata;
-    if (metadata?.type === 'template' && Array.isArray(metadata.variables)) {
-      const knownTypes = ['string', 'number', 'boolean', 'array', 'object', 'date'];
-      for (const variable of metadata.variables) {
-        if (typeof variable === 'object' && variable.type && !knownTypes.includes(variable.type)) {
-          issues.push(`Variable "${variable.name || '(unnamed)'}" has unknown type "${variable.type}". Expected one of: ${knownTypes.join(', ')}`);
-        }
-      }
-    }
+    this._checkTemplateVarSafety(templateVars, issues);
+    this._checkTemplateVarTypes(fileResult.metadata, issues);
 
     if (issues.length > 0) {
       return {
@@ -695,6 +666,30 @@ class IntegrationTester {
       message: `Found ${templateVars.length} valid template variables`,
       details: { variableCount: templateVars.length }
     };
+  }
+
+  /** Check template variables for HTML injection and malformation */
+  _checkTemplateVarSafety(templateVars, issues) {
+    for (const variable of templateVars) {
+      if (variable.includes('<') || variable.includes('>') || /<script/i.test(variable)) {
+        issues.push(`Potentially malicious template variable: ${variable}`);
+      }
+      if (!variable.endsWith('}')) {
+        issues.push(`Malformed template variable: ${variable}`);
+      }
+    }
+  }
+
+  /** Validate structured variable type fields from metadata */
+  _checkTemplateVarTypes(metadata, issues) {
+    if (metadata?.type !== 'template' || !Array.isArray(metadata.variables)) return;
+
+    const knownTypes = new Set(['string', 'number', 'boolean', 'array', 'object', 'date']);
+    for (const variable of metadata.variables) {
+      if (typeof variable === 'object' && variable.type && !knownTypes.has(variable.type)) {
+        issues.push(`Variable "${variable.name || '(unnamed)'}" has unknown type "${variable.type}". Expected one of: ${[...knownTypes].join(', ')}`);
+      }
+    }
   }
 
   async test_FUNCTIONAL_VALIDATION_linksResolvable(fileResult, _content) {
