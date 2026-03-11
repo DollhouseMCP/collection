@@ -759,7 +759,7 @@ class IntegrationTester {
 
     // Templates with {{variable}} placeholders are self-demonstrating —
     // the body IS the usage example showing how the template renders.
-    if (fileResult.metadata?.type === 'template' && /\{\{[^}]+\}\}/.test(contentBody)) {
+    if (fileResult.metadata?.type === 'template' && /\{\{[^}]{1,500}\}\}/.test(contentBody)) {
       return { passed: true, message: 'Template body contains variable placeholders (self-demonstrating)' };
     }
 

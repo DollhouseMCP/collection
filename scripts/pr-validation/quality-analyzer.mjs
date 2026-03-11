@@ -229,7 +229,7 @@ class QualityAnalyzer {
     // Check for examples
     // Templates with {{variable}} placeholders are self-demonstrating — the body IS the example
     const isTemplate = metadata?.type === 'template';
-    const hasTemplatePlaceholders = contentBody && /\{\{[^}]+\}\}/.test(contentBody);
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
 
     if (isTemplate && hasTemplatePlaceholders) {
       assessment.details.hasExamples = { score: 8, maxScore: 8 };
@@ -380,7 +380,7 @@ class QualityAnalyzer {
       // Templates demonstrate logical flow through their structure:
       // headings, variable placeholders, and organized sections
       const headingCount = (contentBody.match(/^#+\s+/gm) || []).length;
-      const variableCount = (contentBody.match(/\{\{[^}]+\}\}/g) || []).length;
+      const variableCount = (contentBody.match(/\{\{[^}]{1,500}\}\}/g) || []).length;
       flowScore = Math.min(8, headingCount * 2 + variableCount);
     } else {
       const sections = ['introduction', 'usage', 'example', 'configuration'];
@@ -579,7 +579,7 @@ class QualityAnalyzer {
     const fullText = `${metadata?.description || ''} ${contentBody || ''}`;
     
     const isTemplateType = metadata?.type === 'template';
-    const hasTemplatePlaceholders = contentBody && /\{\{[^}]+\}\}/.test(contentBody);
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
 
     // Check for clear purpose
     if (metadata?.description && contentBody && contentBody.length > 100) {
