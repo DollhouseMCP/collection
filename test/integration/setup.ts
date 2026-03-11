@@ -262,15 +262,15 @@ name: Test Template for Integration
 description: A test template used for integration testing
 type: template
 category: test-category
-version: 1.0.0
+version: 2.0.0
 tags:
   - test
   - integration
   - template
 variables:
-  - test_name
-  - test_scenario
-  - expected_result
+  - { name: "test_name", type: "string", required: true, description: "Name of the test" }
+  - { name: "test_scenario", type: "string", required: true, description: "Test scenario description" }
+  - { name: "expected_result", type: "string", required: false, description: "Expected outcome" }
 author: Test Suite
 created_at: ${new Date().toISOString()}
 updated_at: ${new Date().toISOString()}
