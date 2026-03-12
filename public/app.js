@@ -1402,8 +1402,10 @@
 
         // r → toggle raw/rendered
         if (e.key === 'r' || e.key === 'R') {
+          console.log('[kb] r pressed, modalOpen:', modalOpen, 'inInput:', inInput, 'activeEl:', document.activeElement?.tagName, document.activeElement?.id, document.activeElement?.className);
           const renderBtn = modal.querySelector('#btn-render');
-          if (renderBtn && renderBtn.onclick) { e.preventDefault(); renderBtn.onclick(); }
+          console.log('[kb] renderBtn:', renderBtn, 'onclick:', typeof renderBtn?.onclick);
+          if (renderBtn) { e.preventDefault(); if (renderBtn.onclick) renderBtn.onclick(); }
           return;
         }
 
