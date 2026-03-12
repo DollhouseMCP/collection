@@ -939,6 +939,7 @@
     }
 
     const { frontmatter: fm, body } = parseFrontmatter(content);
+    console.log('[renderDetailView]', { name: fm.name, type, fmKeys: Object.keys(fm), hasBody: !!body, bodyLen: body?.length, created: fm.created, author: fm.author });
     let html = '';
 
     // ── Created date — prominent header line ──
@@ -1402,9 +1403,7 @@
 
         // r → toggle raw/rendered
         if (e.key === 'r' || e.key === 'R') {
-          console.log('[kb] r pressed, modalOpen:', modalOpen, 'inInput:', inInput, 'activeEl:', document.activeElement?.tagName, document.activeElement?.id, document.activeElement?.className);
           const renderBtn = modal.querySelector('#btn-render');
-          console.log('[kb] renderBtn:', renderBtn, 'onclick:', typeof renderBtn?.onclick);
           if (renderBtn) { e.preventDefault(); if (renderBtn.onclick) renderBtn.onclick(); }
           return;
         }
