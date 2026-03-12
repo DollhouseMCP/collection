@@ -1401,9 +1401,9 @@
         let target = -1;
 
         // r → toggle raw/rendered
-        if (e.key === 'r') {
+        if (e.key === 'r' || e.key === 'R') {
           const renderBtn = modal.querySelector('#btn-render');
-          if (renderBtn) { e.preventDefault(); renderBtn.click(); }
+          if (renderBtn && renderBtn.onclick) { e.preventDefault(); renderBtn.onclick(); }
           return;
         }
 
