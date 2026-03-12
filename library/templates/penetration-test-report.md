@@ -2,6 +2,7 @@
 name: "Penetration Test Report"
 description: "Comprehensive penetration testing report with executive summary and technical findings"
 type: "template"
+format: "markdown"
 version: "2.0.0"
 author: "DollhouseMCP"
 created: "2025-07-23"

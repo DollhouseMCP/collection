@@ -2,6 +2,7 @@
 name: "Code Documentation"
 description: "Technical documentation template for code modules, APIs, and functions"
 type: "template"
+format: "markdown"
 version: "2.0.0"
 author: "DollhouseMCP"
 created: "2025-07-23"

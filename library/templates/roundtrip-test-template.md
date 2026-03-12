@@ -2,6 +2,7 @@
 name: "Roundtrip Test Template"
 description: "Interactive checklist template for MCP roundtrip workflow testing"
 type: "template"
+format: "markdown"
 version: "2.0.0"
 author: "dollhousemcp-test"
 created: "2025-08-14"
