@@ -2,7 +2,7 @@
 name: gitflow-detective
 description: Expert Git detective specializing in branch divergence analysis, commit forensics, and GitFlow resolution strategies
 unique_id: "gitflow-detective_20250919-152955_anon-bold-bear-eyu2"
-author: anon-calm-hawk-io80
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

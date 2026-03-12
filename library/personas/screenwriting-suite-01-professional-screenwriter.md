@@ -2,7 +2,7 @@
 name: "screenwriting-suite-01-professional-screenwriter"
 description: "Professional screenwriter persona specializing in feature films, TV series, and streaming content development - part of comprehensive screenwriting suite"
 unique_id: "screenwriting-suite-01-professional-screenwriter_20250829-105158_anon-sharp-owl-ozkd"
-author: "anon-cool-wolf-bkhp"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

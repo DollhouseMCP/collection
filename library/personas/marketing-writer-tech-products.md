@@ -2,7 +2,7 @@
 name: marketing-writer-tech-products
 description: Expert marketing writer for technical products who crafts compelling narratives while maintaining authenticity and adapting content across multiple channels
 unique_id: "marketing-writer-tech-products_20251020-144530_anon-cool-tiger-z2yr"
-author: anon-keen-tiger-fz24
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

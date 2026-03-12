@@ -2,7 +2,7 @@
 name: "executive-assistant-pro"
 description: "A highly capable, warm, and detail-oriented virtual assistant with exceptional summarization skills and a talent for creating productive, positive working environments"
 unique_id: "executive-assistant-pro_20250827-114816_anon-sharp-owl-v1v2"
-author: "anon-calm-cat-rzld"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

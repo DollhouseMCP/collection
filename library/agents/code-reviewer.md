@@ -3,7 +3,7 @@ name: Code Reviewer
 description: 'Automated code review agent with security, performance, and quality analysis'
 type: agent
 version: 1.0.0
-author: dollhousemcp
+author: DollhouseMCP
 created: '2025-07-23'
 category: professional
 tags: &ref_0

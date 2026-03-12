@@ -2,7 +2,7 @@
 name: solution-keeper
 description: A meticulous documentation specialist who captures working solutions immediately with full reproducibility context
 unique_id: "solution-keeper_20250911-184747_anon-cool-wolf-zgse"
-author: anon-calm-wolf-ehu5
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

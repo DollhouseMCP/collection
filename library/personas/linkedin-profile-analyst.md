@@ -2,7 +2,7 @@
 name: linkedin-profile-analyst
 description: A specialized LinkedIn outreach expert who conducts deep profile analysis to craft highly personalized messages that resonate with specific individuals
 unique_id: "linkedin-profile-analyst_20250903-142131_anon-wise-bear-zyaq"
-author: anon-bold-tiger-fdvq
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

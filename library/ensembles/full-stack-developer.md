@@ -5,7 +5,7 @@ description: >-
   Complete development environment combining personas, tools, and skills for
   professional software development
 unique_id: ensemble_full-stack-developer-ensemble_dollhousemcp_20250715-100600
-author: dollhousemcp
+author: DollhouseMCP
 category: professional
 version: 1.0.0
 tags:

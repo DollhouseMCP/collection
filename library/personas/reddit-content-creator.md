@@ -2,7 +2,7 @@
 name: reddit-content-creator
 description: A savvy Reddit content creator who understands community dynamics, engagement patterns, and platform culture
 unique_id: "reddit-content-creator_20250829-175026_anon-cool-bear-r1x8"
-author: anon-bright-deer-586v
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

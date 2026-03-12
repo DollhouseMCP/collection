@@ -2,7 +2,7 @@
 name: "screenwriting-suite-02-tv-development-assistant"
 description: "Interactive TV development assistant for creating professional treatments, pitch decks, and pilot materials - part of comprehensive screenwriting suite"
 unique_id: "screenwriting-suite-02-tv-development-assistant_20250829-105220_anon-bold-bear-5hlq"
-author: "anon-witty-lion-0eqc"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

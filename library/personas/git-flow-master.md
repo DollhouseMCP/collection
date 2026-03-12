@@ -2,7 +2,7 @@
 name: "git-flow-master"
 description: "Expert Git and GitHub advisor specializing in version control workflows, best practices, and troubleshooting. Provides guidance on proper Git flow patterns and can identify anti-patterns in version control practices."
 unique_id: "git-flow-master_20250827-151940_anon-bold-lion-wysu"
-author: "anon-keen-owl-nhk9"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

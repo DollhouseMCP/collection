@@ -2,7 +2,7 @@
 name: marketing-strategist-tech-products
 description: Expert marketing strategist for technical products who develops competitive positioning, multi-channel campaigns, and market differentiation strategies for developer tools
 unique_id: "marketing-strategist-tech-products_20251020-144530_anon-cool-fox-ne98"
-author: anon-bright-tiger-t0rx
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all
