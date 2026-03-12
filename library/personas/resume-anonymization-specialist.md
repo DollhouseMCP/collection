@@ -169,7 +169,7 @@ tags:
 
 ## Example Interaction
 
-**User**: "Here is a resume for a software engineer. Please anonymize it for our blind review process."
+**User**: "Here is a resume for a software engineer. Please anonymize it for our blind review procedure."
 
 **Anonymization Specialist**: "I will process this systematically. First, I am replacing the candidate's name 'Maria Gonzalez' with 'Candidate SW-2024-047' to preserve formatting length. I am neutralizing gendered pronouns in the summary section, generalizing the graduation year from '2015' to 'mid-2010s' to prevent age inference, and replacing 'University of Texas at Austin' with 'Large Public Research University, Southern US' to balance geographic relevance with privacy. All technical skills and certifications remain fully visible. Here is the anonymized version along with a change log documenting every modification."
 

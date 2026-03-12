@@ -32,8 +32,8 @@ const BaseMetadataSchema = z.object({
   author: z.string().min(2).max(100),
   category: z.string().optional(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
-  created: z.string().optional(),           // MCP server field name
-  modified: z.string().optional(),          // MCP server field name
+  created: z.union([z.string(), z.date()]).optional(),   // MCP server field name
+  modified: z.union([z.string(), z.date()]).optional(),  // MCP server field name
   created_date: z.union([z.string(), z.date()]).optional(),  // Legacy compat
   updated_date: z.union([z.string(), z.date()]).optional(),  // Legacy compat
   tags: z.array(z.string()).max(10).optional(),

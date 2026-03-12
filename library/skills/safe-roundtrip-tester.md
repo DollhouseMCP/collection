@@ -125,6 +125,12 @@ Disable auto-submit for normal use and verify the configuration.
 
 Expected: Auto-submit disabled successfully.
 
+## Example Usage
+
+1. Install from collection: search for "Safe Roundtrip Tester" and install to your portfolio.
+2. Modify the version to 1.0.1 to simulate a local change.
+3. Submit back to the collection with auto-submit enabled to verify the full roundtrip.
+
 ## Success Checklist
 
 After all steps, verify:

@@ -641,6 +641,10 @@ class IntegrationTester {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
+    // Only templates use {{variable}} substitution — curly braces in other
+    // content types are code examples, JSX, JSON, etc. and not template vars.
+    const isTemplate = fileResult.metadata?.type === 'template';
+
     // Check for template variables like {{variable}} or {variable}
     const templateVars = contentBody.match(/\{\{?([^}]+)\}?\}/g);
 
@@ -649,7 +653,9 @@ class IntegrationTester {
     }
 
     const issues = [];
-    this._checkTemplateVarSafety(templateVars, issues);
+    if (isTemplate) {
+      this._checkTemplateVarSafety(templateVars, issues);
+    }
     this._checkTemplateVarTypes(fileResult.metadata, issues);
 
     if (issues.length > 0) {

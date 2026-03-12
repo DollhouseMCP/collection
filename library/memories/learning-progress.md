@@ -102,7 +102,7 @@ skills_matrix:
           fastapi: "learning"
           pandas: "proficient"
       
-    javascript:
+    js:
       level: "beginner"
       hours_practiced: 32
       projects_completed: 2

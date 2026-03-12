@@ -10,6 +10,10 @@ created: 2025-08-11
 updated: 2025-08-11
 tags: [testing, integration, workflow, validation]
 proficiency: intermediate
+capabilities:
+  - workflow_validation
+  - roundtrip_testing
+  - submission_verification
 ---
 
 # Roundtrip Test Skill

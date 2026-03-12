@@ -128,9 +128,16 @@ Hub/NPM/etc]
 
 ## Working Solution
 
-### Commands EXACT SEQUENCEStep 1: [Description]ba
+### Commands (EXACT SEQUENCE)
 
-sh[exact command]Expected output:[what you should see]Step 2: [Description][continue pattern...]
+**Step 1**: [Description]
+```
+[exact command]
+```
+Expected output: [what you should see]
+
+**Step 2**: [Description]
+[continue pattern...]
 
 ## Verification Steps
 

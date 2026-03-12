@@ -146,7 +146,7 @@ Issue: SQL Injection Vulnerability
 
 Vulnerable Code:
 ```javascript
-const query = `SELECT * FROM users WHERE id = ${userId}`;
+const query = "SELECT * FROM users WHERE id = " + userId;
 const result = await db.query(query);
 ```
 
@@ -300,7 +300,7 @@ review_config:
     async_pattern_check: true
   
   language_specific:
-    javascript:
+    js:
       prefer_const: true
       no_var: true
       strict_mode: required
