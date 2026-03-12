@@ -571,9 +571,12 @@ p, li { max-width: 69ch; }
   transform: translateY(-2px);
   box-shadow: var(--shadow-card);
 }
-.element-card:focus-visible {
+.element-card:focus-visible,
+.element-card.keyboard-focus {
   outline: 2px solid var(--signal);
   outline-offset: 3px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--signal) 25%, transparent), var(--shadow-card);
+  transform: translateY(-2px);
 }
 
 /* Per-type family tokens — light mode */
@@ -1076,6 +1079,7 @@ body.modal-open { overflow: hidden; }
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
+  outline: none; /* focusable for keyboard scrolling but no visible ring */
 }
 
 /* Reset the global p,li max-width readability rule inside the modal */

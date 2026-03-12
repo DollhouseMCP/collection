@@ -33,6 +33,7 @@
   let openElementIndex = -1;   // index of currently open modal element in filteredElements
   let modalShowRaw = false;    // sticky raw/rendered toggle — persists across prev/next navigation
   let activeTopic = 'all';
+  let highlightedCardIndex = -1; // keyboard-highlighted card in the grid
 
   // Normalize plural index keys → singular CSS/display type names
   const SINGULAR_TYPE = {
@@ -295,6 +296,7 @@
     if (!grid) return;
 
     filteredElements = sortElements(filteredElements);
+    highlightedCardIndex = -1; // reset grid keyboard selection on re-render
 
     const total = filteredElements.length;
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -601,9 +603,10 @@
     // Show modal with loading state
     const body = document.getElementById('modal-body');
     body.innerHTML = '<p class="loading">Loading content…</p>';
+    body.tabIndex = -1; // make scrollable body focusable for keyboard scrolling
     modal.showModal();
     document.body.classList.add('modal-open');
-    modal.querySelector('.modal-close').focus();
+    body.focus(); // focus body so arrow/Page/Home/End keys scroll content natively
 
     // Fetch full .md file (or use cached local content)
     try {
@@ -1011,6 +1014,42 @@
     document.body.classList.remove('modal-open');
   }
 
+  // ── Grid keyboard navigation ───────────────────────────────────────────────
+
+  function highlightCard(index) {
+    const grid = document.getElementById('elements-grid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.element-card');
+    // Clear previous highlight
+    cards.forEach(c => c.classList.remove('keyboard-focus'));
+    if (index < 0 || index >= cards.length) return;
+    highlightedCardIndex = index;
+    const card = cards[index];
+    card.classList.add('keyboard-focus');
+    card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function getVisibleCardCount() {
+    const grid = document.getElementById('elements-grid');
+    return grid ? grid.querySelectorAll('.element-card').length : 0;
+  }
+
+  function openHighlightedCard() {
+    const grid = document.getElementById('elements-grid');
+    if (!grid || highlightedCardIndex < 0) return;
+    const card = grid.querySelectorAll('.element-card')[highlightedCardIndex];
+    if (!card) return;
+    const idx = Number.parseInt(card.dataset.index, 10);
+    const el = filteredElements[idx];
+    if (!el) return;
+    const isListView = grid.dataset.view === 'list';
+    if (isListView) {
+      toggleInlineExpand(card, el);
+    } else if (!card.dataset.unavailable) {
+      openModal(el, idx);
+    }
+  }
+
   // ── Actions ────────────────────────────────────────────────────────────────
 
   async function copyToClipboard(text, btn) {
@@ -1333,36 +1372,30 @@
 
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        closeModal();
-        return;
-      }
+      const inInput = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
       const modal = document.getElementById('element-modal');
       const modalOpen = modal?.open;
-      // Keyboard navigation when modal is open
-      if (modalOpen && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
-        const PAGE_SKIP = 10;
+
+      // ── Escape: close modal or clear search ──
+      if (e.key === 'Escape') {
+        if (modalOpen) { closeModal(); return; }
+        if (inInput && searchInput) { searchInput.blur(); return; }
+        return;
+      }
+
+      // ── Modal-open shortcuts ──
+      if (modalOpen && !inInput) {
         const last = filteredElements.length - 1;
         let target = -1;
 
+        // Arrow up/down, PageUp/PageDown, Home/End → scroll modal body (don't intercept)
+        // Left/Right and j/k → navigate between elements
         switch (e.key) {
-          case 'ArrowLeft': case 'ArrowUp':
+          case 'ArrowLeft':
             if (openElementIndex > 0) target = openElementIndex - 1;
             break;
-          case 'ArrowRight': case 'ArrowDown':
+          case 'ArrowRight':
             if (openElementIndex < last) target = openElementIndex + 1;
-            break;
-          case 'PageUp':
-            target = Math.max(0, openElementIndex - PAGE_SKIP);
-            break;
-          case 'PageDown':
-            target = Math.min(last, openElementIndex + PAGE_SKIP);
-            break;
-          case 'Home':
-            target = 0;
-            break;
-          case 'End':
-            target = last;
             break;
           case 'j':
             if (openElementIndex < last) target = openElementIndex + 1;
@@ -1377,11 +1410,50 @@
           openModal(filteredElements[target], target);
           return;
         }
+        return; // let all other keys (arrows, Page*, Home, End) do native modal scrolling
       }
-      // Press / to focus search (unless already in an input)
-      if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+
+      // ── Grid navigation (modal closed) ──
+      if (!inInput) {
+        const cardCount = getVisibleCardCount();
+        if (!cardCount) return;
+
+        const last = cardCount - 1;
+        let target = highlightedCardIndex;
+
+        switch (e.key) {
+          case 'j': case 'ArrowDown':
+            target = Math.min(last, target + 1);
+            break;
+          case 'k': case 'ArrowUp':
+            target = Math.max(0, target <= 0 ? 0 : target - 1);
+            break;
+          case 'Home':
+            target = 0;
+            break;
+          case 'End':
+            target = last;
+            break;
+          case 'PageDown':
+            target = Math.min(last, target + 10);
+            break;
+          case 'PageUp':
+            target = Math.max(0, target - 10);
+            break;
+          case 'Enter': case ' ':
+            if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
+            return;
+          case '/':
+            e.preventDefault();
+            searchInput?.focus();
+            return;
+          default:
+            return;
+        }
+
         e.preventDefault();
-        searchInput?.focus();
+        highlightCard(target);
+        return;
       }
     });
 
