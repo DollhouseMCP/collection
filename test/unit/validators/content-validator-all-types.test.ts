@@ -220,8 +220,8 @@ Context: {context}
   });
 
   describe('Template validation', () => {
-    it('should validate a template with bare-string variables (legacy format)', async () => {
-      const validTemplate = `---
+    it('should reject a template with bare-string variables (no longer supported)', async () => {
+      const legacyTemplate = `---
 unique_id: test-template-001
 name: Project README Template
 description: A comprehensive template for project documentation
@@ -231,47 +231,33 @@ tags:
   - documentation
   - readme
 author: Test Author
-created_date: 2024-01-01T00:00:00Z
-updated_date: 2024-01-01T00:00:00Z
 category: professional
-format: "markdown"
 variables:
   - "project_name"
   - "description"
   - "installation_steps"
-use_cases:
-  - "Open source projects"
-  - "Internal documentation"
 ---
 
-# {project_name}
+# {{project_name}}
 
-{description}
+{{description}}
 
 ## Installation
 
-{installation_steps}
+{{installation_steps}}
 
 ## Usage
 
 [Add usage instructions here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## License
-
-[Add license information here]
 `;
 
-      const testFile = join(testDir, 'valid-template.md');
-      writeFileSync(testFile, validTemplate);
+      const testFile = join(testDir, 'legacy-template.md');
+      writeFileSync(testFile, legacyTemplate);
 
       const result = await validator.validateContent(testFile);
 
-      expect(result.passed).toBe(true);
-      expect(result.issues).toHaveLength(0);
+      expect(result.passed).toBe(false);
+      expect(result.issues.some(i => i.type === 'invalid_metadata')).toBe(true);
     });
 
     it('should validate a template with structured variable declarations', async () => {
