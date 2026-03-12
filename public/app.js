@@ -1034,6 +1034,16 @@
     return grid ? grid.querySelectorAll('.element-card').length : 0;
   }
 
+  function getGridColumns() {
+    const grid = document.getElementById('elements-grid');
+    if (!grid) return 1;
+    // For list view, it's always a single column
+    if (grid.dataset.view === 'list') return 1;
+    // Read actual computed column count from the CSS grid
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    return Math.max(1, cols);
+  }
+
   function openHighlightedCard() {
     const grid = document.getElementById('elements-grid');
     if (!grid || highlightedCardIndex < 0) return;
@@ -1419,14 +1429,21 @@
         if (!cardCount) return;
 
         const last = cardCount - 1;
+        const cols = getGridColumns();
         let target = highlightedCardIndex;
 
         switch (e.key) {
-          case 'j': case 'ArrowDown':
+          case 'ArrowRight':
             target = Math.min(last, target + 1);
             break;
-          case 'k': case 'ArrowUp':
+          case 'ArrowLeft':
             target = Math.max(0, target <= 0 ? 0 : target - 1);
+            break;
+          case 'j': case 'ArrowDown':
+            target = Math.min(last, (target < 0 ? -cols : target) + cols);
+            break;
+          case 'k': case 'ArrowUp':
+            target = Math.max(0, target - cols);
             break;
           case 'Home':
             target = 0;
@@ -1435,10 +1452,10 @@
             target = last;
             break;
           case 'PageDown':
-            target = Math.min(last, target + 10);
+            target = Math.min(last, target + cols * 3);
             break;
           case 'PageUp':
-            target = Math.max(0, target - 10);
+            target = Math.max(0, target - cols * 3);
             break;
           case 'Enter': case ' ':
             if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
