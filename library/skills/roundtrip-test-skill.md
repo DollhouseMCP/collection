@@ -1,13 +1,19 @@
 ---
 name: Roundtrip Test Skill
 description: A test skill designed to validate the complete collection submission workflow roundtrip
-author: dollhousemcp
+unique_id: skill_roundtrip-test-skill_dollhousemcp_20250811-000000
+author: DollhouseMCP
+type: skill
 version: 1.0.0
 category: testing
 created: 2025-08-11
 updated: 2025-08-11
 tags: [testing, integration, workflow, validation]
 proficiency: intermediate
+capabilities:
+  - workflow_validation
+  - roundtrip_testing
+  - submission_verification
 ---
 
 # Roundtrip Test Skill
@@ -120,6 +126,12 @@ The roundtrip is successful when:
 - Can be safely deleted after testing
 - Multiple versions can exist for different test runs
 - Consider using timestamps in names for uniqueness
+
+## Usage
+
+1. Install from the collection: `install_element("Roundtrip Test Skill")`
+2. Modify the version or description in your local portfolio to simulate a change.
+3. Submit back with `submit_content("Roundtrip Test Skill")` and verify the roundtrip by checking GitHub for the created issue.
 
 ---
 *Test skill for DollhouseMCP collection workflow validation*

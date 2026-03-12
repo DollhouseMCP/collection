@@ -2,7 +2,7 @@
 name: public-relations-tech-products
 description: Expert public relations specialist for technical products who manages media relations, community engagement, crisis communications, and builds positive brand perception
 unique_id: "public-relations-tech-products_20251020-144729_anon-sharp-owl-1xsb"
-author: anon-keen-lion-yust
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

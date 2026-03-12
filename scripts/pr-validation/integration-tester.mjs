@@ -396,7 +396,7 @@ class IntegrationTester {
       prompt: ['name', 'description', 'unique_id', 'author', 'type'],
       template: ['name', 'description', 'unique_id', 'author', 'type'],
       tool: ['name', 'description', 'unique_id', 'author', 'type'],
-      ensemble: ['name', 'description', 'unique_id', 'author', 'type', 'elements'],
+      ensemble: ['name', 'description', 'unique_id', 'author', 'type', 'components'],
       memory: ['name', 'description', 'unique_id', 'author', 'type']
     };
 
@@ -425,25 +425,29 @@ class IntegrationTester {
       { field: 'unique_id', type: 'string', required: true },
       { field: 'version', type: 'string', required: false },
       { field: 'tags', type: 'array', required: false },
-      { field: 'elements', type: 'array', required: false }
+      { field: 'components', type: 'object', required: false }
     ];
 
     const errors = [];
 
+    const typeValidators = {
+      string: v => typeof v === 'string',
+      array: v => Array.isArray(v),
+      object: v => typeof v === 'object' && !Array.isArray(v)
+    };
+
     for (const check of typeChecks) {
       const value = metadata[check.field];
-      
-      if (check.required && (value === undefined || value === null)) {
+
+      if (check.required && value == null) {
         errors.push(`${check.field} is required but missing`);
         continue;
       }
 
-      if (value !== undefined && value !== null) {
-        if (check.type === 'string' && typeof value !== 'string') {
-          errors.push(`${check.field} should be a string, got ${typeof value}`);
-        } else if (check.type === 'array' && !Array.isArray(value)) {
-          errors.push(`${check.field} should be an array, got ${typeof value}`);
-        }
+      const validator = typeValidators[check.type];
+      if (value != null && validator && !validator(value)) {
+        const actual = Array.isArray(value) ? 'array' : typeof value;
+        errors.push(`${check.field} should be a ${check.type}, got ${actual}`);
       }
     }
 
@@ -502,16 +506,16 @@ class IntegrationTester {
     if (!metadata) return { passed: false, message: 'No metadata', severity: 'critical' };
 
     const validTypes = ['persona', 'skill', 'agent', 'prompt', 'template', 'tool', 'ensemble', 'memory'];
-    const validCategories = ['creative', 'educational', 'gaming', 'personal', 'professional'];
-
     const violations = [];
 
     if (metadata.type && !validTypes.includes(metadata.type)) {
       violations.push(`Invalid type: ${metadata.type}. Valid types: ${validTypes.join(', ')}`);
     }
 
-    if (metadata.category && !validCategories.includes(metadata.category)) {
-      violations.push(`Invalid category: ${metadata.category}. Valid categories: ${validCategories.join(', ')}`);
+    // Category is a free-form string in the schema (z.string().optional()),
+    // not an enum. Only validate that it's a non-empty string if present.
+    if (metadata.category && typeof metadata.category !== 'string') {
+      violations.push(`Invalid category type: expected string, got ${typeof metadata.category}`);
     }
 
     if (violations.length > 0) {
@@ -521,6 +525,19 @@ class IntegrationTester {
         severity: 'high',
         details: { violations }
       };
+    }
+
+    // Warn (not fail) when category is not in the known-good set
+    const knownCategories = [
+      'creative', 'educational', 'gaming', 'personal', 'professional',
+      'business', 'technical', 'security', 'communication', 'testing'
+    ];
+    if (metadata.category && typeof metadata.category === 'string'
+        && !knownCategories.includes(metadata.category.toLowerCase())) {
+      fileResult.warnings = fileResult.warnings || [];
+      fileResult.warnings.push(
+        `Category "${metadata.category}" is not in the known set (${knownCategories.join(', ')}). Consider using a standard category for better discoverability.`
+      );
     }
 
     return { passed: true, message: 'All enum values are valid' };
@@ -550,8 +567,9 @@ class IntegrationTester {
     const metadata = fileResult.metadata;
     
     // Check for ensemble circular references
-    if (metadata.type === 'ensemble' && metadata.elements) {
-      if (metadata.elements.includes(metadata.unique_id)) {
+    if (metadata.type === 'ensemble' && metadata.components) {
+      const allRefs = Object.values(metadata.components).flat().filter(v => typeof v === 'string');
+      if (allRefs.includes(metadata.unique_id)) {
         return {
           passed: false,
           message: 'Ensemble cannot reference itself',
@@ -577,23 +595,40 @@ class IntegrationTester {
   async test_COLLECTION_INTEGRATION_properNaming(fileResult, _content) {
     const fileName = path.basename(fileResult.path, '.md');
     const metadata = fileResult.metadata;
-    
+
     if (!metadata?.unique_id) {
       return { passed: false, message: 'No unique_id for naming check', severity: 'medium' };
     }
 
-    // File name should match or be derived from unique_id
+    // File name should relate to the unique_id. The standard unique_id format is:
+    //   {type}_{name}_{author}_{datetime}
+    // where {name} corresponds to the filename (words may be reordered).
     const normalizedId = metadata.unique_id.replace(/[^a-z0-9-_]/g, '-');
-    
-    if (fileName !== normalizedId && fileName !== metadata.unique_id) {
+
+    // Extract the name segment from the unique_id (second underscore-delimited part)
+    const idParts = metadata.unique_id.split('_');
+    const nameSegment = idParts.length >= 2 ? idParts[1] : metadata.unique_id;
+
+    // Check exact match, containment, or word overlap between filename and name segment
+    const fileWords = new Set(fileName.split('-').filter(Boolean));
+    const nameWords = new Set(nameSegment.split('-').filter(Boolean));
+    const overlap = [...fileWords].filter(w => nameWords.has(w)).length;
+    const overlapRatio = fileWords.size > 0 ? overlap / fileWords.size : 0;
+
+    const matches = fileName === normalizedId
+      || fileName === metadata.unique_id
+      || metadata.unique_id.includes(fileName)
+      || overlapRatio >= 0.5;
+
+    if (!matches) {
       return {
         passed: false,
         message: `File name "${fileName}" doesn't match unique_id "${metadata.unique_id}"`,
         severity: 'low',
-        details: { 
-          fileName, 
-          uniqueId: metadata.unique_id, 
-          suggested: normalizedId 
+        details: {
+          fileName,
+          uniqueId: metadata.unique_id,
+          suggested: normalizedId
         }
       };
     }
@@ -606,26 +641,22 @@ class IntegrationTester {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
 
+    // Only templates use {{variable}} substitution — curly braces in other
+    // content types are code examples, JSX, JSON, etc. and not template vars.
+    const isTemplate = fileResult.metadata?.type === 'template';
+
     // Check for template variables like {{variable}} or {variable}
     const templateVars = contentBody.match(/\{\{?([^}]+)\}?\}/g);
-    
+
     if (!templateVars) {
       return { passed: true, message: 'No template variables found' };
     }
 
     const issues = [];
-    
-    for (const variable of templateVars) {
-      // Check for malformed variables
-      if (variable.includes('<') || variable.includes('>') || variable.includes('script')) {
-        issues.push(`Potentially malicious template variable: ${variable}`);
-      }
-      
-      // Check for unclosed variables
-      if (!variable.endsWith('}')) {
-        issues.push(`Malformed template variable: ${variable}`);
-      }
+    if (isTemplate) {
+      this._checkTemplateVarSafety(templateVars, issues);
     }
+    this._checkTemplateVarTypes(fileResult.metadata, issues);
 
     if (issues.length > 0) {
       return {
@@ -636,11 +667,41 @@ class IntegrationTester {
       };
     }
 
-    return { 
-      passed: true, 
+    return {
+      passed: true,
       message: `Found ${templateVars.length} valid template variables`,
       details: { variableCount: templateVars.length }
     };
+  }
+
+  /** Check template variables for HTML injection and malformation */
+  _checkTemplateVarSafety(templateVars, issues) {
+    for (const variable of templateVars) {
+      if (variable.includes('<') || variable.includes('>') || /<script/i.test(variable)) {
+        issues.push(`Potentially malicious template variable: ${variable}`);
+      }
+      if (!variable.endsWith('}')) {
+        issues.push(`Malformed template variable: ${variable}`);
+      }
+    }
+  }
+
+  /** Validate structured variable type fields from metadata (MCP server requires type enum) */
+  _checkTemplateVarTypes(metadata, issues) {
+    if (metadata?.type !== 'template' || !Array.isArray(metadata.variables)) return;
+
+    const knownTypes = new Set(['string', 'number', 'boolean', 'array', 'object', 'date']);
+    for (const variable of metadata.variables) {
+      if (typeof variable !== 'object') {
+        issues.push(`Variable should be a structured object, got ${typeof variable}`);
+        continue;
+      }
+      if (!variable.type) {
+        issues.push(`Variable "${variable.name || '(unnamed)'}" is missing required "type" field`);
+      } else if (!knownTypes.has(variable.type)) {
+        issues.push(`Variable "${variable.name || '(unnamed)'}" has unknown type "${variable.type}". Expected one of: ${[...knownTypes].join(', ')}`);
+      }
+    }
   }
 
   async test_FUNCTIONAL_VALIDATION_linksResolvable(fileResult, _content) {
@@ -735,6 +796,12 @@ class IntegrationTester {
   async test_FUNCTIONAL_VALIDATION_examplesWorking(fileResult, _content) {
     const contentBody = fileResult.contentBody;
     if (!contentBody) return { passed: true, message: 'No content to check', skipped: true };
+
+    // Templates with {{variable}} placeholders are self-demonstrating —
+    // the body IS the usage example showing how the template renders.
+    if (fileResult.metadata?.type === 'template' && /\{\{[^}]{1,500}\}\}/.test(contentBody)) {
+      return { passed: true, message: 'Template body contains variable placeholders (self-demonstrating)' };
+    }
 
     // Look for various example/usage section formats
     const contentLower = contentBody.toLowerCase();

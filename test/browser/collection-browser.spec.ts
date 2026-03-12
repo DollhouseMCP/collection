@@ -6,6 +6,10 @@
  * and don't depend on real GitHub fetches or local file system access.
  */
 
+/* eslint-disable no-undef, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+// ^ Browser globals (document, getComputedStyle) and Playwright evaluate() callbacks
+//   run in browser context where ESLint's Node.js type analysis doesn't apply.
+
 import { test, expect, Page } from '@playwright/test';
 
 // ── Shared mock data ─────────────────────────────────────────────────────────
@@ -49,11 +53,11 @@ async function setupMocks(page: Page) {
   }, { mockIndex: MOCK_COLLECTION_INDEX, mockLocal: MOCK_LOCAL_ELEMENTS });
 }
 
-/** Inject local elements into the app state after page load */
-async function injectLocalElements(page: Page) {
+/** Inject local elements into the app state after page load (used by local portfolio tests) */
+async function _injectLocalElements(page: Page) {
   await page.evaluate(() => {
-    const local: any[] = (globalThis as any).__TEST_LOCAL_ELEMENTS__ || [];
-    if (local.length === 0) return;
+    const local: unknown[] = ((globalThis as any).__TEST_LOCAL_ELEMENTS__ as unknown[]) || [];
+    if (local.length === 0) { return; }
     // Dispatch a custom event that the test harness in app.js can listen to
     // Since we can't directly set module state, we simulate the portfolio button effect
     // by dispatching a test-inject event
@@ -374,12 +378,15 @@ test.describe('Type color differentiation', () => {
     await page.waitForSelector('.element-card[data-type="agent"]', { timeout: 5000 });
 
     const agentCard = page.locator('.element-card[data-type="agent"]').first();
-    const familyColor = await agentCard.evaluate(el =>
+    const familyColor = await agentCard.evaluate((el): string =>
       getComputedStyle(el).getPropertyValue('--family-1').trim()
     );
     // Agent blue (#5c9cfb)
     expect(familyColor).toBeTruthy();
-    expect(familyColor).not.toBe(getComputedStyle(document.documentElement).getPropertyValue('--signal-2'));
+    const signal2 = await page.evaluate((): string =>
+      getComputedStyle(document.documentElement).getPropertyValue('--signal-2')
+    );
+    expect(familyColor).not.toBe(signal2);
   });
 
   test('all type badges have data-type attribute matching element type', async ({ page }) => {

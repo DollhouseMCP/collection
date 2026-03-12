@@ -3,7 +3,7 @@ type: tool
 name: Task Prioritizer
 description: MCP tool for intelligent task prioritization using multiple frameworks
 unique_id: tool_task-prioritizer_dollhousemcp_20250715-100400
-author: dollhousemcp
+author: DollhouseMCP
 category: personal
 version: 1.0.0
 tags:

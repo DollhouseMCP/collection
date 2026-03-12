@@ -136,6 +136,22 @@ export default [
     },
   },
   
+  // Browser-environment files (CDN libs loaded via script tags)
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        hljs: 'readonly',
+        jsyaml: 'readonly',
+        marked: 'readonly',
+      }
+    },
+    rules: {
+      'no-empty': ['error', { allowEmptyCatch: true }],
+    },
+  },
+
   // Ignore patterns
   {
     ignores: [
@@ -151,7 +167,8 @@ export default [
       '.test-tmp/**',
       '*.d.ts',
       'test/coverage/**',
-      '.jest-cache/**'
+      '.jest-cache/**',
+      'playwright.config.ts',
     ],
   },
 ];

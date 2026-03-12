@@ -4,7 +4,7 @@ description: A security-safe test skill for validating the complete MCP roundtri
 type: skill
 version: 1.0.0
 author: dollhousemcp-test
-created_date: '2025-08-14'
+created: '2025-08-14'
 category: professional
 tags:
   - testing
@@ -124,6 +124,12 @@ Expected: Fresh download with original version.
 Disable auto-submit for normal use and verify the configuration.
 
 Expected: Auto-submit disabled successfully.
+
+## Example Usage
+
+1. Install from collection: search for "Safe Roundtrip Tester" and install to your portfolio.
+2. Modify the version to 1.0.1 to simulate a local change.
+3. Submit back to the collection with auto-submit enabled to verify the full roundtrip.
 
 ## Success Checklist
 

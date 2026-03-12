@@ -1,133 +1,59 @@
 ---
-name: Meeting Notes
-description: Structured template for capturing and organizing meeting information
-type: template
-version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
-category: professional
-tags:
-  - meeting
-  - notes
-  - documentation
-  - collaboration
-variables:
-  - meeting_title
-  - meeting_date
-  - attendees
-  - meeting_type
-  - duration
-outputFormats:
-  - markdown
-  - html
-  - pdf
-includes: []
+name: "Meeting Notes"
+description: "Structured template for capturing meeting information, decisions, and action items"
+type: "template"
+version: "2.0.0"
+author: "DollhouseMCP"
+created: "2025-07-23"
+category: "business"
+tags: ["meeting", "notes", "documentation", "collaboration"]
 unique_id: template_meeting-notes_dollhousemcp_20250723-165719
-format: markdown
+variables:
+  - { name: "meeting_title", type: "string", required: true, description: "Title of the meeting" }
+  - { name: "meeting_date", type: "string", required: true, description: "Date of the meeting" }
+  - { name: "meeting_time", type: "string", required: false, description: "Start time of the meeting" }
+  - { name: "duration", type: "string", required: false, description: "Meeting duration", default: "60 minutes" }
+  - { name: "meeting_type", type: "string", required: false, description: "Type of meeting (standup, review, planning, etc.)", default: "general" }
+  - { name: "attendees", type: "string", required: true, description: "Pre-formatted attendee list, one per line with bullet points" }
+  - { name: "agenda", type: "string", required: false, description: "Pre-formatted agenda items, numbered list" }
+  - { name: "discussion_points", type: "string", required: false, description: "Key discussion points and summaries" }
+  - { name: "decisions", type: "string", required: false, description: "Decisions made with rationale and impact" }
+  - { name: "action_items", type: "string", required: false, description: "Pre-formatted table rows: | Action | Owner | Due Date | Priority |" }
+  - { name: "next_steps", type: "string", required: false, description: "Pre-formatted numbered list of next steps" }
+  - { name: "note_taker", type: "string", required: false, description: "Person who took the meeting notes" }
+  - { name: "next_meeting_date", type: "string", required: false, description: "Date of the next meeting" }
 ---
-
 # {{meeting_title}}
 
-**Date:** {{meeting_date}}  
-**Time:** {{meeting_time}}  
-**Duration:** {{duration}}  
-**Type:** {{meeting_type}}  
+**Date:** {{meeting_date}}
+**Time:** {{meeting_time}}
+**Duration:** {{duration}}
+**Type:** {{meeting_type}}
 
 ## Attendees
-{{#each attendees}}
-- {{name}} {{#if role}}({{role}}){{/if}}
-{{/each}}
+{{attendees}}
 
 ## Agenda
-{{#if agenda_items}}
-{{#each agenda_items}}
-1. {{topic}} {{#if time_allocation}}({{time_allocation}}){{/if}}
-{{/each}}
-{{else}}
-1. [Topic 1]
-2. [Topic 2]
-3. [Topic 3]
-{{/if}}
+{{agenda}}
 
 ## Meeting Notes
 
 ### Key Discussion Points
-{{#if discussion_points}}
-{{#each discussion_points}}
-- **{{topic}}**: {{summary}}
-  {{#if details}}
-  - {{details}}
-  {{/if}}
-{{/each}}
-{{else}}
-- **[Topic]**: [Summary of discussion]
-  - [Key point 1]
-  - [Key point 2]
-{{/if}}
+{{discussion_points}}
 
 ### Decisions Made
-{{#if decisions}}
-{{#each decisions}}
-1. **{{decision}}**
-   - Rationale: {{rationale}}
-   - Impact: {{impact}}
-   {{#if dissenting_opinions}}- Dissenting opinions: {{dissenting_opinions}}{{/if}}
-{{/each}}
-{{else}}
-1. **[Decision]**
-   - Rationale: [Why this decision]
-   - Impact: [What changes]
-{{/if}}
+{{decisions}}
 
 ### Action Items
-{{#if action_items}}
 | Action | Owner | Due Date | Priority |
 |--------|-------|----------|----------|
-{{#each action_items}}
-| {{action}} | {{owner}} | {{due_date}} | {{priority}} |
-{{/each}}
-{{else}}
-| Action | Owner | Due Date | Priority |
-|--------|-------|----------|----------|
-| [Task description] | [Name] | [Date] | High/Medium/Low |
-{{/if}}
-
-### Questions & Concerns
-{{#if questions}}
-{{#each questions}}
-- **Q:** {{question}}
-  - **A:** {{#if answer}}{{answer}}{{else}}[Pending]{{/if}}
-{{/each}}
-{{else}}
-- **Q:** [Question]
-  - **A:** [Answer or "Pending"]
-{{/if}}
+{{action_items}}
 
 ### Next Steps
-{{#if next_steps}}
-{{#each next_steps}}
-1. {{step}} {{#if responsible}}({{responsible}}){{/if}}
-{{/each}}
-{{else}}
-1. [Next step 1]
-2. [Next step 2]
-3. Schedule follow-up meeting
-{{/if}}
-
-### Resources & References
-{{#if resources}}
-{{#each resources}}
-- [{{title}}]({{url}}) {{#if description}}- {{description}}{{/if}}
-{{/each}}
-{{else}}
-- [Document/Link title](URL)
-{{/if}}
+{{next_steps}}
 
 ## Follow-up
-**Next Meeting:** {{#if next_meeting_date}}{{next_meeting_date}}{{else}}TBD{{/if}}  
-**Meeting Recording:** {{#if recording_link}}[Link]({{recording_link}}){{else}}N/A{{/if}}  
-**Additional Notes:** {{#if additional_notes}}{{additional_notes}}{{else}}None{{/if}}
+**Next Meeting:** {{next_meeting_date}}
 
 ---
-*Notes taken by: {{note_taker}}*  
-*Reviewed by: {{#if reviewer}}{{reviewer}}{{else}}Pending review{{/if}}*
+*Notes taken by: {{note_taker}}*

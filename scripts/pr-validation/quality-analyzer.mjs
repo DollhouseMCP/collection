@@ -203,17 +203,50 @@ class QualityAnalyzer {
     const { metadata, contentBody } = fileResult;
     
     // Check for description
-    if (metadata && metadata.description && metadata.description.trim()) {
+    this._scoreDescription(metadata, assessment, fileResult);
+
+    // Check for examples
+    // Templates with {{variable}} placeholders are self-demonstrating — the body IS the example
+    const isTemplate = metadata?.type === 'template';
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
+
+    if ((isTemplate && hasTemplatePlaceholders) ||
+        (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```')))) {
+      assessment.details.hasExamples = { score: 8, maxScore: 8 };
+      assessment.score += 8;
+    } else {
+      assessment.details.hasExamples = { score: 0, maxScore: 8 };
+      fileResult.recommendations.push('Add usage examples or code snippets to demonstrate functionality');
+    }
+
+    // Check for usage instructions
+    // Templates with structured `variables` metadata provide usage guidance via variable descriptions
+    const hasVariableDescriptions = isTemplate && Array.isArray(metadata?.variables) &&
+      metadata.variables.some(v => typeof v === 'object' && v.description);
+
+    if (hasVariableDescriptions ||
+        (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions')))) {
+      assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
+      assessment.score += 7;
+    } else {
+      assessment.details.hasUsageInstructions = { score: 3, maxScore: 7 };
+      assessment.score += 3;
+      fileResult.recommendations.push('Include clear usage instructions');
+    }
+
+    fileResult.metrics.documentation = assessment;
+  }
+
+  /** Score the description sub-metric for documentation assessment */
+  _scoreDescription(metadata, assessment, fileResult) {
+    if (metadata?.description?.trim()) {
       assessment.details.hasDescription = { score: 5, maxScore: 5 };
       assessment.score += 5;
-      
-      // Check description length
-      if (metadata.description.length >= 20) {
-        assessment.details.descriptionLength = { score: 5, maxScore: 5 };
-        assessment.score += 5;
-      } else {
-        assessment.details.descriptionLength = { score: 2, maxScore: 5 };
-        assessment.score += 2;
+
+      const lengthScore = metadata.description.length >= 20 ? 5 : 2;
+      assessment.details.descriptionLength = { score: lengthScore, maxScore: 5 };
+      assessment.score += lengthScore;
+      if (lengthScore < 5) {
         fileResult.recommendations.push('Expand the description to be more detailed (minimum 20 characters)');
       }
     } else {
@@ -225,27 +258,6 @@ class QualityAnalyzer {
         suggestion: 'Add a clear, descriptive summary of the element\'s purpose'
       });
     }
-
-    // Check for examples
-    if (contentBody && (contentBody.includes('## Example') || contentBody.includes('## Usage') || contentBody.includes('```'))) {
-      assessment.details.hasExamples = { score: 8, maxScore: 8 };
-      assessment.score += 8;
-    } else {
-      assessment.details.hasExamples = { score: 0, maxScore: 8 };
-      fileResult.recommendations.push('Add usage examples or code snippets to demonstrate functionality');
-    }
-
-    // Check for usage instructions
-    if (contentBody && (contentBody.includes('how to') || contentBody.includes('usage') || contentBody.includes('instructions'))) {
-      assessment.details.hasUsageInstructions = { score: 7, maxScore: 7 };
-      assessment.score += 7;
-    } else {
-      assessment.details.hasUsageInstructions = { score: 3, maxScore: 7 };
-      assessment.score += 3;
-      fileResult.recommendations.push('Include clear usage instructions');
-    }
-
-    fileResult.metrics.documentation = assessment;
   }
 
   /**
@@ -358,11 +370,22 @@ class QualityAnalyzer {
     }
 
     // Check logical flow (basic heuristic)
-    const sections = ['introduction', 'usage', 'example', 'configuration'];
+    // Templates get credit for structured variable placeholders and section headings
+    const isTemplateType = fileResult.metadata?.type === 'template';
     let flowScore = 0;
-    for (const section of sections) {
-      if (contentBody.toLowerCase().includes(section)) {
-        flowScore += 2;
+
+    if (isTemplateType) {
+      // Templates demonstrate logical flow through their structure:
+      // headings, variable placeholders, and organized sections
+      const headingCount = (contentBody.match(/^#+\s+/gm) || []).length;
+      const variableCount = (contentBody.match(/\{\{[^}]{1,500}\}\}/g) || []).length;
+      flowScore = Math.min(8, headingCount * 2 + variableCount);
+    } else {
+      const sections = ['introduction', 'usage', 'example', 'configuration'];
+      for (const section of sections) {
+        if (contentBody.toLowerCase().includes(section)) {
+          flowScore += 2;
+        }
       }
     }
     assessment.details.logicalFlow = { score: Math.min(8, flowScore), maxScore: 8 };
@@ -423,19 +446,26 @@ class QualityAnalyzer {
 
     const { contentBody, metadata } = fileResult;
     const fullText = `${metadata?.description || ''} ${contentBody || ''}`;
-    
+
     if (!fullText.trim()) {
       fileResult.metrics.languageQuality = assessment;
       return;
     }
 
     // Basic grammar check (simple heuristics)
-    const grammarScore = this.checkBasicGrammar(fullText);
+    let grammarScore = this.checkBasicGrammar(fullText);
+
+    // Readability assessment
+    let readabilityScore = this.calculateReadability(fullText);
+
+    // Formatting corruption detection — deducts from grammar and readability
+    const corruption = this.detectFormattingCorruption(contentBody || '', fileResult);
+    grammarScore = Math.max(0, grammarScore - corruption.grammarDeduction);
+    readabilityScore = Math.max(0, readabilityScore - corruption.readabilityDeduction);
+
     assessment.details.grammarCheck = { score: grammarScore, maxScore: 6 };
     assessment.score += grammarScore;
 
-    // Readability assessment
-    const readabilityScore = this.calculateReadability(fullText);
     assessment.details.readabilityScore = { score: readabilityScore, maxScore: 5 };
     assessment.score += readabilityScore;
 
@@ -539,6 +569,121 @@ class QualityAnalyzer {
   }
 
   /**
+   * Detect formatting corruption in content body.
+   *
+   * Checks for three categories:
+   *   1. Broken words — word fragments split across lines (e.g. "relation\n\nships")
+   *   2. Wall-of-text lines — body lines > 500 chars outside code blocks
+   *   3. Duplicate boilerplate — the same heading appearing more than once
+   *
+   * Returns an object with grammarDeduction and readabilityDeduction totals.
+   * Also pushes issues/recommendations onto fileResult.
+   */
+  detectFormattingCorruption(contentBody, fileResult) {
+    if (!contentBody?.trim()) {
+      return { grammarDeduction: 0, readabilityDeduction: 0 };
+    }
+
+    const lines = contentBody.split('\n');
+    const grammarDeduction = this._detectBrokenWords(lines, fileResult)
+      + this._detectDuplicateHeadings(lines, fileResult);
+    const readabilityDeduction = this._detectWallOfText(lines, fileResult);
+
+    return { grammarDeduction, readabilityDeduction };
+  }
+
+  _detectBrokenWords(lines, fileResult) {
+    const brokenWordSuffixes = [
+      'ship', 'ships', 'tion', 'tions', 'ment', 'ments',
+      'ness', 'ble', 'ful', 'ing', 'ously', 'ting', 'shing'
+    ];
+    const suffixPattern = new RegExp(
+      String.raw`^(${brokenWordSuffixes.join('|')})\b`, 'i'
+    );
+    let brokenWordCount = 0;
+
+    for (const line of lines) {
+      const trimmed = line.trimStart();
+      if (!trimmed || /^[#\-*>0-9]/.test(trimmed)) continue;
+      if (suffixPattern.test(trimmed)) {
+        brokenWordCount++;
+      }
+    }
+
+    if (brokenWordCount === 0) return 0;
+
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Detected ${brokenWordCount} broken word${brokenWordCount > 1 ? 's' : ''} (word fragments split across lines)`,
+      suggestion: String.raw`Rejoin words that were split across line breaks (e.g. "relation\nships" → "relationships")`
+    });
+    fileResult.recommendations.push(
+      'Fix broken words — some words appear to be split across lines, indicating copy-paste or formatting corruption'
+    );
+    return Math.min(brokenWordCount, 3);
+  }
+
+  _detectWallOfText(lines, fileResult) {
+    let inCodeBlock = false;
+    let wallOfTextCount = 0;
+
+    for (const line of lines) {
+      if (line.trimStart().startsWith('```')) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+      if (!inCodeBlock && line.length > 500) {
+        wallOfTextCount++;
+      }
+    }
+
+    if (wallOfTextCount === 0) return 0;
+
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Found ${wallOfTextCount} line${wallOfTextCount > 1 ? 's' : ''} exceeding 500 characters (wall-of-text)`,
+      suggestion: 'Break long lines into shorter paragraphs — this may indicate lost line breaks'
+    });
+    fileResult.recommendations.push(
+      'Break up wall-of-text lines (>500 chars) — these suggest formatting corruption where line breaks were lost'
+    );
+    return Math.min(wallOfTextCount, 3);
+  }
+
+  _detectDuplicateHeadings(lines, fileResult) {
+    const headingCounts = {};
+    const headingRegex = /^(#{1,6})\s+(.*\S)/;
+
+    for (const line of lines) {
+      const match = line.match(headingRegex);
+      if (match) {
+        const normalized = match[0].trim().toLowerCase();
+        headingCounts[normalized] = (headingCounts[normalized] || 0) + 1;
+      }
+    }
+
+    const duplicateHeadings = Object.entries(headingCounts)
+      .filter(([, count]) => count > 1)
+      .map(([heading]) => heading);
+
+    if (duplicateHeadings.length === 0) return 0;
+
+    const examples = duplicateHeadings.slice(0, 3).map(h => `"${h}"`).join(', ');
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Duplicate headings detected: ${examples}`,
+      suggestion: 'Remove or rename duplicate headings — this may indicate duplicated boilerplate sections'
+    });
+    fileResult.recommendations.push(
+      'Remove duplicate headings — the same section heading appears more than once, suggesting duplicated boilerplate'
+    );
+    return Math.min(duplicateHeadings.length, 2);
+  }
+
+  /**
    * Assess usability aspects
    */
   async assessUsability(fileResult) {
@@ -553,8 +698,12 @@ class QualityAnalyzer {
     const { contentBody, metadata } = fileResult;
     const fullText = `${metadata?.description || ''} ${contentBody || ''}`;
     
+    const isTemplateType = metadata?.type === 'template';
+    const hasTemplatePlaceholders = contentBody && /\{\{[^}]{1,500}\}\}/.test(contentBody);
+
     // Check for clear purpose
-    if (metadata?.description && contentBody && contentBody.length > 100) {
+    if ((metadata?.description && contentBody && contentBody.length > 100) ||
+        (isTemplateType && metadata?.description && hasTemplatePlaceholders)) {
       assessment.details.clearPurpose = { score: 4, maxScore: 4 };
       assessment.score += 4;
     } else {
@@ -564,21 +713,30 @@ class QualityAnalyzer {
     }
 
     // Check for actionable content
-    const actionWords = ['step', 'follow', 'run', 'execute', 'configure', 'install', 'setup'];
-    const hasActionable = actionWords.some(word => fullText.toLowerCase().includes(word));
-    
-    if (hasActionable) {
+    // Templates with variable placeholders ARE actionable — fill in the variables to use
+    if (isTemplateType && hasTemplatePlaceholders) {
       assessment.details.actionableContent = { score: 3, maxScore: 3 };
       assessment.score += 3;
     } else {
-      assessment.details.actionableContent = { score: 0, maxScore: 3 };
-      fileResult.recommendations.push('Include actionable steps or instructions');
+      const actionWords = ['step', 'follow', 'run', 'execute', 'configure', 'install', 'setup'];
+      const hasActionable = actionWords.some(word => fullText.toLowerCase().includes(word));
+
+      if (hasActionable) {
+        assessment.details.actionableContent = { score: 3, maxScore: 3 };
+        assessment.score += 3;
+      } else {
+        assessment.details.actionableContent = { score: 0, maxScore: 3 };
+        fileResult.recommendations.push('Include actionable steps or instructions');
+      }
     }
 
     // Check for troubleshooting or common issues
-    if (fullText.toLowerCase().includes('troubleshoot') || 
-        fullText.toLowerCase().includes('common issue') ||
-        fullText.toLowerCase().includes('known limitation')) {
+    // Templates don't typically need troubleshooting sections
+    const lowerText = fullText.toLowerCase();
+    if (isTemplateType ||
+        lowerText.includes('troubleshoot') ||
+        lowerText.includes('common issue') ||
+        lowerText.includes('known limitation')) {
       assessment.details.troubleshooting = { score: 3, maxScore: 3 };
       assessment.score += 3;
     } else {
@@ -614,11 +772,18 @@ class QualityAnalyzer {
     }
 
     // Check for security considerations
-    if (contentBody && (contentBody.toLowerCase().includes('security') || 
+    // Templates that are security-focused inherently address this; other templates
+    // are structural documents that don't need explicit security notes.
+    const isTemplateType = metadata?.type === 'template';
+    if (contentBody && (contentBody.toLowerCase().includes('security') ||
                        contentBody.toLowerCase().includes('caution') ||
                        contentBody.toLowerCase().includes('warning'))) {
       assessment.details.securityConsiderations = { score: 3, maxScore: 3 };
       assessment.score += 3;
+    } else if (isTemplateType) {
+      // Templates are structural documents; security notes are not always applicable
+      assessment.details.securityConsiderations = { score: 2, maxScore: 3 };
+      assessment.score += 2;
     } else {
       assessment.details.securityConsiderations = { score: 0, maxScore: 3 };
       fileResult.recommendations.push('Consider adding security notes if applicable');
@@ -630,6 +795,10 @@ class QualityAnalyzer {
                        contentBody.toLowerCase().includes('efficiency'))) {
       assessment.details.performanceNotes = { score: 3, maxScore: 3 };
       assessment.score += 3;
+    } else if (isTemplateType) {
+      // Templates are static documents; performance notes are not applicable
+      assessment.details.performanceNotes = { score: 2, maxScore: 3 };
+      assessment.score += 2;
     } else {
       assessment.details.performanceNotes = { score: 0, maxScore: 3 };
       fileResult.recommendations.push('Consider adding performance considerations');

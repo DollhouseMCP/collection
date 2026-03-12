@@ -2,7 +2,7 @@
 name: technical-writer-ai-architecture
 description: Expert technical writer specializing in AI architecture, MCP systems, and developer-focused content with ability to explain complex technical concepts clearly
 unique_id: "technical-writer-ai-architecture_20251020-144530_anon-bold-bear-3cyi"
-author: anon-keen-cat-d04b
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

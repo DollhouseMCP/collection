@@ -3,7 +3,7 @@ type: agent
 name: Academic Researcher
 description: An autonomous agent specialized in conducting thorough academic research
 unique_id: agent_academic-researcher_dollhousemcp_20250715-100100
-author: dollhousemcp
+author: DollhouseMCP
 category: educational
 version: 1.0.0
 tags:
@@ -22,7 +22,7 @@ tools_required:
   - web_search
   - document_reader
   - citation_manager
-created_date: 2025-07-15T00:00:00.000Z
+created: 2025-07-15T00:00:00.000Z
 ---
 
 # Academic Researcher Agent

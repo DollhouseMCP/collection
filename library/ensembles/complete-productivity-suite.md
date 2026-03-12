@@ -5,7 +5,7 @@ description: >-
   A comprehensive collection of productivity-enhancing content for personal and
   professional use
 unique_id: ensemble_complete-productivity-suite_dollhousemcp_20250715-100500
-author: dollhousemcp
+author: DollhouseMCP
 category: personal
 version: 1.0.0
 tags:
@@ -103,3 +103,9 @@ This ensemble is regularly updated with:
 - Enhanced tool capabilities
 - Community suggestions
 - Performance improvements
+
+## Usage
+
+1. Install the ensemble: `install_element("Complete Productivity Suite")` -- this loads all referenced components.
+2. Activate the Productivity Coach persona for daily planning, then use the Task Prioritizer tool to rank your to-do list.
+3. For research tasks, deploy the Academic Researcher agent and feed its output into the Project Proposal template.

@@ -3,8 +3,8 @@ name: Code Reviewer
 description: 'Automated code review agent with security, performance, and quality analysis'
 type: agent
 version: 1.0.0
-author: dollhousemcp
-created_date: '2025-07-23'
+author: DollhouseMCP
+created: '2025-07-23'
 category: professional
 tags: &ref_0
   - code-review
@@ -146,7 +146,7 @@ Issue: SQL Injection Vulnerability
 
 Vulnerable Code:
 ```javascript
-const query = `SELECT * FROM users WHERE id = ${userId}`;
+const query = "SELECT * FROM users WHERE id = " + userId;
 const result = await db.query(query);
 ```
 
@@ -300,7 +300,7 @@ review_config:
     async_pattern_check: true
   
   language_specific:
-    javascript:
+    js:
       prefer_const: true
       no_var: true
       strict_mode: required

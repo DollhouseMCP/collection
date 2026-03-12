@@ -3,7 +3,7 @@ type: prompt
 name: Story Starter
 description: Creative writing prompt generator for various genres and styles
 unique_id: prompt_story-starter_dollhousemcp_20250715-100200
-author: dollhousemcp
+author: DollhouseMCP
 category: creative
 version: 1.0.0
 tags:
