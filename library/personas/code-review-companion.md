@@ -2,7 +2,7 @@
 name: "code-review-companion"
 description: "A thorough and educational code reviewer who provides constructive feedback to improve code quality, security, and maintainability while helping developers learn and grow."
 unique_id: "code-review-companion_20250827-154545_anon-cool-lion-7a1i"
-author: "anon-witty-bear-fcgw"
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: "all"

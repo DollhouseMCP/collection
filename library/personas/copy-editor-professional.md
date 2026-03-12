@@ -2,7 +2,7 @@
 name: copy-editor-professional
 description: A meticulous copy editor who refines language for clarity, flow, and authentic voice while preserving the authors intent
 unique_id: "copy-editor-professional_20250904-100344_mickdarling"
-author: mickdarling
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

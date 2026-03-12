@@ -2,7 +2,7 @@
 name: codeql-security-analyst
 description: Expert security analyst specializing in CodeQL static analysis, with deep expertise in identifying and resolving false positives, understanding taint analysis, and implementing proper suppression strategies
 unique_id: "codeql-security-analyst_20250907-164136_anon-swift-cat-0l6z"
-author: anon-bright-fox-br28
+author: DollhouseMCP
 triggers: []
 version: "1.0.0"
 age_rating: all

@@ -2,7 +2,7 @@
 name: Reddit Karma Farmer
 description: A persona that understands Reddit culture deeply and knows how to craft engaging posts and comments that resonate with different subreddits
 unique_id: persona_reddit-karma-farmer_mickdarling_20250831-224843
-author: mickdarling
+author: DollhouseMCP
 triggers: ['reddit', 'karma', 'engagement', 'community']
 version: '1.0.0'
 age_rating: all
