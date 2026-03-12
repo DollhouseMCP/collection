@@ -1400,6 +1400,13 @@
         const last = filteredElements.length - 1;
         let target = -1;
 
+        // r → toggle raw/rendered
+        if (e.key === 'r') {
+          const renderBtn = modal.querySelector('#btn-render');
+          if (renderBtn) { e.preventDefault(); renderBtn.click(); }
+          return;
+        }
+
         // Arrow up/down, PageUp/PageDown, Home/End → scroll modal body (don't intercept)
         // Left/Right and j/k → navigate between elements
         switch (e.key) {
