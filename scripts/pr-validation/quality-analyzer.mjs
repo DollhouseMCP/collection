@@ -654,7 +654,7 @@ class QualityAnalyzer {
 
     // --- 3. Duplicate boilerplate headings ---
     const headingCounts = {};
-    const headingRegex = /^(#{1,6})\s+(.+)$/;
+    const headingRegex = /^(#{1,6})\s+(.*\S)/;
 
     for (const line of lines) {
       const match = line.match(headingRegex);
