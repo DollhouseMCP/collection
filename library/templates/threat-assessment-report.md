@@ -2,7 +2,6 @@
 name: "Threat Assessment Report"
 description: "Comprehensive threat modeling and risk assessment report with mitigation strategies"
 type: "template"
-format: "markdown"
 version: "2.0.0"
 author: "DollhouseMCP"
 created: "2025-07-23"
