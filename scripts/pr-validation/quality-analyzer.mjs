@@ -580,51 +580,51 @@ class QualityAnalyzer {
    * Also pushes issues/recommendations onto fileResult.
    */
   detectFormattingCorruption(contentBody, fileResult) {
-    let grammarDeduction = 0;
-    let readabilityDeduction = 0;
-
-    if (!contentBody || !contentBody.trim()) {
-      return { grammarDeduction, readabilityDeduction };
+    if (!contentBody?.trim()) {
+      return { grammarDeduction: 0, readabilityDeduction: 0 };
     }
 
     const lines = contentBody.split('\n');
+    const grammarDeduction = this._detectBrokenWords(lines, fileResult)
+      + this._detectDuplicateHeadings(lines, fileResult);
+    const readabilityDeduction = this._detectWallOfText(lines, fileResult);
 
-    // --- 1. Broken words ---
-    // Look for common word suffixes appearing at the start of a non-heading,
-    // non-list-item line, which suggests the previous word was split.
+    return { grammarDeduction, readabilityDeduction };
+  }
+
+  _detectBrokenWords(lines, fileResult) {
     const brokenWordSuffixes = [
       'ship', 'ships', 'tion', 'tions', 'ment', 'ments',
       'ness', 'ble', 'ful', 'ing', 'ously', 'ting', 'shing'
     ];
     const suffixPattern = new RegExp(
-      `^(${brokenWordSuffixes.join('|')})\\b`, 'i'
+      String.raw`^(${brokenWordSuffixes.join('|')})\b`, 'i'
     );
     let brokenWordCount = 0;
 
-    for (let i = 0; i < lines.length; i++) {
-      const trimmed = lines[i].trimStart();
-      // Skip headings, list items, and empty lines
+    for (const line of lines) {
+      const trimmed = line.trimStart();
       if (!trimmed || /^[#\-*>0-9]/.test(trimmed)) continue;
       if (suffixPattern.test(trimmed)) {
         brokenWordCount++;
       }
     }
 
-    if (brokenWordCount > 0) {
-      // Each broken word costs 1 point from grammar, capped at 3
-      grammarDeduction += Math.min(brokenWordCount, 3);
-      fileResult.issues.push({
-        category: 'language',
-        severity: 'medium',
-        message: `Detected ${brokenWordCount} broken word${brokenWordCount > 1 ? 's' : ''} (word fragments split across lines)`,
-        suggestion: 'Rejoin words that were split across line breaks (e.g. "relation\\nships" → "relationships")'
-      });
-      fileResult.recommendations.push(
-        'Fix broken words — some words appear to be split across lines, indicating copy-paste or formatting corruption'
-      );
-    }
+    if (brokenWordCount === 0) return 0;
 
-    // --- 2. Wall-of-text lines (>500 chars outside code blocks) ---
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Detected ${brokenWordCount} broken word${brokenWordCount > 1 ? 's' : ''} (word fragments split across lines)`,
+      suggestion: String.raw`Rejoin words that were split across line breaks (e.g. "relation\nships" → "relationships")`
+    });
+    fileResult.recommendations.push(
+      'Fix broken words — some words appear to be split across lines, indicating copy-paste or formatting corruption'
+    );
+    return Math.min(brokenWordCount, 3);
+  }
+
+  _detectWallOfText(lines, fileResult) {
     let inCodeBlock = false;
     let wallOfTextCount = 0;
 
@@ -638,21 +638,21 @@ class QualityAnalyzer {
       }
     }
 
-    if (wallOfTextCount > 0) {
-      // Each wall-of-text line costs 1 point from readability, capped at 3
-      readabilityDeduction += Math.min(wallOfTextCount, 3);
-      fileResult.issues.push({
-        category: 'language',
-        severity: 'medium',
-        message: `Found ${wallOfTextCount} line${wallOfTextCount > 1 ? 's' : ''} exceeding 500 characters (wall-of-text)`,
-        suggestion: 'Break long lines into shorter paragraphs — this may indicate lost line breaks'
-      });
-      fileResult.recommendations.push(
-        'Break up wall-of-text lines (>500 chars) — these suggest formatting corruption where line breaks were lost'
-      );
-    }
+    if (wallOfTextCount === 0) return 0;
 
-    // --- 3. Duplicate boilerplate headings ---
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Found ${wallOfTextCount} line${wallOfTextCount > 1 ? 's' : ''} exceeding 500 characters (wall-of-text)`,
+      suggestion: 'Break long lines into shorter paragraphs — this may indicate lost line breaks'
+    });
+    fileResult.recommendations.push(
+      'Break up wall-of-text lines (>500 chars) — these suggest formatting corruption where line breaks were lost'
+    );
+    return Math.min(wallOfTextCount, 3);
+  }
+
+  _detectDuplicateHeadings(lines, fileResult) {
     const headingCounts = {};
     const headingRegex = /^(#{1,6})\s+(.*\S)/;
 
@@ -668,22 +668,19 @@ class QualityAnalyzer {
       .filter(([, count]) => count > 1)
       .map(([heading]) => heading);
 
-    if (duplicateHeadings.length > 0) {
-      // Each duplicate heading set costs 1 point from grammar, capped at 2
-      grammarDeduction += Math.min(duplicateHeadings.length, 2);
-      const examples = duplicateHeadings.slice(0, 3).map(h => `"${h}"`).join(', ');
-      fileResult.issues.push({
-        category: 'language',
-        severity: 'medium',
-        message: `Duplicate headings detected: ${examples}`,
-        suggestion: 'Remove or rename duplicate headings — this may indicate duplicated boilerplate sections'
-      });
-      fileResult.recommendations.push(
-        'Remove duplicate headings — the same section heading appears more than once, suggesting duplicated boilerplate'
-      );
-    }
+    if (duplicateHeadings.length === 0) return 0;
 
-    return { grammarDeduction, readabilityDeduction };
+    const examples = duplicateHeadings.slice(0, 3).map(h => `"${h}"`).join(', ');
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Duplicate headings detected: ${examples}`,
+      suggestion: 'Remove or rename duplicate headings — this may indicate duplicated boilerplate sections'
+    });
+    fileResult.recommendations.push(
+      'Remove duplicate headings — the same section heading appears more than once, suggesting duplicated boilerplate'
+    );
+    return Math.min(duplicateHeadings.length, 2);
   }
 
   /**
