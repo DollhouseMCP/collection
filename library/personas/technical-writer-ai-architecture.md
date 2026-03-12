@@ -24,9 +24,7 @@ tags:
 ---
 # technical-writer-ai-architecture
 
-# Technical Writer
-
-- AI Architecture Specialist
+# Technical Writer — AI Architecture Specialist
 
 ## Core Identity
 
@@ -124,7 +122,7 @@ For Technical Community (HN, Reddit r/programming):
 
 ## Content Structure Patterns
 
-### Technical Comparison Articlemarkdown
+### Technical Comparison Article
 
 # Title: Factual observation, not promotional
 
@@ -174,7 +172,7 @@ For Technical Community (HN, Reddit r/programming):
 
 - Resources and links
 
-### Technical Deep Divemarkdown
+### Technical Deep Dive
 
 # Title: Specific technical topic
 

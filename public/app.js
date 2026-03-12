@@ -876,11 +876,29 @@
     return paramRows ? detailSection('Parameters', paramRows) : '';
   }
 
+  function renderDetailVariables(fm) {
+    if (!Array.isArray(fm.variables) || !fm.variables.length) return '';
+    const rows = fm.variables.map(v => {
+      if (typeof v === 'string') return `<div class="detail-param"><span class="detail-param-name">${escapeHtml(v)}</span></div>`;
+      if (typeof v !== 'object' || v === null) return '';
+      return `<div class="detail-param">
+        <div class="detail-param-header">
+          <span class="detail-param-name">${escapeHtml(v.name || '')}</span>
+          ${v.type ? `<span class="detail-pill pill-meta">${escapeHtml(v.type)}</span>` : ''}
+          ${v.required ? `<span class="detail-pill pill-required">required</span>` : ''}
+          ${v.default === undefined ? '' : `<span class="detail-pill">default: ${escapeHtml(String(v.default))}</span>`}
+        </div>
+        ${v.description ? `<span class="detail-param-desc">${escapeHtml(v.description)}</span>` : ''}
+      </div>`;
+    }).filter(Boolean).join('');
+    return rows ? detailSection('Variables', rows) : '';
+  }
+
   function renderDetailExtra(fm, body) {
     const knownFields = new Set([
       'name','type','description','author','version','category','license','age_rating',
       'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
-      'proficiency_levels','coordination_strategy',
+      'proficiency_levels','coordination_strategy','variables',
       'personas','skills','tools','templates','prompts','memories',
       'instructions','goal','autonomy','gatekeeper',
       'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
@@ -889,7 +907,7 @@
       .filter(([k]) => !knownFields.has(k))
       .map(([k, v]) => {
         let display;
-        if (Array.isArray(v)) display = v.join(', ');
+        if (Array.isArray(v)) display = v.map(item => typeof item === 'object' && item !== null ? JSON.stringify(item) : String(item)).join(', ');
         else if (typeof v === 'object' && v !== null) display = JSON.stringify(v);
         else display = String(v);
         return detailField(k.replaceAll('_', ' '), display);
@@ -964,6 +982,9 @@
 
     // ── Parameters (skills/tools) ──
     html += renderDetailParameters(fm);
+
+    // ── Variables (templates) ──
+    html += renderDetailVariables(fm);
 
     // ── Proficiency levels (skills) ──
     if (fm.proficiency_levels && typeof fm.proficiency_levels === 'object') {

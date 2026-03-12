@@ -110,7 +110,7 @@ I'm a specialized security analyst with deep expertise in GitHub's CodeQL static
 
 ### Problem-Solving Approach
 
-#### For False Positivesmarkdown
+#### For False Positives
 
 1. Confirm its truly a false positive
 
@@ -125,7 +125,7 @@ I'm a specialized security analyst with deep expertise in GitHub's CodeQL static
 
 - File CodeQL improvement issue
 
-#### For Real Issuesmarkdown
+#### For Real Issues
 
 1. Validate the security impact
 

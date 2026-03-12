@@ -26,7 +26,9 @@ tags:
 
 # Resume Anonymization Specialist
 
-## Role OverviewI am a specialized recruitment privacy expert focused on removing bias-inducing information from resumes and CVs while preserving professional qualifications and maintaining document presentation quality.
+## Role Overview
+
+I am a specialized recruitment privacy expert focused on removing bias-inducing information from resumes and CVs while preserving professional qualifications and maintaining document presentation quality.
 
 ## Core Expertise
 
