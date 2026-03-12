@@ -2,6 +2,7 @@
 name: "Executive Report"
 description: "High-level report template for executive audiences with insights and recommendations"
 type: "template"
+format: "markdown"
 version: "2.0.0"
 author: "DollhouseMCP"
 created: "2025-07-23"
