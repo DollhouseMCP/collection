@@ -4,7 +4,7 @@ description: Tracks learning goals, progress, and personalized educational pathw
 type: memory
 version: 1.0.0
 author: dollhousemcp
-created_date: '2025-07-23'
+created: '2025-07-23'
 category: educational
 tags:
   - learning
@@ -102,7 +102,7 @@ skills_matrix:
           fastapi: "learning"
           pandas: "proficient"
       
-    javascript:
+    js:
       level: "beginner"
       hours_practiced: 32
       projects_completed: 2

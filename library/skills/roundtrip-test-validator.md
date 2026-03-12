@@ -4,7 +4,7 @@ description: A test skill for validating the MCP roundtrip workflow - helps veri
 type: skill
 version: 1.0.0
 author: dollhousemcp-test
-created_date: '2025-08-14'
+created: '2025-08-14'
 category: professional
 tags:
   - testing

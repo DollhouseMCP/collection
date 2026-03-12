@@ -446,19 +446,26 @@ class QualityAnalyzer {
 
     const { contentBody, metadata } = fileResult;
     const fullText = `${metadata?.description || ''} ${contentBody || ''}`;
-    
+
     if (!fullText.trim()) {
       fileResult.metrics.languageQuality = assessment;
       return;
     }
 
     // Basic grammar check (simple heuristics)
-    const grammarScore = this.checkBasicGrammar(fullText);
+    let grammarScore = this.checkBasicGrammar(fullText);
+
+    // Readability assessment
+    let readabilityScore = this.calculateReadability(fullText);
+
+    // Formatting corruption detection — deducts from grammar and readability
+    const corruption = this.detectFormattingCorruption(contentBody || '', fileResult);
+    grammarScore = Math.max(0, grammarScore - corruption.grammarDeduction);
+    readabilityScore = Math.max(0, readabilityScore - corruption.readabilityDeduction);
+
     assessment.details.grammarCheck = { score: grammarScore, maxScore: 6 };
     assessment.score += grammarScore;
 
-    // Readability assessment
-    const readabilityScore = this.calculateReadability(fullText);
     assessment.details.readabilityScore = { score: readabilityScore, maxScore: 5 };
     assessment.score += readabilityScore;
 
@@ -559,6 +566,121 @@ class QualityAnalyzer {
     }
 
     return Math.max(0, Math.round(score * 10) / 10);
+  }
+
+  /**
+   * Detect formatting corruption in content body.
+   *
+   * Checks for three categories:
+   *   1. Broken words — word fragments split across lines (e.g. "relation\n\nships")
+   *   2. Wall-of-text lines — body lines > 500 chars outside code blocks
+   *   3. Duplicate boilerplate — the same heading appearing more than once
+   *
+   * Returns an object with grammarDeduction and readabilityDeduction totals.
+   * Also pushes issues/recommendations onto fileResult.
+   */
+  detectFormattingCorruption(contentBody, fileResult) {
+    if (!contentBody?.trim()) {
+      return { grammarDeduction: 0, readabilityDeduction: 0 };
+    }
+
+    const lines = contentBody.split('\n');
+    const grammarDeduction = this._detectBrokenWords(lines, fileResult)
+      + this._detectDuplicateHeadings(lines, fileResult);
+    const readabilityDeduction = this._detectWallOfText(lines, fileResult);
+
+    return { grammarDeduction, readabilityDeduction };
+  }
+
+  _detectBrokenWords(lines, fileResult) {
+    const brokenWordSuffixes = [
+      'ship', 'ships', 'tion', 'tions', 'ment', 'ments',
+      'ness', 'ble', 'ful', 'ing', 'ously', 'ting', 'shing'
+    ];
+    const suffixPattern = new RegExp(
+      String.raw`^(${brokenWordSuffixes.join('|')})\b`, 'i'
+    );
+    let brokenWordCount = 0;
+
+    for (const line of lines) {
+      const trimmed = line.trimStart();
+      if (!trimmed || /^[#\-*>0-9]/.test(trimmed)) continue;
+      if (suffixPattern.test(trimmed)) {
+        brokenWordCount++;
+      }
+    }
+
+    if (brokenWordCount === 0) return 0;
+
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Detected ${brokenWordCount} broken word${brokenWordCount > 1 ? 's' : ''} (word fragments split across lines)`,
+      suggestion: String.raw`Rejoin words that were split across line breaks (e.g. "relation\nships" → "relationships")`
+    });
+    fileResult.recommendations.push(
+      'Fix broken words — some words appear to be split across lines, indicating copy-paste or formatting corruption'
+    );
+    return Math.min(brokenWordCount, 3);
+  }
+
+  _detectWallOfText(lines, fileResult) {
+    let inCodeBlock = false;
+    let wallOfTextCount = 0;
+
+    for (const line of lines) {
+      if (line.trimStart().startsWith('```')) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+      if (!inCodeBlock && line.length > 500) {
+        wallOfTextCount++;
+      }
+    }
+
+    if (wallOfTextCount === 0) return 0;
+
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Found ${wallOfTextCount} line${wallOfTextCount > 1 ? 's' : ''} exceeding 500 characters (wall-of-text)`,
+      suggestion: 'Break long lines into shorter paragraphs — this may indicate lost line breaks'
+    });
+    fileResult.recommendations.push(
+      'Break up wall-of-text lines (>500 chars) — these suggest formatting corruption where line breaks were lost'
+    );
+    return Math.min(wallOfTextCount, 3);
+  }
+
+  _detectDuplicateHeadings(lines, fileResult) {
+    const headingCounts = {};
+    const headingRegex = /^(#{1,6})\s+(.*\S)/;
+
+    for (const line of lines) {
+      const match = line.match(headingRegex);
+      if (match) {
+        const normalized = match[0].trim().toLowerCase();
+        headingCounts[normalized] = (headingCounts[normalized] || 0) + 1;
+      }
+    }
+
+    const duplicateHeadings = Object.entries(headingCounts)
+      .filter(([, count]) => count > 1)
+      .map(([heading]) => heading);
+
+    if (duplicateHeadings.length === 0) return 0;
+
+    const examples = duplicateHeadings.slice(0, 3).map(h => `"${h}"`).join(', ');
+    fileResult.issues.push({
+      category: 'language',
+      severity: 'medium',
+      message: `Duplicate headings detected: ${examples}`,
+      suggestion: 'Remove or rename duplicate headings — this may indicate duplicated boilerplate sections'
+    });
+    fileResult.recommendations.push(
+      'Remove duplicate headings — the same section heading appears more than once, suggesting duplicated boilerplate'
+    );
+    return Math.min(duplicateHeadings.length, 2);
   }
 
   /**
