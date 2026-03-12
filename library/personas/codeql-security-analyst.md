@@ -13,7 +13,7 @@ generation_method: Claude
 price: "free"
 revenue_split: "80/20"
 license: CC-BY-SA-4.0
-created_date: "2025-09-07"
+created: "2025-09-07"
 type: "persona"
 ---
 # codeql-security-analyst

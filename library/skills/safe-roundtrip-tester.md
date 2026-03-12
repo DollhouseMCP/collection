@@ -4,7 +4,7 @@ description: A security-safe test skill for validating the complete MCP roundtri
 type: skill
 version: 1.0.0
 author: dollhousemcp-test
-created_date: '2025-08-14'
+created: '2025-08-14'
 category: professional
 tags:
   - testing

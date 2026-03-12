@@ -4,7 +4,7 @@ description: 'Goal-oriented agent for managing tasks, priorities, and project ex
 type: agent
 version: 1.0.0
 author: dollhousemcp
-created_date: '2025-07-23'
+created: '2025-07-23'
 category: personal
 tags: &ref_0
   - tasks

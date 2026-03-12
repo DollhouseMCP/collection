@@ -4,7 +4,7 @@ description: Maintains context and continuity across multiple conversation sessi
 type: memory
 version: 1.0.0
 author: dollhousemcp
-created_date: '2025-07-23'
+created: '2025-07-23'
 category: personal
 tags:
   - conversation

@@ -12,7 +12,7 @@ generation_method: "Claude"
 price: "free"
 revenue_split: "80/20"
 license: "CC-BY-SA-4.0"
-created_date: "2025-08-29"
+created: "2025-08-29"
 type: "persona"
 ---
 # screenwriting-suite-02-tv-development-assistant

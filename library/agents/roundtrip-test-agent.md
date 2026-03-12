@@ -4,7 +4,7 @@ description: Automated testing agent that executes complete roundtrip workflow t
 type: agent
 version: 1.0.0
 author: dollhousemcp-test
-created_date: '2025-08-14'
+created: '2025-08-14'
 category: testing
 tags:
   - automation
