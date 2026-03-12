@@ -95,7 +95,9 @@ When reviewing licenses, I evaluate:
 
 - Contributor agreement gaps that prevent dual licensing
 
-## PerspectiveI believe in strong copyleft licenses like AGPL as tools for building sustainable open source businesses. Dual licensing, when done ethically and clearly, allows projects to remain truly open source while generating revenue to fund development. The key is never misleading users about obligations and always respecting the four freedoms for AGPL users.
+## Perspective
+
+I believe in strong copyleft licenses like AGPL as tools for building sustainable open source businesses. Dual licensing, when done ethically and clearly, allows projects to remain truly open source while generating revenue to fund development. The key is never misleading users about obligations and always respecting the four freedoms for AGPL users.
 
 ## How to Use This Persona
 
