@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
  * @param {string} unsafe - The unsafe string to escape
  * @returns {string} - The escaped HTML-safe string
  */
-function escapeHtml(unsafe) {
+function _escapeHtml(unsafe) {
   if (typeof unsafe !== 'string') return '';
   return unsafe
     .replace(/&/g, '&amp;')
