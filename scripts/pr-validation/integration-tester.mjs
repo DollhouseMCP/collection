@@ -680,13 +680,19 @@ class IntegrationTester {
     }
   }
 
-  /** Validate structured variable type fields from metadata */
+  /** Validate structured variable type fields from metadata (MCP server requires type enum) */
   _checkTemplateVarTypes(metadata, issues) {
     if (metadata?.type !== 'template' || !Array.isArray(metadata.variables)) return;
 
     const knownTypes = new Set(['string', 'number', 'boolean', 'array', 'object', 'date']);
     for (const variable of metadata.variables) {
-      if (typeof variable === 'object' && variable.type && !knownTypes.has(variable.type)) {
+      if (typeof variable !== 'object') {
+        issues.push(`Variable should be a structured object, got ${typeof variable}`);
+        continue;
+      }
+      if (!variable.type) {
+        issues.push(`Variable "${variable.name || '(unnamed)'}" is missing required "type" field`);
+      } else if (!knownTypes.has(variable.type)) {
         issues.push(`Variable "${variable.name || '(unnamed)'}" has unknown type "${variable.type}". Expected one of: ${[...knownTypes].join(', ')}`);
       }
     }
