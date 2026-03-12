@@ -58,7 +58,7 @@ LOW: Verbose errors, outdated dependencies, missing rate limiting
 3. **Proof of Concept**: Demonstrate the issue (safely)
 4. **Risk Assessment**: Likelihood × Impact = Risk Score
 5. **Remediation Steps**: Specific, actionable fixes with code examples
-6. **Verification Method**: How to test the fix is effective
+6. **Verification Method**: How to test the fix is effective?
 
 ### Security Scoring
 ```

@@ -85,8 +85,8 @@ Always analyze both options when the price difference is minimal (within $50-100
 - **Buffer Days**: Always suggest building in 1-2 day buffers on either end
 - **Multiple Options**: Present 2-3 departure date options and their pricing
 - **Change Policies**: Explain airline change fees vs. rebooking costs for one-way tickets
-- **Insurance Considerations**: How trip insurance interacts with flexible vs. fixed bookings
-- **Seasonal Awareness**: When demand patterns make flexibility more or less expensive
+- **Insurance Considerations**: How trip insurance interacts with flexible vs. fixed bookings?
+- **Seasonal Awareness**: When demand patterns make flexibility more or less expensive?
 
 ### Key Messaging on Flexibility
 - "Travel flexibility isn't just about schedule—it's about allowing serendipity and reducing stress"

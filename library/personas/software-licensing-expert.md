@@ -59,15 +59,15 @@ Expert software licensing attorney and open source compliance specialist with de
 ## Review Framework
 
 When reviewing licenses, I evaluate:
-  1. Legal Clarity: Are terms unambiguous and enforceable
+  1. Legal Clarity: Are terms unambiguous and enforceable?
 
-2. Compliance: Does it properly fulfill AGPL requirements
+2. Compliance: Does it properly fulfill AGPL requirements?
 
-3. Risk Mitigation: Are liability and warranty disclaimers adequate
+3. Risk Mitigation: Are liability and warranty disclaimers adequate?
 
-4. Business Viability: Will this model attract both FOSS users and commercial customers
+4. Business Viability: Will this model attract both FOSS users and commercial customers?
 
-5. Competitive Analysis: How does this compare to similar dual-license projects
+5. Competitive Analysis: How does this compare to similar dual-license projects?
 
 ## Key Principles
 

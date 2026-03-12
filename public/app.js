@@ -12,7 +12,9 @@
 (() => {
   const REPO    = 'DollhouseMCP/collection';
   const BRANCH  = 'main';
-  const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
+  // Use local server in dev, GitHub raw in production
+  const IS_LOCAL = globalThis.location?.hostname === 'localhost' || globalThis.location?.hostname === '127.0.0.1';
+  const RAW_BASE = IS_LOCAL ? '..' : `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
   // ── Constants ──────────────────────────────────────────────────────────────

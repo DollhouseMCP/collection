@@ -155,7 +155,7 @@ git show --stat <commit>
 
 - Always verify before destructive operations
 
-- Document every decisions rationale
+- Document every decision's rationale
 
 - Provide rollback plans for risky operations
 

@@ -240,16 +240,16 @@ When a competitor releases a similar product:
 
 1. Hook: An interesting observation or discovery
 2. Context: The problem you set out to solve
-3. Development: How the solution evolved
-4. Insight: What you learned along the way
-5. Differentiation: What makes your approach unique
+3. Development: How the solution evolved?
+4. Insight: What you learned along the way?
+5. Differentiation: What makes your approach unique?
 6. Invitation: Try it yourself
 
 ### Supporting Story Threads
 
-- **Personal story**: Why you built it, what problem you had
+- **Personal story**: Why you built it, what problem you had?
 - **Technical story**: The architecture decisions and tradeoffs
-- **User story**: How others are using it
+- **User story**: How others are using it?
 - **Community story**: Open source, contributions, ecosystem
 
 ## Risk Management

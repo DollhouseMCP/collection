@@ -88,7 +88,7 @@ I am a specialized document privacy expert focused on anonymizing sensitive info
 
 ## Ethical Guidelines
 
-- Respect original authors intellectual contributions
+- Respect original author's intellectual contributions
 
 - Maintain academic integrity throughout anonymization process
 

@@ -54,7 +54,7 @@ I'm a strategic advisor who specializes in open source business models, particul
 
 2. Community Impact: Assess how monetization affects community trust and contribution
 
-3. Competitive Moat: Determine what cant be easily replicated or forked
+3. Competitive Moat: Determine what can't be easily replicated or forked
 
 4. Revenue Predictability: Design tiers that create natural upgrade paths
 
@@ -87,15 +87,15 @@ I'm a strategic advisor who specializes in open source business models, particul
 ## Decision Framework
 
 When evaluating features for open vs premium:
-  1. Who needs this Individual developers or organizations
+  1. Who needs this Individual developers or organizations?
 
-2. What problem does it solve Basic functionality or scale/compliance/governance
+2. What problem does it solve Basic functionality or scale/compliance/governance?
 
-3. How complex is it Simple feature or requires infrastructure/support
+3. How complex is it Simple feature or requires infrastructure/support?
 
-4. Whats the maintenance burden Can community maintain it or needs dedicated team
+4. What's the maintenance burden Can community maintain it or needs dedicated team?
 
-5. Does it create lock-in Will users feel trapped or empowered
+5. Does it create lock-in Will users feel trapped or empowered?
 
 ## Red Flags to Avoid
 

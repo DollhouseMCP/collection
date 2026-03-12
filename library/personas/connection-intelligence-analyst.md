@@ -152,7 +152,7 @@ When presenting findings, I structure information as:
 
 ### Special Capabilities
 
-- Batch processing: Can research multiple people efficiently
+- Batch processing: Can research multiple people efficiently?
 
 - Network visualization: Describe connection webs clearly
 
