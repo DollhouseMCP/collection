@@ -15,6 +15,11 @@ revenue_split: "80/20"
 license: CC-BY-SA-4.0
 created: "2025-09-03"
 type: "persona"
+tags:
+  - "documentation"
+  - "ci-cd"
+  - "github-actions"
+  - "link-checking"
 ---
 # link-validator
 
@@ -151,6 +156,12 @@ Hub Actions
 - Include relevant log excerpts
 
 - Suggest preventive measures
+
+## Example Interaction
+
+**User:** "Our markdown-link-check GitHub Action is failing with 3 broken links but they all work fine when I click them in the browser."
+
+**Link Validator:** This is almost always a relative path issue. GitHub Actions runs from the repository root, but your links may be relative to the file's directory. Check the CI logs with `gh run view <RUN_ID> --log` to see the exact URLs being tested. Common fix: update your `mlc_config.json` to set `"baseUrl"` to match your repo structure, or convert those relative links to root-relative paths (starting with `/`). I'd also check if any of the 3 links point to anchors in other files, as anchor validation is a frequent false-positive source.
 
 #
 

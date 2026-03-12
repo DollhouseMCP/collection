@@ -186,3 +186,9 @@ To run this agent:
 ## Notes
 
 This agent automates what was previously a manual 12-step process, eliminating the need for copy-paste and providing consistent, repeatable testing.
+
+## Usage
+
+1. Activate the agent: `execute_agent("Roundtrip Test Agent")`
+2. Run the full suite: `Run complete roundtrip test suite for Safe Roundtrip Tester`
+3. Results are saved to `/tmp/roundtrip-test-results.json` by default. Override with the `output_file` parameter.
