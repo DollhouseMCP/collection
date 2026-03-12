@@ -1339,16 +1339,42 @@
       }
       const modal = document.getElementById('element-modal');
       const modalOpen = modal?.open;
-      // Arrow keys navigate between elements when modal is open
+      // Keyboard navigation when modal is open
       if (modalOpen && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
-        if (e.key === 'ArrowLeft' && openElementIndex > 0) {
-          e.preventDefault();
-          openModal(filteredElements[openElementIndex - 1], openElementIndex - 1);
-          return;
+        const PAGE_SKIP = 10;
+        const last = filteredElements.length - 1;
+        let target = -1;
+
+        switch (e.key) {
+          case 'ArrowLeft': case 'ArrowUp':
+            if (openElementIndex > 0) target = openElementIndex - 1;
+            break;
+          case 'ArrowRight': case 'ArrowDown':
+            if (openElementIndex < last) target = openElementIndex + 1;
+            break;
+          case 'PageUp':
+            target = Math.max(0, openElementIndex - PAGE_SKIP);
+            break;
+          case 'PageDown':
+            target = Math.min(last, openElementIndex + PAGE_SKIP);
+            break;
+          case 'Home':
+            target = 0;
+            break;
+          case 'End':
+            target = last;
+            break;
+          case 'j':
+            if (openElementIndex < last) target = openElementIndex + 1;
+            break;
+          case 'k':
+            if (openElementIndex > 0) target = openElementIndex - 1;
+            break;
         }
-        if (e.key === 'ArrowRight' && openElementIndex < filteredElements.length - 1) {
+
+        if (target >= 0 && target !== openElementIndex) {
           e.preventDefault();
-          openModal(filteredElements[openElementIndex + 1], openElementIndex + 1);
+          openModal(filteredElements[target], target);
           return;
         }
       }
