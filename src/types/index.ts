@@ -3,15 +3,18 @@
  */
 
 // Base metadata shared by all content types
+// Field names follow MCP server conventions (source of truth)
 export interface BaseMetadata {
   name: string;
   description: string;
   unique_id: string;
   author: string;
-  category: 'creative' | 'educational' | 'gaming' | 'personal' | 'professional';
+  category?: string;              // Free-form string (MCP server defaults to 'general')
   version?: string;
-  created_date?: string;
-  updated_date?: string;
+  created?: string;               // ISO date (MCP server field name)
+  modified?: string;              // ISO date (MCP server field name)
+  created_date?: string;          // Legacy alias — accepted for backward compatibility
+  updated_date?: string;          // Legacy alias — accepted for backward compatibility
   tags?: string[];
   license?: string;
 }
@@ -49,11 +52,37 @@ export interface PromptMetadata extends BaseMetadata {
   examples?: string[];
 }
 
+// Template variable definition — matches MCP server TemplateVariable interface
+export type TemplateVariableType = 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object';
+
+export interface TemplateVariable {
+  name: string;
+  type: TemplateVariableType;     // Required enum (MCP server enforces this)
+  required?: boolean;
+  description?: string;
+  default?: string;               // String in collection; MCP server allows unknown
+  validation?: string;            // Regex pattern for string type validation
+  options?: string[];             // Enum-like value choices
+  format?: string;                // Date format string (date type only)
+}
+
+// Structured example with variables and expected output
+export interface TemplateExample {
+  title: string;
+  description?: string;
+  variables?: Record<string, unknown>;
+  output?: string;
+}
+
 export interface TemplateMetadata extends BaseMetadata {
   type: 'template';
-  format: string;
-  variables?: string[];
-  use_cases?: string[];
+  output_format?: string;         // MCP server field: 'markdown' | 'html' | 'json' | 'yaml' | 'text' | 'xml'
+  variables?: TemplateVariable[];
+  includes?: string[];            // Template composition references
+  examples?: TemplateExample[];   // Structured usage examples
+  triggers?: string[];            // Action verbs for discovery
+  instructions?: string;          // V2 dual-field: rendering directives
+  use_cases?: string[];           // Collection-specific: discoverability
 }
 
 export interface ToolMetadata extends BaseMetadata {

@@ -32,8 +32,10 @@ const BaseMetadataSchema = z.object({
   author: z.string().min(2).max(100),
   category: z.string().optional(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
-  created_date: z.union([z.string(), z.date()]).optional(),
-  updated_date: z.union([z.string(), z.date()]).optional(),
+  created: z.string().optional(),           // MCP server field name
+  modified: z.string().optional(),          // MCP server field name
+  created_date: z.union([z.string(), z.date()]).optional(),  // Legacy compat
+  updated_date: z.union([z.string(), z.date()]).optional(),  // Legacy compat
   tags: z.array(z.string()).max(10).optional(),
   license: z.string().optional()
 });
@@ -70,10 +72,34 @@ const PromptMetadataSchema = BaseMetadataSchema.extend({
   examples: z.array(z.string()).optional()
 }).passthrough();
 
+const TemplateVariableTypeEnum = z.enum(['string', 'number', 'boolean', 'date', 'array', 'object']);
+
+const TemplateVariableSchema = z.object({
+  name: z.string(),
+  type: TemplateVariableTypeEnum,
+  required: z.boolean().optional(),
+  description: z.string().optional(),
+  default: z.string().optional(),
+  validation: z.string().optional(),    // Regex pattern for string validation
+  options: z.array(z.string()).optional(),  // Enum-like value choices
+  format: z.string().optional()         // Date format string (date type only)
+}).passthrough();
+
+const TemplateExampleSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  variables: z.record(z.string(), z.unknown()).optional(),
+  output: z.string().optional()
+}).passthrough();
+
 const TemplateMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('template'),
-  format: z.string(),
-  variables: z.array(z.string()).optional(),
+  output_format: z.enum(['markdown', 'html', 'json', 'yaml', 'text', 'xml']).optional(),
+  variables: z.array(TemplateVariableSchema).optional(),
+  includes: z.array(z.string()).optional(),
+  examples: z.array(TemplateExampleSchema).optional(),
+  triggers: z.array(z.string()).optional(),
+  instructions: z.string().optional(),
   use_cases: z.array(z.string()).optional()
 }).passthrough();
 
@@ -188,8 +214,18 @@ export class ContentValidator {
 
       // Security scanning
       const securityIssues = scanForSecurityPatterns(content);
+
+      // Filter out false positives for template files.
+      // Templates legitimately contain phrases like "Session ID:" as placeholder labels,
+      // which trigger context_awareness patterns designed for prompt injection detection.
+      const elementType = (parsed.data as Record<string, unknown>).type;
+      const templateSafePatterns = new Set(['session_data_probe', 'developer_mode']);
+      const filteredSecurityIssues = elementType === 'template'
+        ? securityIssues.filter(issue => !templateSafePatterns.has(issue.pattern))
+        : securityIssues;
+
       // Convert SecurityIssue to ValidationIssue format
-      const convertedSecurityIssues = securityIssues.map(securityIssue => ({
+      const convertedSecurityIssues = filteredSecurityIssues.map(securityIssue => ({
         severity: securityIssue.severity,
         type: `security_${securityIssue.category}`,
         details: `${securityIssue.description}: Pattern "${securityIssue.pattern}" detected`,

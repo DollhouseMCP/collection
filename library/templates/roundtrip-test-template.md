@@ -1,26 +1,25 @@
 ---
-name: Roundtrip Test Template
-description: Interactive checklist template for MCP roundtrip workflow testing
-type: template
-version: 1.0.0
-author: dollhousemcp-test
-created_date: '2025-08-14'
-category: testing
-tags:
-  - testing
-  - validation
-  - checklist
-  - roundtrip
+name: "Roundtrip Test Template"
+description: "Interactive checklist template for MCP roundtrip workflow testing"
+type: "template"
+version: "2.0.0"
+author: "dollhousemcp-test"
+created: "2025-08-14"
+category: "testing"
+tags: ["testing", "validation", "checklist", "roundtrip"]
 unique_id: template_roundtrip-test-template_dollhousemcp-test_20250814-220000
+variables:
+  - { name: "test_date", type: "string", required: true, description: "Date of the test run" }
+  - { name: "tester_name", type: "string", required: true, description: "Name of the person running the test" }
+  - { name: "session_id", type: "string", required: false, description: "Unique session ID for this test run" }
 ---
-
 # MCP Roundtrip Test Checklist
 
 ## Test Information
-- Date: [Fill in date]
-- Tester: [Your name]
+- Date: {{test_date}}
+- Tester: {{tester_name}}
 - Test Element: Safe Roundtrip Tester
-- Session ID: [Generate unique ID]
+- Session ID: {{session_id}}
 
 ## Phase 1: Installation and Setup
 
@@ -161,7 +160,7 @@ Command: configure_collection_submission autoSubmit: false
 
 ### Statistics
 - Tests Run: ___ / 21
-- Passed: ___ 
+- Passed: ___
 - Failed: ___
 - Success Rate: ___%
 

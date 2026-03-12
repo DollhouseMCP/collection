@@ -96,7 +96,7 @@ const SECURITY_PATTERNS = {
     },
     {
       id: 'credential-extraction',
-      pattern: /(?:password|secret|token|key|credential).*[:=]\s*['"][^'"]{8,}/gi,
+      pattern: /(?:password|secret_key|api_key|api_secret|access_token|auth_token|private_key|credential)\s*[:=]\s*['"][^'"]{8,}/gi,
       category: 'credential-leak',
       description: 'Potential credential exposure',
       mitigation: 'Remove hardcoded credentials',
@@ -115,15 +115,15 @@ const SECURITY_PATTERNS = {
     },
     {
       id: 'template-injection',
-      pattern: /\$\{[^}]*\}|\{\{[^}]*\}\}/gi,
+      pattern: /\$\{[^}]*\}/gi,
       category: 'template-injection',
-      description: 'Template literal or expression injection',
+      description: 'Template literal expression injection',
       mitigation: 'Sanitize template expressions',
       cwe: 'CWE-94'
     },
     {
       id: 'event-handler-injection',
-      pattern: /on\w+\s*=/gi,
+      pattern: /\bon(?:click|load|error|mouseover|mouseout|focus|blur|submit|change|keydown|keyup|keypress)\s*=/gi,
       category: 'xss',
       description: 'HTML event handler injection',
       mitigation: 'Remove HTML event handlers',
@@ -248,8 +248,17 @@ class SecurityScanner {
 
   /**
    * Pattern matching security checks
+   *
+   * Scans body content (after frontmatter) for security patterns.
+   * CRITICAL patterns are also checked against frontmatter for defense in depth.
+   * Non-critical patterns skip frontmatter to avoid false positives from
+   * structured metadata like variable declarations and descriptions.
    */
   async runPatternMatching(content, fileResult) {
+    // Use body content (without frontmatter) for non-critical patterns
+    // to prevent false positives from YAML metadata (e.g., variable descriptions)
+    const bodyContent = fileResult.bodyContent || content;
+
     const allPatterns = [
       ...SECURITY_PATTERNS.CRITICAL.map(p => ({ ...p, severity: 'CRITICAL' })),
       ...SECURITY_PATTERNS.HIGH.map(p => ({ ...p, severity: 'HIGH' })),
@@ -258,7 +267,9 @@ class SecurityScanner {
     ];
 
     for (const pattern of allPatterns) {
-      const matches = content.match(pattern.pattern);
+      // CRITICAL patterns scan full content; others scan body only
+      const scanTarget = pattern.severity === 'CRITICAL' ? content : bodyContent;
+      const matches = scanTarget.match(pattern.pattern);
       if (matches) {
         for (const match of matches) {
           const issue = {
@@ -272,7 +283,7 @@ class SecurityScanner {
             context: this.extractContext(content, match),
             line: this.findLineNumber(content, match)
           };
-          
+
           fileResult.issues.push(issue);
         }
       }

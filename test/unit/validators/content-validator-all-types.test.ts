@@ -220,8 +220,8 @@ Context: {context}
   });
 
   describe('Template validation', () => {
-    it('should validate a valid template file', async () => {
-      const validTemplate = `---
+    it('should reject a template with bare-string variables (no longer supported)', async () => {
+      const legacyTemplate = `---
 unique_id: test-template-001
 name: Project README Template
 description: A comprehensive template for project documentation
@@ -231,47 +231,136 @@ tags:
   - documentation
   - readme
 author: Test Author
-created_date: 2024-01-01T00:00:00Z
-updated_date: 2024-01-01T00:00:00Z
 category: professional
-format: "markdown"
 variables:
   - "project_name"
   - "description"
   - "installation_steps"
-use_cases:
-  - "Open source projects"
-  - "Internal documentation"
 ---
 
-# {project_name}
+# {{project_name}}
 
-{description}
+{{description}}
 
 ## Installation
 
-{installation_steps}
+{{installation_steps}}
 
 ## Usage
 
 [Add usage instructions here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## License
-
-[Add license information here]
 `;
 
-      const testFile = join(testDir, 'valid-template.md');
-      writeFileSync(testFile, validTemplate);
-      
+      const testFile = join(testDir, 'legacy-template.md');
+      writeFileSync(testFile, legacyTemplate);
+
       const result = await validator.validateContent(testFile);
-      
+
+      expect(result.passed).toBe(false);
+      expect(result.issues.some(i => i.type === 'invalid_metadata')).toBe(true);
+    });
+
+    it('should validate a template with structured variable declarations', async () => {
+      const structuredTemplate = `---
+unique_id: test-template-structured
+name: Meeting Notes Template
+description: Structured template for capturing meeting information and action items
+type: template
+version: 2.0.0
+tags:
+  - meeting
+  - notes
+author: Test Author
+created_date: 2024-01-01T00:00:00Z
+category: professional
+variables:
+  - { name: "meeting_title", type: "string", required: true, description: "Title of the meeting" }
+  - { name: "meeting_date", type: "string", required: true, description: "Date of the meeting" }
+  - { name: "attendees", type: "string", required: true, description: "Pre-formatted attendee list, one per line" }
+  - { name: "action_items", type: "string", required: false, description: "Pre-formatted table rows: | Action | Owner | Due Date |" }
+---
+
+# {{meeting_title}}
+
+**Date:** {{meeting_date}}
+
+## Attendees
+{{attendees}}
+
+## Action Items
+| Action | Owner | Due Date |
+|--------|-------|----------|
+{{action_items}}
+`;
+
+      const testFile = join(testDir, 'structured-template.md');
+      writeFileSync(testFile, structuredTemplate);
+
+      const result = await validator.validateContent(testFile);
+
       expect(result.passed).toBe(true);
       expect(result.issues).toHaveLength(0);
+    });
+
+    it('should validate a template without the format field', async () => {
+      const noFormatTemplate = `---
+unique_id: test-template-no-format
+name: Simple Report Template
+description: A report template that does not specify a format field
+type: template
+version: 2.0.0
+author: Test Author
+category: professional
+variables:
+  - { name: "report_title", type: "string", required: true, description: "Title of the report" }
+  - { name: "report_body", type: "string", required: false, description: "Main report content" }
+---
+
+# {{report_title}}
+
+## Overview
+
+{{report_body}}
+
+This template demonstrates that the format field is optional for templates.
+`;
+
+      const testFile = join(testDir, 'no-format-template.md');
+      writeFileSync(testFile, noFormatTemplate);
+
+      const result = await validator.validateContent(testFile);
+
+      expect(result.passed).toBe(true);
+      expect(result.issues).toHaveLength(0);
+    });
+
+    it('should reject structured variables missing the name field', async () => {
+      const badVariableTemplate = `---
+unique_id: test-template-bad-var
+name: Template With Bad Variable
+description: A template with a structured variable missing the required name field
+type: template
+version: 2.0.0
+author: Test Author
+category: professional
+variables:
+  - { type: "string", required: true, description: "Missing the name field" }
+---
+
+# Bad Variable Template
+
+This template has a malformed variable declaration.
+`;
+
+      const testFile = join(testDir, 'bad-variable-template.md');
+      writeFileSync(testFile, badVariableTemplate);
+
+      const result = await validator.validateContent(testFile);
+
+      expect(result.passed).toBe(false);
+      expect(result.issues.some(issue =>
+        issue.type === 'missing_field' || issue.type === 'invalid_metadata'
+      )).toBe(true);
     });
   });
 

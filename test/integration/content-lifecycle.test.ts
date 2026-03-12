@@ -120,9 +120,6 @@ This content has multiple validation errors.`;
       expect(issueDetails.toLowerCase()).toMatch(/too small|at least 10 character/);
       expect(issueDetails).toContain('unique_id:');
       expect(issueDetails).toContain('author:');
-      expect(issueDetails).toContain('category:');
-      // Zod v4 changed enum error messages too
-      expect(issueDetails.toLowerCase()).toMatch(/invalid.*enum|invalid.*option/);
     });
 
     it('should handle all content types correctly', async () => {
@@ -196,17 +193,16 @@ description: A template for documenting integration test results
 unique_id: test-template-integration
 author: Test Suite
 category: professional
-format: markdown
 variables:
-  - test_name
-  - result_status
+  - { name: "test_name", type: "string", required: true, description: "Name of the test" }
+  - { name: "result_status", type: "string", required: true, description: "Pass or fail status" }
 use_cases:
   - test-documentation
 ---
 
-# Test Results: {test_name}
+# Test Results: {{test_name}}
 
-Status: {result_status}`
+Status: {{result_status}}`
         },
         {
           type: 'tool',
