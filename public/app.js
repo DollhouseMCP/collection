@@ -885,74 +885,54 @@
     return agentConfig ? detailSection('Configuration', agentConfig) : '';
   }
 
+  function renderMarkdownOrPre(text) {
+    return globalThis.marked
+      ? `<div class="element-rendered">${marked.parse(String(text))}</div>`
+      : `<pre class="detail-multiline">${escapeHtml(String(text))}</pre>`;
+  }
+
+  function renderActivatesSection(fm) {
+    if (!fm.activates || typeof fm.activates !== 'object') return '';
+    const entries = Object.entries(fm.activates)
+      .filter(([, v]) => Array.isArray(v) && v.length)
+      .map(([k, v]) => `<div class="detail-field"><span class="detail-label">${escapeHtml(k)}</span><span class="detail-value">${detailPillList(v)}</span></div>`)
+      .join('');
+    return entries ? detailSection('Activates', entries) : '';
+  }
+
+  function renderResilienceSection(fm) {
+    if (!fm.resilience || typeof fm.resilience !== 'object') return '';
+    const fields = Object.entries(fm.resilience)
+      .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(v)))
+      .filter(Boolean).join('');
+    return fields ? detailSection('Resilience', fields) : '';
+  }
+
+  function renderRiskThresholds(fm) {
+    if (!fm.risk_thresholds || typeof fm.risk_thresholds !== 'object') return '';
+    const thresholds = Object.entries(fm.risk_thresholds)
+      .map(([k, v]) => detailField(k.replaceAll('_', ' '), String(v)))
+      .filter(Boolean).join('');
+    return thresholds ? detailSection('Risk thresholds', thresholds) : '';
+  }
+
   function renderAgentSection(fm) {
     let html = '';
-    if (fm.instructions) {
-      const rendered = globalThis.marked
-        ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
-        : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
-      html += detailSection('Instructions', rendered);
-    }
-    if (fm.goal && typeof fm.goal === 'object') {
-      html += renderGoalSection(fm.goal);
-    }
-
+    if (fm.instructions) html += detailSection('Instructions', renderMarkdownOrPre(fm.instructions));
+    if (fm.goal && typeof fm.goal === 'object') html += renderGoalSection(fm.goal);
     html += renderLegacyGoals(fm);
-
-    if (fm.autonomy && typeof fm.autonomy === 'object') {
-      html += renderAutonomySection(fm.autonomy);
-    }
-    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
-      html += renderGatekeeperSection(fm.gatekeeper);
-    }
-
-    // ── System prompt (v2.0) ──
-    if (fm.systemPrompt) {
-      const rendered = globalThis.marked
-        ? `<div class="element-rendered">${marked.parse(String(fm.systemPrompt))}</div>`
-        : `<pre class="detail-multiline">${escapeHtml(String(fm.systemPrompt))}</pre>`;
-      html += detailSection('System prompt', rendered);
-    }
-
-    // ── Activates (v2.0 element activation) ──
-    if (fm.activates && typeof fm.activates === 'object') {
-      const activateEntries = Object.entries(fm.activates)
-        .filter(([, v]) => Array.isArray(v) && v.length)
-        .map(([k, v]) => `<div class="detail-field"><span class="detail-label">${escapeHtml(k)}</span><span class="detail-value">${detailPillList(v)}</span></div>`)
-        .join('');
-      if (activateEntries) html += detailSection('Activates', activateEntries);
-    }
-
+    if (fm.autonomy && typeof fm.autonomy === 'object') html += renderAutonomySection(fm.autonomy);
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') html += renderGatekeeperSection(fm.gatekeeper);
+    if (fm.systemPrompt) html += detailSection('System prompt', renderMarkdownOrPre(fm.systemPrompt));
+    html += renderActivatesSection(fm);
     html += renderAgentToolsSection(fm);
-
-    // ── Resilience (v2.1+) ──
-    if (fm.resilience && typeof fm.resilience === 'object') {
-      const resFields = Object.entries(fm.resilience)
-        .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(v)))
-        .filter(Boolean).join('');
-      if (resFields) html += detailSection('Resilience', resFields);
-    }
-
-    // ── Capabilities ──
+    html += renderResilienceSection(fm);
     if (Array.isArray(fm.capabilities) && fm.capabilities.length) {
       html += detailSection('Capabilities', detailPillList(fm.capabilities.map(c => String(c).replaceAll('_', ' ')), 'pill-tag'));
     }
-
-    // ── Decision framework ──
-    if (fm.decision_framework && typeof fm.decision_framework === 'object') {
-      html += renderDecisionFramework(fm.decision_framework);
-    }
-
+    if (fm.decision_framework && typeof fm.decision_framework === 'object') html += renderDecisionFramework(fm.decision_framework);
     html += renderStateSection(fm);
-
-    // ── Risk thresholds ──
-    if (fm.risk_thresholds && typeof fm.risk_thresholds === 'object') {
-      const thresholds = Object.entries(fm.risk_thresholds)
-        .map(([k, v]) => detailField(k.replaceAll('_', ' '), String(v)))
-        .filter(Boolean).join('');
-      if (thresholds) html += detailSection('Risk thresholds', thresholds);
-    }
-
+    html += renderRiskThresholds(fm);
     html += renderAgentV1Config(fm);
     return html;
   }
@@ -977,18 +957,38 @@
     return pills.join(' ');
   }
 
+  function renderEnsembleElementRow(el) {
+    if (typeof el !== 'object' || el === null) return '';
+    const elName = el.element_name || el.name || '(unnamed)';
+    const pills = buildElementPills(el);
+    const purposeLine = el.purpose ? `<div class="detail-param-desc">${escapeHtml(el.purpose)}</div>` : '';
+    const condLine = el.condition ? `<div class="detail-param-desc"><em>when:</em> <code>${escapeHtml(el.condition)}</code></div>` : '';
+    const deps = Array.isArray(el.dependencies) && el.dependencies.length;
+    const depsLine = deps ? `<div class="detail-param-desc"><em>depends on:</em> ${el.dependencies.map(d => detailPill(d)).join(' ')}</div>` : '';
+    return `<div class="detail-param">
+      <div class="detail-param-header"><span class="detail-param-name">${escapeHtml(elName)}</span>${pills}</div>
+      ${purposeLine}${condLine}${depsLine}
+    </div>`;
+  }
+
+  function renderEnsembleElements(elements) {
+    if (!Array.isArray(elements) || !elements.length) return '';
+    const rows = elements.map(renderEnsembleElementRow).filter(Boolean).join('');
+    return rows ? detailSection('Elements', rows) : '';
+  }
+
+  function renderResourceLimits(fm) {
+    const limits = fm.resource_limits || fm.resourceLimits;
+    if (!limits || typeof limits !== 'object') return '';
+    const fields = Object.entries(limits)
+      .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').replaceAll('_', ' ').toLowerCase().trim(), String(v)))
+      .filter(Boolean).join('');
+    return fields ? detailSection('Resource limits', fields) : '';
+  }
+
   function renderEnsembleSection(fm) {
     let html = '';
-
-    // ── Instructions (v2.0 dual-field) ──
-    if (fm.instructions) {
-      const rendered = globalThis.marked
-        ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
-        : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
-      html += detailSection('Instructions', rendered);
-    }
-
-    // ── Ensemble configuration (snake_case collection + camelCase v2.0) ──
+    if (fm.instructions) html += detailSection('Instructions', renderMarkdownOrPre(fm.instructions));
     const configFields = [
       detailField('Activation strategy', fm.activation_strategy || fm.activationStrategy),
       detailField('Conflict resolution', fm.conflict_resolution || fm.conflictResolution),
@@ -997,40 +997,9 @@
       detailField('Max nesting depth', fm.maxNestingDepth == null ? null : String(fm.maxNestingDepth)),
     ].filter(Boolean).join('');
     if (configFields) html += detailSection('Ensemble configuration', configFields);
-
-    // ── Elements (the main composition — array of element references) ──
-    const elements = fm.elements;
-    if (Array.isArray(elements) && elements.length) {
-      const elRows = elements.map(el => {
-        if (typeof el !== 'object' || el === null) return '';
-        const elName = el.element_name || el.name || '(unnamed)';
-        const pills = buildElementPills(el);
-        const purposeLine = el.purpose ? `<div class="detail-param-desc">${escapeHtml(el.purpose)}</div>` : '';
-        const condLine = el.condition ? `<div class="detail-param-desc"><em>when:</em> <code>${escapeHtml(el.condition)}</code></div>` : '';
-        const depsLine = Array.isArray(el.dependencies) && el.dependencies.length
-          ? `<div class="detail-param-desc"><em>depends on:</em> ${el.dependencies.map(d => detailPill(d)).join(' ')}</div>` : '';
-        return `<div class="detail-param">
-          <div class="detail-param-header"><span class="detail-param-name">${escapeHtml(elName)}</span>${pills}</div>
-          ${purposeLine}${condLine}${depsLine}
-        </div>`;
-      }).filter(Boolean).join('');
-      if (elRows) html += detailSection('Elements', elRows);
-    }
-
-    // ── Resource limits ──
-    const limits = fm.resource_limits || fm.resourceLimits;
-    if (limits && typeof limits === 'object') {
-      const limitFields = Object.entries(limits)
-        .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').replaceAll('_', ' ').toLowerCase().trim(), String(v)))
-        .filter(Boolean).join('');
-      if (limitFields) html += detailSection('Resource limits', limitFields);
-    }
-
-    // ── Gatekeeper (shared renderer with agents) ──
-    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
-      html += renderGatekeeperSection(fm.gatekeeper);
-    }
-
+    html += renderEnsembleElements(fm.elements);
+    html += renderResourceLimits(fm);
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') html += renderGatekeeperSection(fm.gatekeeper);
     return html;
   }
 
@@ -1272,6 +1241,54 @@
     } else if (!card.dataset.unavailable) {
       openModal(el, idx);
     }
+  }
+
+  function getModalNavTarget(key) {
+    const last = filteredElements.length - 1;
+    if ((key === 'ArrowLeft' || key === 'k') && openElementIndex > 0) return openElementIndex - 1;
+    if ((key === 'ArrowRight' || key === 'j') && openElementIndex < last) return openElementIndex + 1;
+    return -1;
+  }
+
+  function handleModalKeyboard(e, modal) {
+    if (e.key === 'r' || e.key === 'R') {
+      const renderBtn = modal.querySelector('#btn-render');
+      if (renderBtn && renderBtn.onclick) { e.preventDefault(); renderBtn.onclick(); }
+      return;
+    }
+    const target = getModalNavTarget(e.key);
+    if (target >= 0) {
+      e.preventDefault();
+      openModal(filteredElements[target], target);
+    }
+  }
+
+  function handleGridKeyboard(e, sInput) {
+    const cardCount = getVisibleCardCount();
+    if (!cardCount) return;
+    const last = cardCount - 1;
+    const cols = getGridColumns();
+    let target = highlightedCardIndex;
+    switch (e.key) {
+      case 'ArrowRight':  target = Math.min(last, target + 1); break;
+      case 'ArrowLeft':   target = Math.max(0, target <= 0 ? 0 : target - 1); break;
+      case 'j': case 'ArrowDown':  target = Math.min(last, (target < 0 ? -cols : target) + cols); break;
+      case 'k': case 'ArrowUp':    target = Math.max(0, target - cols); break;
+      case 'Home':        target = 0; break;
+      case 'End':         target = last; break;
+      case 'PageDown':    target = Math.min(last, target + cols * 3); break;
+      case 'PageUp':      target = Math.max(0, target - cols * 3); break;
+      case 'Enter': case ' ':
+        if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
+        return;
+      case '/':
+        e.preventDefault();
+        sInput?.focus();
+        return;
+      default: return;
+    }
+    e.preventDefault();
+    highlightCard(target);
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -1595,88 +1612,6 @@
     document.getElementById('modal-overlay')?.addEventListener('click', closeModal);
 
     // Keyboard shortcuts
-    function handleModalKeyboard(e, modal) {
-      const last = filteredElements.length - 1;
-      let target = -1;
-
-      // r → toggle raw/rendered
-      if (e.key === 'r' || e.key === 'R') {
-        const renderBtn = modal.querySelector('#btn-render');
-        if (renderBtn) { e.preventDefault(); if (renderBtn.onclick) renderBtn.onclick(); }
-        return true;
-      }
-
-      // Left/Right and j/k → navigate between elements
-      switch (e.key) {
-        case 'ArrowLeft':
-          if (openElementIndex > 0) target = openElementIndex - 1;
-          break;
-        case 'ArrowRight':
-          if (openElementIndex < last) target = openElementIndex + 1;
-          break;
-        case 'j':
-          if (openElementIndex < last) target = openElementIndex + 1;
-          break;
-        case 'k':
-          if (openElementIndex > 0) target = openElementIndex - 1;
-          break;
-      }
-
-      if (target >= 0 && target !== openElementIndex) {
-        e.preventDefault();
-        openModal(filteredElements[target], target);
-      }
-      return true; // let all other keys (arrows, Page*, Home, End) do native modal scrolling
-    }
-
-    function handleGridKeyboard(e, sInput) {
-      const cardCount = getVisibleCardCount();
-      if (!cardCount) return;
-
-      const last = cardCount - 1;
-      const cols = getGridColumns();
-      let target = highlightedCardIndex;
-
-      switch (e.key) {
-        case 'ArrowRight':
-          target = Math.min(last, target + 1);
-          break;
-        case 'ArrowLeft':
-          target = Math.max(0, target <= 0 ? 0 : target - 1);
-          break;
-        case 'j': case 'ArrowDown':
-          target = Math.min(last, (target < 0 ? -cols : target) + cols);
-          break;
-        case 'k': case 'ArrowUp':
-          target = Math.max(0, target - cols);
-          break;
-        case 'Home':
-          target = 0;
-          break;
-        case 'End':
-          target = last;
-          break;
-        case 'PageDown':
-          target = Math.min(last, target + cols * 3);
-          break;
-        case 'PageUp':
-          target = Math.max(0, target - cols * 3);
-          break;
-        case 'Enter': case ' ':
-          if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
-          return;
-        case '/':
-          e.preventDefault();
-          sInput?.focus();
-          return;
-        default:
-          return;
-      }
-
-      e.preventDefault();
-      highlightCard(target);
-    }
-
     document.addEventListener('keydown', e => {
       const inInput = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
       const modal = document.getElementById('element-modal');
