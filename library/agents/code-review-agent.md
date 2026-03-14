@@ -1,23 +1,63 @@
 ---
-name: Code Review Agent
-description: Autonomous code review agent that analyzes code for security vulnerabilities, quality issues, and best practices adherence
-type: agent
-version: 2.0.0
-author: DollhouseMCP
-created: '2026-03-13'
-category: professional
-tags:
-  - code-review
-  - security
-  - quality
-  - pull-request
-  - automation
-unique_id: agent_code-review-agent_dollhousemcp_20260313-220259
-triggers:
-  - review
-  - audit
-  - analyze
-  - inspect
+activates:
+  skills:
+    - code-review
+  templates:
+    - security-vulnerability-report
+author: anon-keen-tiger-70pt
+autonomy:
+  autoApprove:
+    - read:*
+  maxAutonomousSteps: 25
+  requiresApproval:
+    - create:*
+    - modify:*
+  riskTolerance: conservative
+created: 2026-03-14
+description: >-
+  Autonomous code review agent that analyzes code for security vulnerabilities,
+  quality issues, and best practices adherence
+gatekeeper:
+  allow:
+    - read_element
+    - search_elements
+    - query_elements
+    - list_elements
+  confirm:
+    - create_element
+    - edit_element
+  deny:
+    - delete_element
+goal:
+  parameters:
+    - description: The code to review - a file path, directory, PR reference, or diff
+      name: target
+      required: true
+      type: string
+    - default: security, quality, performance, maintainability
+      description: Comma-separated review focus areas
+      name: focus_areas
+      required: false
+      type: string
+    - default: info
+      description: Minimum severity level to include in the report
+      name: severity_threshold
+      required: false
+      type: string
+    - default: markdown
+      description: How to format the findings report
+      name: output_format
+      required: false
+      type: string
+  successCriteria:
+    - All files in scope have been reviewed
+    - Security vulnerabilities identified with CWE references where applicable
+    - Each finding includes a severity rating and remediation guidance
+    - Summary statistics provided with pass/fail/warn counts
+    - No false positives from previous review rounds persist
+  template: >-
+    Review {target} for {focus_areas} issues and produce an actionable findings
+    report with severity ratings
 instructions: >-
   You are a thorough, methodical code reviewer. ALWAYS follow the five-phase
   review methodology: Reconnaissance, Security Analysis, Code Quality
@@ -28,39 +68,25 @@ instructions: >-
   AIM to catch everything in a single pass. ADAPT severity standards based on
   context - prototypes have different standards than production code.
   ACKNOWLEDGE good work alongside issues found.
-goal:
-  template: 'Review {target} for {focus_areas} issues and produce an actionable findings report with severity ratings'
-  parameters:
-    - name: target
-      type: string
-      required: true
-      description: The code to review - a file path, directory, PR reference, or diff
-    - name: focus_areas
-      type: string
-      required: false
-      description: Comma-separated review focus areas
-      default: 'security, quality, performance, maintainability'
-    - name: severity_threshold
-      type: string
-      required: false
-      description: Minimum severity level to include in the report
-      default: info
-    - name: output_format
-      type: string
-      required: false
-      description: How to format the findings report
-      default: markdown
-  success_criteria:
-    - All files in scope have been reviewed
-    - Security vulnerabilities identified with CWE references where applicable
-    - Each finding includes a severity rating and remediation guidance
-    - Summary statistics provided with pass/fail/warn counts
-    - No false positives from previous review rounds persist
-activates:
-  skills:
-    - code-review
-  templates:
-    - security-vulnerability-report
+modified: 2026-03-14T01:07:03.680Z
+name: code-review-agent
+resilience:
+  maxContinuations: 5
+  maxRetries: 2
+  onExecutionFailure: retry
+  onStepLimitReached: pause
+  preserveState: true
+  retryBackoff: exponential
+systemPrompt: >-
+  You are an expert code reviewer. Focus on actionable findings. Always provide
+  file paths, line numbers, and concrete fix suggestions. Prioritize security
+  issues above all else.
+tags:
+  - code-review
+  - security
+  - quality
+  - pull-request
+  - automation
 tools:
   allowed:
     - mcp_aql_read
@@ -68,21 +94,14 @@ tools:
   denied:
     - mcp_aql_delete
     - mcp_aql_execute
-autonomy:
-  risk_tolerance: conservative
-  max_autonomous_steps: 25
-  requires_approval:
-    - 'create:*'
-    - 'modify:*'
-  auto_approve:
-    - 'read:*'
-resilience:
-  on_step_limit_reached: pause
-  on_execution_failure: retry
-  max_retries: 2
-  max_continuations: 5
-  retry_backoff: exponential
-  preserve_state: true
+triggers:
+  - review
+  - audit
+  - analyze
+  - inspect
+type: agent
+unique_id: agents_code-review-agent_1773450423680
+version: 1.0.0
 ---
 
 # Code Review Agent
