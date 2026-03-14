@@ -51,16 +51,90 @@ const PersonaMetadataSchema = BaseMetadataSchema.extend({
   revenue_split: z.string().optional()
 }).passthrough();
 
+const SkillParameterSchema = z.object({
+  name: z.string(),
+  type: z.enum(['string', 'number', 'boolean', 'enum', 'array']),
+  description: z.string().optional(),
+  required: z.boolean().optional(),
+  default: z.unknown().optional(),
+  options: z.array(z.string()).optional(),
+  min: z.number().optional(),
+  max: z.number().optional()
+}).passthrough();
+
 const SkillMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('skill'),
-  capabilities: z.array(z.string()),
+  capabilities: z.array(z.string()).optional(),
+  parameters: z.array(SkillParameterSchema).optional(),
+  triggers: z.array(z.string()).optional(),
+  instructions: z.string().optional(),
+  languages: z.array(z.string()).optional(),
+  complexity: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+  domains: z.array(z.string()).optional(),
+  prerequisites: z.array(z.string()).optional(),
+  proficiency_level: z.number().optional(),
+  proficiency_levels: z.record(z.string(), z.string()).optional(),
   requirements: z.array(z.string()).optional(),
   compatibility: z.array(z.string()).optional()
 }).passthrough();
 
+const AgentGoalParameterSchema = z.object({
+  name: z.string(),
+  type: z.enum(['string', 'number', 'boolean']),
+  required: z.boolean(),
+  description: z.string().optional(),
+  default: z.unknown().optional()
+}).passthrough();
+
+const AgentGoalSchema = z.object({
+  template: z.string(),
+  parameters: z.array(AgentGoalParameterSchema),
+  successCriteria: z.array(z.string()).optional(),
+  success_criteria: z.array(z.string()).optional()
+}).passthrough();
+
 const AgentMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('agent'),
-  capabilities: z.array(z.string()),
+  goal: AgentGoalSchema.optional(),
+  capabilities: z.array(z.string()).optional(),
+  activates: z.record(z.string(), z.array(z.string())).optional(),
+  tools: z.object({
+    allowed: z.array(z.string()),
+    denied: z.array(z.string()).optional()
+  }).optional(),
+  systemPrompt: z.string().optional(),
+  system_prompt: z.string().optional(),
+  autonomy: z.object({
+    riskTolerance: z.enum(['conservative', 'moderate', 'aggressive']).optional(),
+    risk_tolerance: z.enum(['conservative', 'moderate', 'aggressive']).optional(),
+    maxAutonomousSteps: z.number().optional(),
+    max_autonomous_steps: z.number().optional(),
+    requiresApproval: z.array(z.string()).optional(),
+    requires_approval: z.array(z.string()).optional(),
+    autoApprove: z.array(z.string()).optional(),
+    auto_approve: z.array(z.string()).optional()
+  }).passthrough().optional(),
+  resilience: z.object({
+    onStepLimitReached: z.enum(['pause', 'continue', 'restart']).optional(),
+    on_step_limit_reached: z.enum(['pause', 'continue', 'restart']).optional(),
+    onExecutionFailure: z.enum(['pause', 'retry', 'restart-fresh']).optional(),
+    on_execution_failure: z.enum(['pause', 'retry', 'restart-fresh']).optional(),
+    maxRetries: z.number().optional(),
+    max_retries: z.number().optional(),
+    maxContinuations: z.number().optional(),
+    max_continuations: z.number().optional(),
+    retryBackoff: z.enum(['none', 'linear', 'exponential']).optional(),
+    retry_backoff: z.enum(['none', 'linear', 'exponential']).optional(),
+    preserveState: z.boolean().optional(),
+    preserve_state: z.boolean().optional()
+  }).passthrough().optional(),
+  gatekeeper: z.object({
+    allow: z.array(z.string()).optional(),
+    confirm: z.array(z.string()).optional(),
+    deny: z.array(z.string()).optional()
+  }).passthrough().optional(),
+  triggers: z.array(z.string()).optional(),
+  instructions: z.string().optional(),
   tools_required: z.array(z.string()).optional(),
   model_requirements: z.string().optional()
 }).passthrough();
@@ -110,8 +184,22 @@ const ToolMetadataSchema = BaseMetadataSchema.extend({
   returns: z.string().optional()
 }).passthrough();
 
+const EnsembleElementSchema = z.object({
+  element_name: z.string().optional(),
+  name: z.string().optional(),
+  element_type: z.string().optional(),
+  type: z.string().optional(),
+  role: z.enum(['primary', 'support', 'override', 'monitor', 'core']).optional(),
+  priority: z.number().optional(),
+  activation: z.enum(['always', 'on-demand', 'conditional']).optional(),
+  condition: z.string().optional(),
+  purpose: z.string().optional(),
+  dependencies: z.array(z.string()).optional()
+}).passthrough();
+
 const EnsembleMetadataSchema = BaseMetadataSchema.extend({
   type: z.literal('ensemble'),
+  elements: z.array(EnsembleElementSchema).optional(),
   components: z.object({
     personas: z.array(z.string()).optional(),
     skills: z.array(z.string()).optional(),
@@ -119,7 +207,21 @@ const EnsembleMetadataSchema = BaseMetadataSchema.extend({
     prompts: z.array(z.string()).optional(),
     templates: z.array(z.string()).optional(),
     tools: z.array(z.string()).optional()
-  }),
+  }).optional(),
+  activation_strategy: z.string().optional(),
+  activationStrategy: z.string().optional(),
+  conflict_resolution: z.string().optional(),
+  conflictResolution: z.string().optional(),
+  context_sharing: z.enum(['none', 'selective', 'full']).optional(),
+  contextSharing: z.enum(['none', 'selective', 'full']).optional(),
+  resource_limits: z.record(z.string(), z.unknown()).optional(),
+  resourceLimits: z.record(z.string(), z.unknown()).optional(),
+  instructions: z.string().optional(),
+  gatekeeper: z.object({
+    allow: z.array(z.string()).optional(),
+    confirm: z.array(z.string()).optional(),
+    deny: z.array(z.string()).optional()
+  }).passthrough().optional(),
   coordination_strategy: z.string().optional(),
   use_cases: z.array(z.string()).optional(),
   dependencies: z.array(z.string()).optional()

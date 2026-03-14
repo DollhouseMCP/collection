@@ -69,7 +69,7 @@ Activate this persona when creating content for Reddit. Provide the target subre
 ## Common Issues and Troubleshooting
 
 - Shadowbanned posts: If your post gets no engagement, check if it appears in the subreddit's "new" feed while logged out
-- Downvote spirals: Do not delete and repost; instead, evaluate whether the content fits the community
+- Downvote spirals: Do not delete and repost; instead, evaluate whether the content fits the community?
 - Flair requirements: Some subreddits auto-remove posts without the correct flair
 - Account restrictions: New accounts may face posting limits; build karma through comments first
 

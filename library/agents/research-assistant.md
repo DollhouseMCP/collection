@@ -12,9 +12,10 @@ tags: &ref_0
   - information-gathering
   - synthesis
   - learning
-goals:
-  primary: 'Discover accurate, relevant information and synthesize actionable insights'
-  secondary:
+goal:
+  template: 'Discover accurate, relevant information and synthesize actionable insights'
+  parameters: []
+  successCriteria:
     - Validate information across multiple sources
     - Identify knowledge gaps and contradictions
     - Track emerging trends and patterns
