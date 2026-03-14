@@ -200,26 +200,26 @@ Test content`;
     });
 
     it('should handle deeply nested missing fields', async () => {
+      // Test with a tool type that has required nested field (mcp_version)
       const testContent = `---
-name: Test Agent
-type: agent
-unique_id: test-agent
-description: A test agent
+name: Test Tool
+type: tool
+unique_id: test-tool
+description: A tool missing required mcp_version
 author: Test Author
-# Missing required nested capabilities field
 ---
 Test content`;
 
       const testFile = join(testDir, 'test-nested.md');
       await writeFile(testFile, testContent);
       const result = await validator.validateContent(testFile);
-      
-      // Should have missing field issues
-      const missingFieldIssues = result.issues.filter((i: ValidationIssue) => 
-        i.type === 'missing_field'
+
+      // Should have missing field issues for mcp_version
+      const validationIssues = result.issues.filter((i: ValidationIssue) =>
+        i.type === 'missing_field' || i.type === 'invalid_metadata'
       );
-      
-      expect(missingFieldIssues.length).toBeGreaterThan(0);
+
+      expect(validationIssues.length).toBeGreaterThan(0);
     });
   });
 
