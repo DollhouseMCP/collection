@@ -11,6 +11,14 @@ tags:
   - validation
   - reporting
   - artifacts
+goal:
+  template: 'Generate a comprehensive roundtrip test execution plan and results template as an interactive artifact'
+  parameters: []
+  successCriteria:
+    - Create a persistent artifact in Claude Desktop
+    - Interactive checklist format for live test execution
+    - Serve as both test plan and results document
+    - Easy to copy and share for documentation
 unique_id: agent_roundtrip-test-reporter_dollhousemcp-test_20250814-210000
 capabilities:
   - test_plan_generation

@@ -16,12 +16,12 @@ proficiency_levels:
   intermediate: Design patterns and architecture review
   advanced: Security vulnerabilities and performance optimization
 parameters:
-  language:
+  - name: language
     type: string
     description: Programming language to review
     required: false
     default: auto-detect
-  focus_areas:
+  - name: focus_areas
     type: array
     description: Specific areas to focus on
     default:
@@ -29,11 +29,11 @@ parameters:
       - performance
       - maintainability
       - testing
-  severity_threshold:
+  - name: severity_threshold
     type: string
     description: Minimum severity to report
     default: info
-    enum:
+    options:
       - error
       - warning
       - info

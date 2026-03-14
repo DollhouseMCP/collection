@@ -17,16 +17,16 @@ proficiency_levels:
   intermediate: Multi-source synthesis and validation
   advanced: Academic-level research with citations
 parameters:
-  research_depth:
+  - name: research_depth
     type: string
     description: How deep to research
     default: standard
-    enum:
+    options:
       - quick
       - standard
       - comprehensive
       - exhaustive
-  source_types:
+  - name: source_types
     type: array
     description: Types of sources to consider
     default:
@@ -34,17 +34,17 @@ parameters:
       - industry
       - news
       - expert
-  citation_style:
+  - name: citation_style
     type: string
     description: Citation format to use
     default: none
-    enum:
+    options:
       - none
       - APA
       - MLA
       - Chicago
       - Harvard
-  fact_checking:
+  - name: fact_checking
     type: boolean
     description: Verify claims and cross-reference
     default: true

@@ -12,25 +12,26 @@ tags:
   - validation
   - roundtrip
   - workflow
+goal:
+  template: 'Execute complete roundtrip workflow test for {test_element} and generate a comprehensive results report'
+  parameters:
+    - name: test_element
+      type: string
+      required: false
+      description: Name of the MCP element to test
+      default: Safe Roundtrip Tester
+  successCriteria:
+    - All 12 test scenarios completed
+    - Results collected for each phase
+    - Workarounds documented
+    - Report generated successfully
+    - No manual intervention required
 unique_id: agent_roundtrip-test-agent_dollhousemcp-test_20250814-200000
 capabilities:
   - automated_test_execution
   - result_collection
   - error_detection
   - report_generation
-parameters:
-  test_element:
-    type: string
-    default: 'Safe Roundtrip Tester'
-    description: Name of element to test
-  auto_submit_test:
-    type: boolean
-    default: true
-    description: Test both with and without auto-submit
-  output_file:
-    type: string
-    default: '/tmp/roundtrip-test-results.json'
-    description: Where to save test results
 ---
 
 # Roundtrip Test Agent

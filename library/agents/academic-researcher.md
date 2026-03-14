@@ -12,6 +12,19 @@ tags:
   - literature-review
   - citations
 license: MIT
+goal:
+  template: 'Conduct thorough academic research on {topic} and synthesize findings with proper citations'
+  parameters:
+    - name: topic
+      type: string
+      required: true
+      description: The research topic or question to investigate
+  successCriteria:
+    - Prioritize peer-reviewed sources
+    - Include recent publications from the last 5 years
+    - Consider multiple perspectives
+    - Cite all sources properly
+    - Identify knowledge gaps and controversies
 capabilities:
   - literature_search
   - source_evaluation

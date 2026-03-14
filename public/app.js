@@ -13,7 +13,7 @@
   const REPO    = 'DollhouseMCP/collection';
   const BRANCH  = 'main';
   // Use local server in dev, GitHub raw in production
-  const IS_LOCAL = globalThis.location?.hostname === 'localhost' || globalThis.location?.hostname === '127.0.0.1';
+  const IS_LOCAL = ['localhost', '127.0.0.1', 'host.docker.internal'].includes(globalThis.location?.hostname);
   const RAW_BASE = IS_LOCAL ? '..' : `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
@@ -625,7 +625,7 @@
 
       function renderModalBody() {
         if (modalShowRaw) {
-          body.innerHTML = `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
+          body.innerHTML = `<pre class="element-source"><code class="element-code language-yaml">${escapeHtml(content)}</code></pre>`;
           if (globalThis.hljs) body.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
         } else {
           body.innerHTML = renderDetailView(content, element.type);
@@ -851,17 +851,188 @@
     if (fm.goal && typeof fm.goal === 'object') {
       html += renderGoalSection(fm.goal);
     }
+
+    // ── Goals (snake_case variant used in collection agents) ──
+    if (fm.goals && typeof fm.goals === 'object') {
+      let goalsHtml = '';
+      if (fm.goals.primary) goalsHtml += `<p class="detail-prose">${escapeHtml(String(fm.goals.primary))}</p>`;
+      if (Array.isArray(fm.goals.secondary) && fm.goals.secondary.length) {
+        goalsHtml += `<ul class="detail-list">${fm.goals.secondary.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>`;
+      }
+      if (goalsHtml) html += detailSection('Goals', goalsHtml);
+    }
+
     if (fm.autonomy && typeof fm.autonomy === 'object') {
       html += renderAutonomySection(fm.autonomy);
     }
     if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
       html += renderGatekeeperSection(fm.gatekeeper);
     }
+
+    // ── System prompt (v2.0) ──
+    if (fm.systemPrompt) {
+      const rendered = globalThis.marked
+        ? `<div class="element-rendered">${marked.parse(String(fm.systemPrompt))}</div>`
+        : `<pre class="detail-multiline">${escapeHtml(String(fm.systemPrompt))}</pre>`;
+      html += detailSection('System prompt', rendered);
+    }
+
+    // ── Activates (v2.0 element activation) ──
+    if (fm.activates && typeof fm.activates === 'object') {
+      const activateEntries = Object.entries(fm.activates)
+        .filter(([, v]) => Array.isArray(v) && v.length)
+        .map(([k, v]) => `<div class="detail-field"><span class="detail-label">${escapeHtml(k)}</span><span class="detail-value">${detailPillList(v)}</span></div>`)
+        .join('');
+      if (activateEntries) html += detailSection('Activates', activateEntries);
+    }
+
+    // ── Tools (v2.0 allowed/denied) ──
+    if (fm.tools && typeof fm.tools === 'object') {
+      let toolsHtml = '';
+      if (Array.isArray(fm.tools.allowed) && fm.tools.allowed.length) {
+        toolsHtml += `<div class="detail-field"><span class="detail-label">allowed</span><span class="detail-value">${fm.tools.allowed.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
+      }
+      if (Array.isArray(fm.tools.denied) && fm.tools.denied.length) {
+        toolsHtml += `<div class="detail-field"><span class="detail-label">denied</span><span class="detail-value">${fm.tools.denied.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
+      }
+      if (toolsHtml) html += detailSection('Tools', toolsHtml);
+    }
+
+    // ── Resilience (v2.1+) ──
+    if (fm.resilience && typeof fm.resilience === 'object') {
+      const resFields = Object.entries(fm.resilience)
+        .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(v)))
+        .filter(Boolean).join('');
+      if (resFields) html += detailSection('Resilience', resFields);
+    }
+
+    // ── Capabilities ──
+    if (Array.isArray(fm.capabilities) && fm.capabilities.length) {
+      html += detailSection('Capabilities', detailPillList(fm.capabilities.map(c => String(c).replaceAll('_', ' ')), 'pill-tag'));
+    }
+
+    // ── Decision framework ──
+    if (fm.decision_framework && typeof fm.decision_framework === 'object') {
+      html += renderDecisionFramework(fm.decision_framework);
+    }
+
+    // ── State ──
+    if (fm.state && typeof fm.state === 'object') {
+      let stateHtml = '';
+      for (const [k, v] of Object.entries(fm.state)) {
+        if (Array.isArray(v)) {
+          stateHtml += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v)}</span></div>`;
+        } else {
+          stateHtml += detailField(k.replaceAll('_', ' '), String(v));
+        }
+      }
+      if (stateHtml) html += detailSection('State', stateHtml);
+    }
+
+    // ── Risk thresholds ──
+    if (fm.risk_thresholds && typeof fm.risk_thresholds === 'object') {
+      const thresholds = Object.entries(fm.risk_thresholds)
+        .map(([k, v]) => detailField(k.replaceAll('_', ' '), String(v)))
+        .filter(Boolean).join('');
+      if (thresholds) html += detailSection('Risk thresholds', thresholds);
+    }
+
     const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
       .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
       .filter(Boolean).join('');
     if (agentConfig) html += detailSection('Configuration', agentConfig);
     return html;
+  }
+
+  // ── Ensemble-specific rendering ──────────────────────────────────────────
+  function renderEnsembleSection(fm) {
+    let html = '';
+
+    // ── Instructions (v2.0 dual-field) ──
+    if (fm.instructions) {
+      const rendered = globalThis.marked
+        ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
+        : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
+      html += detailSection('Instructions', rendered);
+    }
+
+    // ── Ensemble configuration (snake_case collection + camelCase v2.0) ──
+    const configFields = [
+      detailField('Activation strategy', fm.activation_strategy || fm.activationStrategy),
+      detailField('Conflict resolution', fm.conflict_resolution || fm.conflictResolution),
+      detailField('Context sharing', fm.context_sharing || fm.contextSharing),
+      detailField('Allow nested', fm.allowNested == null ? null : String(fm.allowNested)),
+      detailField('Max nesting depth', fm.maxNestingDepth == null ? null : String(fm.maxNestingDepth)),
+    ].filter(Boolean).join('');
+    if (configFields) html += detailSection('Ensemble configuration', configFields);
+
+    // ── Elements (the main composition — array of element references) ──
+    const elements = fm.elements;
+    if (Array.isArray(elements) && elements.length) {
+      const elRows = elements.map(el => {
+        if (typeof el !== 'object' || el === null) return '';
+        const elName = el.element_name || el.name || '(unnamed)';
+        const elType = el.element_type || el.type || '';
+        const pills = [
+          elType ? detailPill(elType, 'pill-meta') : '',
+          el.role ? detailPill(el.role, el.role === 'primary' || el.role === 'core' ? 'pill-required' : 'pill-tag') : '',
+          el.activation ? detailPill(el.activation, el.activation === 'always' ? 'pill-trigger' : '') : '',
+          el.priority != null ? detailPill(`priority ${el.priority}`) : '',
+        ].filter(Boolean).join(' ');
+        const purposeLine = el.purpose ? `<div class="detail-param-desc">${escapeHtml(el.purpose)}</div>` : '';
+        const condLine = el.condition ? `<div class="detail-param-desc"><em>when:</em> <code>${escapeHtml(el.condition)}</code></div>` : '';
+        const depsLine = Array.isArray(el.dependencies) && el.dependencies.length
+          ? `<div class="detail-param-desc"><em>depends on:</em> ${el.dependencies.map(d => detailPill(d)).join(' ')}</div>` : '';
+        return `<div class="detail-param">
+          <div class="detail-param-header"><span class="detail-param-name">${escapeHtml(elName)}</span>${pills}</div>
+          ${purposeLine}${condLine}${depsLine}
+        </div>`;
+      }).filter(Boolean).join('');
+      if (elRows) html += detailSection('Elements', elRows);
+    }
+
+    // ── Resource limits ──
+    const limits = fm.resource_limits || fm.resourceLimits;
+    if (limits && typeof limits === 'object') {
+      const limitFields = Object.entries(limits)
+        .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').replaceAll('_', ' ').toLowerCase().trim(), String(v)))
+        .filter(Boolean).join('');
+      if (limitFields) html += detailSection('Resource limits', limitFields);
+    }
+
+    // ── Gatekeeper (shared renderer with agents) ──
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
+      html += renderGatekeeperSection(fm.gatekeeper);
+    }
+
+    return html;
+  }
+
+  function renderDecisionFramework(df) {
+    let html = '';
+    if (df.type) html += detailField('Type', String(df.type).replaceAll(/[-_]/g, ' '));
+
+    // Render any array fields as pill lists (rules_engine, ml_components, evaluation_criteria, etc.)
+    for (const [k, v] of Object.entries(df)) {
+      if (k === 'type') continue;
+      if (Array.isArray(v)) {
+        html += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
+      } else if (typeof v === 'object' && v !== null) {
+        // Nested object (e.g. severity_matrix, confidence_thresholds) — render as grouped fields
+        let nested = '';
+        for (const [sk, sv] of Object.entries(v)) {
+          if (Array.isArray(sv)) {
+            nested += `<div class="detail-field"><span class="detail-label">${escapeHtml(sk.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(sv.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
+          } else {
+            nested += detailField(sk.replaceAll('_', ' '), String(sv));
+          }
+        }
+        if (nested) html += detailSection(k.replaceAll('_', ' '), nested);
+      } else {
+        html += detailField(k.replaceAll('_', ' '), String(v));
+      }
+    }
+    return html ? detailSection('Decision framework', html) : '';
   }
 
   function renderDetailParameters(fm) {
@@ -905,8 +1076,14 @@
       'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
       'proficiency_levels','coordination_strategy','variables',
       'personas','skills','tools','templates','prompts','memories',
-      'instructions','goal','autonomy','gatekeeper',
+      'instructions','goal','goals','autonomy','gatekeeper',
+      'systemPrompt','activates','tools','resilience',
+      'capabilities','decision_framework','state','risk_thresholds',
       'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
+      'specializations','ruleEngineConfig',
+      'activation_strategy','activationStrategy','conflict_resolution','conflictResolution',
+      'context_sharing','contextSharing','resource_limits','resourceLimits',
+      'elements','allowNested','maxNestingDepth','components',
     ]);
     const extraFields = Object.entries(fm)
       .filter(([k]) => !knownFields.has(k))
@@ -939,7 +1116,6 @@
     }
 
     const { frontmatter: fm, body } = parseFrontmatter(content);
-    console.log('[renderDetailView]', { name: fm.name, type, fmKeys: Object.keys(fm), hasBody: !!body, bodyLen: body?.length, created: fm.created, author: fm.author });
     let html = '';
 
     // ── Created date — prominent header line ──
@@ -1002,6 +1178,11 @@
     // ── Agent fields ──
     if (type === 'agent') {
       html += renderAgentSection(fm);
+    }
+
+    // ── Ensemble fields ──
+    if (type === 'ensemble') {
+      html += renderEnsembleSection(fm);
     }
 
     // ── Catch-all + body ──

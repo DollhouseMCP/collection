@@ -22,55 +22,51 @@ resource_limits:
   max_memory_mb: 384
   max_execution_time_ms: 25000
 elements:
-  - name: business-consultant
-    type: persona
+  - element_name: business-consultant
+    element_type: persona
     role: primary
     priority: 100
     activation: always
     purpose: Strategic business analysis and recommendations
-  - name: data-analysis
-    type: skill
+  - element_name: data-analysis
+    element_type: skill
     role: core
     priority: 90
     activation: conditional
     condition: data_available || metrics_requested
     purpose: Quantitative analysis and insights
-  - name: research
-    type: skill
-    role: foundation
+  - element_name: research
+    element_type: skill
+    role: support
     priority: 85
     activation: on-demand
     purpose: Market research and competitive analysis
-  - name: project-brief
-    type: template
+  - element_name: project-brief
+    element_type: template
     role: support
     priority: 70
     activation: on-demand
     purpose: Structured project planning documents
-  - name: report-executive
-    type: template
+  - element_name: report-executive
+    element_type: template
     role: support
     priority: 75
     activation: on-demand
     purpose: Executive-level reporting and summaries
-  - name: project-context
-    type: memory
-    role: foundation
+  - element_name: project-context
+    element_type: memory
+    role: support
     priority: 95
     activation: always
     purpose: Maintain business context and decisions
-  - name: task-manager
-    type: agent
-    role: coordinator
+  - element_name: task-manager
+    element_type: agent
+    role: support
     priority: 80
     activation: conditional
     condition: project_planning || implementation_phase
     purpose: Project execution and resource management
 unique_id: ensemble_business-advisor_dollhousemcp_20250723-165719
-components:
-  personas: []
-  skills: []
-  agents: []
 ---
 
 # Business Advisor Ensemble

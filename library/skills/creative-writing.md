@@ -17,11 +17,11 @@ proficiency_levels:
   intermediate: Complex plots and engaging dialogue
   advanced: Literary techniques and genre mastery
 parameters:
-  genre:
+  - name: genre
     type: string
     description: Writing genre
     default: general
-    enum:
+    options:
       - general
       - fantasy
       - sci-fi
@@ -30,11 +30,11 @@ parameters:
       - thriller
       - literary
       - comedy
-  tone:
+  - name: tone
     type: string
     description: Overall tone
     default: balanced
-    enum:
+    options:
       - lighthearted
       - serious
       - dramatic
@@ -42,22 +42,22 @@ parameters:
       - dark
       - inspirational
       - balanced
-  perspective:
+  - name: perspective
     type: string
     description: Narrative perspective
     default: third-person
-    enum:
+    options:
       - first-person
       - second-person
       - third-person
       - omniscient
-  style_elements:
+  - name: style_elements
     type: array
     description: Stylistic elements to include
     default:
       - dialogue
       - description
-    enum:
+    options:
       - dialogue
       - description
       - action

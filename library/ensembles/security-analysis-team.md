@@ -22,77 +22,73 @@ resource_limits:
   max_memory_mb: 768
   max_execution_time_ms: 45000
 elements:
-  - name: security-analyst
-    type: persona
+  - element_name: security-analyst
+    element_type: persona
     role: primary
     priority: 100
     activation: always
     purpose: Lead security expert with deep vulnerability knowledge
-  - name: penetration-testing
-    type: skill
+  - element_name: penetration-testing
+    element_type: skill
     role: core
     priority: 95
     activation: conditional
     condition: pentest_requested || security_validation_needed
     purpose: Ethical hacking and vulnerability validation
-  - name: threat-modeling
-    type: skill
+  - element_name: threat-modeling
+    element_type: skill
     role: core
     priority: 90
     activation: conditional
     condition: architecture_review || threat_analysis_requested
     purpose: Systematic threat identification and risk assessment
-  - name: code-review
-    type: skill
+  - element_name: code-review
+    element_type: skill
     role: support
     priority: 85
     activation: conditional
     condition: code_provided || static_analysis_requested
     purpose: Static code analysis and security review
-  - name: research
-    type: skill
-    role: foundation
+  - element_name: research
+    element_type: skill
+    role: support
     priority: 80
     activation: on-demand
     purpose: CVE research and threat intelligence gathering
-  - name: security-vulnerability-report
-    type: template
-    role: output
+  - element_name: security-vulnerability-report
+    element_type: template
+    role: support
     priority: 75
     activation: on-demand
     purpose: Structured vulnerability reporting
-  - name: penetration-test-report
-    type: template
-    role: output
+  - element_name: penetration-test-report
+    element_type: template
+    role: support
     priority: 75
     activation: conditional
     condition: penetration_test_completed
     purpose: Comprehensive pen test documentation
-  - name: threat-assessment-report
-    type: template
-    role: output
+  - element_name: threat-assessment-report
+    element_type: template
+    role: support
     priority: 70
     activation: conditional
     condition: threat_model_completed
     purpose: Threat modeling and risk assessment documentation
-  - name: project-context
-    type: memory
-    role: foundation
+  - element_name: project-context
+    element_type: memory
+    role: support
     priority: 95
     activation: always
     purpose: Maintain security findings and remediation history
-  - name: code-reviewer
-    type: agent
+  - element_name: code-reviewer
+    element_type: agent
     role: support
     priority: 80
     activation: conditional
     condition: automated_review_requested || large_codebase
     purpose: Automated security code analysis
 unique_id: ensemble_security-analysis-team_dollhousemcp_20250723-165719
-components:
-  personas: []
-  skills: []
-  agents: []
 ---
 
 # Security Analysis Team Ensemble

@@ -11,8 +11,14 @@
 :root {
   --ink-950: #0a1020;
   --ink-900: #18243a;
+  --ink-800: #25354e;
   --ink-700: #324563;
+  --ink-600: #4d5e7b;
   --ink-500: #677893;
+  --ink-400: #8494ab;
+  --ink-300: #a1b0c3;
+  --ink-200: #c1ccda;
+  --ink-100: #e2e8f1;
   --line:    #c8d5e9;
   --paper:   #f3f7ff;
   --paper-strong: #ffffff;
@@ -46,8 +52,14 @@
 [data-theme="dark"] {
   --ink-950: #f6f9fd;
   --ink-900: #dce6f2;
+  --ink-800: #c2d0e0;
   --ink-700: #a8bcce;
+  --ink-600: #92a8bb;
   --ink-500: #7b93a7;
+  --ink-400: #637d93;
+  --ink-300: #4c677f;
+  --ink-200: #36516b;
+  --ink-100: #243d57;
   --line:    #2b3445;
   --paper:   #111318;
   --paper-strong: #161b24;
