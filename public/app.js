@@ -1253,7 +1253,7 @@
   function handleModalKeyboard(e, modal) {
     if (e.key === 'r' || e.key === 'R') {
       const renderBtn = modal.querySelector('#btn-render');
-      if (renderBtn && renderBtn.onclick) { e.preventDefault(); renderBtn.onclick(); }
+      if (renderBtn?.onclick) { e.preventDefault(); renderBtn.onclick(); }
       return;
     }
     const target = getModalNavTarget(e.key);
