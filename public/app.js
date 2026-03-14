@@ -840,6 +840,51 @@
     return gHtml ? detailSection('Gatekeeper', gHtml) : '';
   }
 
+  // ── Agent sub-section helpers (extracted for cognitive complexity) ──────
+
+  function renderLegacyGoals(fm) {
+    if (!fm.goals || typeof fm.goals !== 'object') return '';
+    let goalsHtml = '';
+    if (fm.goals.primary) goalsHtml += `<p class="detail-prose">${escapeHtml(String(fm.goals.primary))}</p>`;
+    if (Array.isArray(fm.goals.secondary) && fm.goals.secondary.length) {
+      const items = fm.goals.secondary.map(g => `<li>${escapeHtml(g)}</li>`).join('');
+      goalsHtml += `<ul class="detail-list">${items}</ul>`;
+    }
+    return goalsHtml ? detailSection('Goals', goalsHtml) : '';
+  }
+
+  function renderStateSection(fm) {
+    if (!fm.state || typeof fm.state !== 'object') return '';
+    let stateHtml = '';
+    for (const [k, v] of Object.entries(fm.state)) {
+      if (Array.isArray(v)) {
+        stateHtml += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v)}</span></div>`;
+      } else {
+        stateHtml += detailField(k.replaceAll('_', ' '), String(v));
+      }
+    }
+    return stateHtml ? detailSection('State', stateHtml) : '';
+  }
+
+  function renderAgentToolsSection(fm) {
+    if (!fm.tools || typeof fm.tools !== 'object') return '';
+    let toolsHtml = '';
+    if (Array.isArray(fm.tools.allowed) && fm.tools.allowed.length) {
+      toolsHtml += `<div class="detail-field"><span class="detail-label">allowed</span><span class="detail-value">${fm.tools.allowed.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
+    }
+    if (Array.isArray(fm.tools.denied) && fm.tools.denied.length) {
+      toolsHtml += `<div class="detail-field"><span class="detail-label">denied</span><span class="detail-value">${fm.tools.denied.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
+    }
+    return toolsHtml ? detailSection('Tools', toolsHtml) : '';
+  }
+
+  function renderAgentV1Config(fm) {
+    const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
+      .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
+      .filter(Boolean).join('');
+    return agentConfig ? detailSection('Configuration', agentConfig) : '';
+  }
+
   function renderAgentSection(fm) {
     let html = '';
     if (fm.instructions) {
@@ -852,15 +897,7 @@
       html += renderGoalSection(fm.goal);
     }
 
-    // ── Goals (snake_case variant used in collection agents) ──
-    if (fm.goals && typeof fm.goals === 'object') {
-      let goalsHtml = '';
-      if (fm.goals.primary) goalsHtml += `<p class="detail-prose">${escapeHtml(String(fm.goals.primary))}</p>`;
-      if (Array.isArray(fm.goals.secondary) && fm.goals.secondary.length) {
-        goalsHtml += `<ul class="detail-list">${fm.goals.secondary.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>`;
-      }
-      if (goalsHtml) html += detailSection('Goals', goalsHtml);
-    }
+    html += renderLegacyGoals(fm);
 
     if (fm.autonomy && typeof fm.autonomy === 'object') {
       html += renderAutonomySection(fm.autonomy);
@@ -886,17 +923,7 @@
       if (activateEntries) html += detailSection('Activates', activateEntries);
     }
 
-    // ── Tools (v2.0 allowed/denied) ──
-    if (fm.tools && typeof fm.tools === 'object') {
-      let toolsHtml = '';
-      if (Array.isArray(fm.tools.allowed) && fm.tools.allowed.length) {
-        toolsHtml += `<div class="detail-field"><span class="detail-label">allowed</span><span class="detail-value">${fm.tools.allowed.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
-      }
-      if (Array.isArray(fm.tools.denied) && fm.tools.denied.length) {
-        toolsHtml += `<div class="detail-field"><span class="detail-label">denied</span><span class="detail-value">${fm.tools.denied.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
-      }
-      if (toolsHtml) html += detailSection('Tools', toolsHtml);
-    }
+    html += renderAgentToolsSection(fm);
 
     // ── Resilience (v2.1+) ──
     if (fm.resilience && typeof fm.resilience === 'object') {
@@ -916,18 +943,7 @@
       html += renderDecisionFramework(fm.decision_framework);
     }
 
-    // ── State ──
-    if (fm.state && typeof fm.state === 'object') {
-      let stateHtml = '';
-      for (const [k, v] of Object.entries(fm.state)) {
-        if (Array.isArray(v)) {
-          stateHtml += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v)}</span></div>`;
-        } else {
-          stateHtml += detailField(k.replaceAll('_', ' '), String(v));
-        }
-      }
-      if (stateHtml) html += detailSection('State', stateHtml);
-    }
+    html += renderStateSection(fm);
 
     // ── Risk thresholds ──
     if (fm.risk_thresholds && typeof fm.risk_thresholds === 'object') {
@@ -937,14 +953,30 @@
       if (thresholds) html += detailSection('Risk thresholds', thresholds);
     }
 
-    const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
-      .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
-      .filter(Boolean).join('');
-    if (agentConfig) html += detailSection('Configuration', agentConfig);
+    html += renderAgentV1Config(fm);
     return html;
   }
 
   // ── Ensemble-specific rendering ──────────────────────────────────────────
+
+  function buildElementPills(el) {
+    const elType = el.element_type || el.type || '';
+    const pills = [];
+    if (elType) pills.push(detailPill(elType, 'pill-meta'));
+    if (el.role) {
+      const cls = (el.role === 'primary' || el.role === 'core') ? 'pill-required' : 'pill-tag';
+      pills.push(detailPill(el.role, cls));
+    }
+    if (el.activation) {
+      const cls = el.activation === 'always' ? 'pill-trigger' : '';
+      pills.push(detailPill(el.activation, cls));
+    }
+    if (el.priority != null) {
+      pills.push(detailPill(`priority ${el.priority}`));
+    }
+    return pills.join(' ');
+  }
+
   function renderEnsembleSection(fm) {
     let html = '';
 
@@ -972,13 +1004,7 @@
       const elRows = elements.map(el => {
         if (typeof el !== 'object' || el === null) return '';
         const elName = el.element_name || el.name || '(unnamed)';
-        const elType = el.element_type || el.type || '';
-        const pills = [
-          elType ? detailPill(elType, 'pill-meta') : '',
-          el.role ? detailPill(el.role, el.role === 'primary' || el.role === 'core' ? 'pill-required' : 'pill-tag') : '',
-          el.activation ? detailPill(el.activation, el.activation === 'always' ? 'pill-trigger' : '') : '',
-          el.priority != null ? detailPill(`priority ${el.priority}`) : '',
-        ].filter(Boolean).join(' ');
+        const pills = buildElementPills(el);
         const purposeLine = el.purpose ? `<div class="detail-param-desc">${escapeHtml(el.purpose)}</div>` : '';
         const condLine = el.condition ? `<div class="detail-param-desc"><em>when:</em> <code>${escapeHtml(el.condition)}</code></div>` : '';
         const depsLine = Array.isArray(el.dependencies) && el.dependencies.length
@@ -1008,6 +1034,18 @@
     return html;
   }
 
+  function renderNestedDfObject(obj) {
+    let nested = '';
+    for (const [sk, sv] of Object.entries(obj)) {
+      if (Array.isArray(sv)) {
+        nested += `<div class="detail-field"><span class="detail-label">${escapeHtml(sk.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(sv.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
+      } else {
+        nested += detailField(sk.replaceAll('_', ' '), String(sv));
+      }
+    }
+    return nested;
+  }
+
   function renderDecisionFramework(df) {
     let html = '';
     if (df.type) html += detailField('Type', String(df.type).replaceAll(/[-_]/g, ' '));
@@ -1018,15 +1056,7 @@
       if (Array.isArray(v)) {
         html += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
       } else if (typeof v === 'object' && v !== null) {
-        // Nested object (e.g. severity_matrix, confidence_thresholds) — render as grouped fields
-        let nested = '';
-        for (const [sk, sv] of Object.entries(v)) {
-          if (Array.isArray(sv)) {
-            nested += `<div class="detail-field"><span class="detail-label">${escapeHtml(sk.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(sv.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
-          } else {
-            nested += detailField(sk.replaceAll('_', ' '), String(sv));
-          }
-        }
+        const nested = renderNestedDfObject(v);
         if (nested) html += detailSection(k.replaceAll('_', ' '), nested);
       } else {
         html += detailField(k.replaceAll('_', ' '), String(v));
@@ -1565,6 +1595,88 @@
     document.getElementById('modal-overlay')?.addEventListener('click', closeModal);
 
     // Keyboard shortcuts
+    function handleModalKeyboard(e, modal) {
+      const last = filteredElements.length - 1;
+      let target = -1;
+
+      // r → toggle raw/rendered
+      if (e.key === 'r' || e.key === 'R') {
+        const renderBtn = modal.querySelector('#btn-render');
+        if (renderBtn) { e.preventDefault(); if (renderBtn.onclick) renderBtn.onclick(); }
+        return true;
+      }
+
+      // Left/Right and j/k → navigate between elements
+      switch (e.key) {
+        case 'ArrowLeft':
+          if (openElementIndex > 0) target = openElementIndex - 1;
+          break;
+        case 'ArrowRight':
+          if (openElementIndex < last) target = openElementIndex + 1;
+          break;
+        case 'j':
+          if (openElementIndex < last) target = openElementIndex + 1;
+          break;
+        case 'k':
+          if (openElementIndex > 0) target = openElementIndex - 1;
+          break;
+      }
+
+      if (target >= 0 && target !== openElementIndex) {
+        e.preventDefault();
+        openModal(filteredElements[target], target);
+      }
+      return true; // let all other keys (arrows, Page*, Home, End) do native modal scrolling
+    }
+
+    function handleGridKeyboard(e, sInput) {
+      const cardCount = getVisibleCardCount();
+      if (!cardCount) return;
+
+      const last = cardCount - 1;
+      const cols = getGridColumns();
+      let target = highlightedCardIndex;
+
+      switch (e.key) {
+        case 'ArrowRight':
+          target = Math.min(last, target + 1);
+          break;
+        case 'ArrowLeft':
+          target = Math.max(0, target <= 0 ? 0 : target - 1);
+          break;
+        case 'j': case 'ArrowDown':
+          target = Math.min(last, (target < 0 ? -cols : target) + cols);
+          break;
+        case 'k': case 'ArrowUp':
+          target = Math.max(0, target - cols);
+          break;
+        case 'Home':
+          target = 0;
+          break;
+        case 'End':
+          target = last;
+          break;
+        case 'PageDown':
+          target = Math.min(last, target + cols * 3);
+          break;
+        case 'PageUp':
+          target = Math.max(0, target - cols * 3);
+          break;
+        case 'Enter': case ' ':
+          if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
+          return;
+        case '/':
+          e.preventDefault();
+          sInput?.focus();
+          return;
+        default:
+          return;
+      }
+
+      e.preventDefault();
+      highlightCard(target);
+    }
+
     document.addEventListener('keydown', e => {
       const inInput = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
       const modal = document.getElementById('element-modal');
@@ -1579,89 +1691,13 @@
 
       // ── Modal-open shortcuts ──
       if (modalOpen && !inInput) {
-        const last = filteredElements.length - 1;
-        let target = -1;
-
-        // r → toggle raw/rendered
-        if (e.key === 'r' || e.key === 'R') {
-          const renderBtn = modal.querySelector('#btn-render');
-          if (renderBtn) { e.preventDefault(); if (renderBtn.onclick) renderBtn.onclick(); }
-          return;
-        }
-
-        // Arrow up/down, PageUp/PageDown, Home/End → scroll modal body (don't intercept)
-        // Left/Right and j/k → navigate between elements
-        switch (e.key) {
-          case 'ArrowLeft':
-            if (openElementIndex > 0) target = openElementIndex - 1;
-            break;
-          case 'ArrowRight':
-            if (openElementIndex < last) target = openElementIndex + 1;
-            break;
-          case 'j':
-            if (openElementIndex < last) target = openElementIndex + 1;
-            break;
-          case 'k':
-            if (openElementIndex > 0) target = openElementIndex - 1;
-            break;
-        }
-
-        if (target >= 0 && target !== openElementIndex) {
-          e.preventDefault();
-          openModal(filteredElements[target], target);
-          return;
-        }
-        return; // let all other keys (arrows, Page*, Home, End) do native modal scrolling
+        handleModalKeyboard(e, modal);
+        return;
       }
 
       // ── Grid navigation (modal closed) ──
       if (!inInput) {
-        const cardCount = getVisibleCardCount();
-        if (!cardCount) return;
-
-        const last = cardCount - 1;
-        const cols = getGridColumns();
-        let target = highlightedCardIndex;
-
-        switch (e.key) {
-          case 'ArrowRight':
-            target = Math.min(last, target + 1);
-            break;
-          case 'ArrowLeft':
-            target = Math.max(0, target <= 0 ? 0 : target - 1);
-            break;
-          case 'j': case 'ArrowDown':
-            target = Math.min(last, (target < 0 ? -cols : target) + cols);
-            break;
-          case 'k': case 'ArrowUp':
-            target = Math.max(0, target - cols);
-            break;
-          case 'Home':
-            target = 0;
-            break;
-          case 'End':
-            target = last;
-            break;
-          case 'PageDown':
-            target = Math.min(last, target + cols * 3);
-            break;
-          case 'PageUp':
-            target = Math.max(0, target - cols * 3);
-            break;
-          case 'Enter': case ' ':
-            if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
-            return;
-          case '/':
-            e.preventDefault();
-            searchInput?.focus();
-            return;
-          default:
-            return;
-        }
-
-        e.preventDefault();
-        highlightCard(target);
-        return;
+        handleGridKeyboard(e, searchInput);
       }
     });
 
