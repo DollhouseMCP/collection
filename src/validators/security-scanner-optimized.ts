@@ -32,6 +32,7 @@ export interface ScanMetrics {
 
 // Define priority scores for different categories
 const categoryPriority: Record<string, number> = {
+  'xss': 100,
   'command_execution': 100,
   'code_execution': 95,
   'prompt_injection': 90,
