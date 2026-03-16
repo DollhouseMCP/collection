@@ -51,8 +51,11 @@ jobs:
       
       - name: Check if validation needed
         id: check-needed
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]] && [[ -z "${{ steps.changed-files.outputs.all_changed_files }}" ]]; then
+          if [[ "$EVENT_NAME" == "pull_request" ]] && [[ -z "$CHANGED_FILES" ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "No content files changed, skipping validation"
           else
@@ -63,18 +66,21 @@ jobs:
         if: steps.check-needed.outputs.skip != 'true'
         id: validate
         shell: bash
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          INPUT_CONTENT_PATH: ${{ github.event.inputs.content_path }}
         run: |
           # Prepare file list
           FILES=""
-          
+
           # Handle comma-separated list from changed-files action
-          if [ -n "${{ steps.changed-files.outputs.all_changed_files }}" ]; then
-            FILES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr ',' ' ')
+          if [ -n "$CHANGED_FILES" ]; then
+            FILES=$(echo "$CHANGED_FILES" | tr ',' ' ')
           fi
-          
+
           # Add manual path if provided
-          if [ -n "${{ github.event.inputs.content_path }}" ]; then
-            FILES="$FILES ${{ github.event.inputs.content_path }}"
+          if [ -n "$INPUT_CONTENT_PATH" ]; then
+            FILES="$FILES $INPUT_CONTENT_PATH"
           fi
           
           # If no files specified, validate all content
@@ -205,10 +211,13 @@ jobs:
       
       - name: Set status check
         if: github.event_name == 'pull_request'
+        env:
+          SKIP_VALIDATION: ${{ steps.check-needed.outputs.skip }}
+          VALIDATION_PASSED: ${{ steps.validate.outputs.validation_passed }}
         run: |
-          if [ "${{ steps.check-needed.outputs.skip }}" == "true" ]; then
+          if [ "$SKIP_VALIDATION" == "true" ]; then
             echo "✅ Content security validation skipped - no content files changed"
-          elif [ "${{ steps.validate.outputs.validation_passed }}" != "true" ]; then
+          elif [ "$VALIDATION_PASSED" != "true" ]; then
             echo "❌ Content security validation failed. Please review the security report above."
             exit 1
           else
@@ -250,11 +259,13 @@ jobs:
     
     steps:
       - name: Summary
+        env:
+          VALIDATION_RESULT: ${{ needs.validate-content.result }}
         run: |
           echo "## Content Security Validation Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ needs.validate-content.result }}" == "success" ]; then
+
+          if [ "$VALIDATION_RESULT" == "success" ]; then
             echo "✅ All content passed security validation!" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Security validation failed. Check the detailed report above." >> $GITHUB_STEP_SUMMARY
