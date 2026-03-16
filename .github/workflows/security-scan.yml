@@ -76,24 +76,20 @@ jobs:
         shell: bash
         run: |
           echo "🔒 Scanning content for security patterns..."
-          
-          # Create scan results directory
-          mkdir -p scan-results
-          
-          # Run validation on all content
-          npm run validate -- --security-only --output scan-results/security-report.json
-          
-          # Check for critical issues
-          if [ -f scan-results/security-report.json ]; then
-            CRITICAL_COUNT=$(jq '.issues[] | select(.severity == "critical") | length' scan-results/security-report.json | wc -l || echo "0")
-            HIGH_COUNT=$(jq '.issues[] | select(.severity == "high") | length' scan-results/security-report.json | wc -l || echo "0")
-            
-            echo "critical_count=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
-            echo "high_count=$HIGH_COUNT" >> $GITHUB_OUTPUT
-            
-            if [ "$CRITICAL_COUNT" -gt 0 ] || [ "$HIGH_COUNT" -gt 0 ]; then
-              echo "SCAN_FAILED=true" >> $GITHUB_ENV
-            fi
+
+          # Find all content files
+          FILES=$(find library showcase catalog -name "*.md" -type f 2>/dev/null | tr '\n' ' ')
+
+          if [ -z "$FILES" ]; then
+            echo "No content files found to scan"
+            exit 0
+          fi
+
+          # Run the content validator on all content files
+          if node dist/src/cli/validate-content.js $FILES; then
+            echo "✅ Content security scan passed"
+          else
+            echo "SCAN_FAILED=true" >> $GITHUB_ENV
           fi
 
       - name: Upload scan results
