@@ -36,7 +36,11 @@ jobs:
       - name: Run npm audit
         id: npm-audit
         run: |
-          npm audit --json > npm-audit-report.json || true
+          npm audit --json > npm-audit-report.json; AUDIT_EXIT=$?
+          if [ $AUDIT_EXIT -gt 1 ]; then
+            echo "npm audit encountered an error (exit code: $AUDIT_EXIT)"
+            exit $AUDIT_EXIT
+          fi
           npm audit
 
       - name: Run better-npm-audit

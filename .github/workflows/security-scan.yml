@@ -81,7 +81,7 @@ jobs:
           mkdir -p scan-results
           
           # Run validation on all content
-          npm run validate -- --security-only --output scan-results/security-report.json || true
+          npm run validate -- --security-only --output scan-results/security-report.json
           
           # Check for critical issues
           if [ -f scan-results/security-report.json ]; then
@@ -149,7 +149,11 @@ jobs:
       - name: Upload audit report
         if: always()
         run: |
-          npm audit --json > npm-audit.json || true
+          npm audit --json > npm-audit.json; AUDIT_EXIT=$?
+          if [ $AUDIT_EXIT -gt 1 ]; then
+            echo "npm audit encountered an error (exit code: $AUDIT_EXIT)"
+            exit $AUDIT_EXIT
+          fi
           echo "### NPM Audit Report" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
           cat npm-audit.json >> $GITHUB_STEP_SUMMARY
