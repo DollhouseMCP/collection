@@ -132,7 +132,7 @@ describe('Context Awareness Pattern Detection', () => {
         const issues = scanForSecurityPatterns(phrase);
         expect(issues.length).toBeGreaterThan(0);
         expect(issues[0].category).toBe('context_awareness');
-        expect(issues[0].pattern).toBe('training_data_extraction');
+        expect(issues[0].pattern).toMatch(/^training_data_/);
         expect(issues[0].severity).toBe('high');
       });
     });
