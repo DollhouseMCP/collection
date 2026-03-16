@@ -157,14 +157,15 @@ describe('Security Scanner Performance Benchmarks', () => {
         const curr = measurements[i];
         
         // Time per pattern should stay relatively constant
-        // Allow 2.5x degradation between measurements:
+        // Allow 3.0x degradation between measurements:
         // - 1.0x would be perfect O(n) scaling
-        // - 2.5x allows for CI variance, JIT optimization differences, CPU throttling
+        // - 3.0x allows for CI variance, JIT optimization differences, CPU throttling,
+        //   and sub-millisecond measurement noise at small pattern counts
         // - 4.0x+ would indicate O(n²) or worse algorithmic complexity
         // This threshold catches algorithmic bugs while tolerating environment noise
         const degradation = curr.timePerPattern / prev.timePerPattern;
-        
-        expect(degradation).toBeLessThan(2.5);
+
+        expect(degradation).toBeLessThan(3.0);
       }
       
       // Also verify overall complexity is closer to O(n) than O(n²)
