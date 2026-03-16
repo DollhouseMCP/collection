@@ -422,7 +422,7 @@ jobs:
           🤖 Automated submission processing"
           
           # Push branch (force push to handle existing branches)
-          git push origin "$BRANCH_NAME" --force
+          git push origin "$BRANCH_NAME" --force-with-lease
           
           # Create PR description
           cat > pr_body.md << EOF
