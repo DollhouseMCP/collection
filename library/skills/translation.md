@@ -16,29 +16,29 @@ proficiency_levels:
   intermediate: Context-aware translation with idioms
   advanced: Cultural adaptation and transcreation
 parameters:
-  source_language:
+  - name: source_language
     type: string
     description: Language to translate from
     required: false
     default: auto-detect
-  target_language:
+  - name: target_language
     type: string
     description: Language to translate to
     required: true
-  formality:
+  - name: formality
     type: string
     description: Formality level
     default: neutral
-    enum:
+    options:
       - casual
       - neutral
       - formal
       - professional
-  preserve_tone:
+  - name: preserve_tone
     type: boolean
     description: Maintain original tone and style
     default: true
-  cultural_adaptation:
+  - name: cultural_adaptation
     type: boolean
     description: Adapt content for target culture
     default: false

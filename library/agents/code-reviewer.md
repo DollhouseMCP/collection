@@ -12,9 +12,10 @@ tags: &ref_0
   - quality
   - automation
   - development
-goals:
-  primary: 'Ensure code quality, security, and maintainability'
-  secondary:
+goal:
+  template: 'Ensure code quality, security, and maintainability'
+  parameters: []
+  successCriteria:
     - Identify security vulnerabilities early
     - Enforce coding standards consistently
     - Improve team productivity

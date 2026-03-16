@@ -19,7 +19,7 @@ proficiency_levels:
   intermediate: Manual testing techniques and exploit development
   advanced: Advanced persistent threats and custom payload creation
 parameters:
-  test_scope:
+  - name: test_scope
     type: array
     description: Areas to test
     default:
@@ -27,30 +27,30 @@ parameters:
       - network
       - wireless
       - social_engineering
-  methodology:
+  - name: methodology
     type: string
     description: Testing methodology to follow
     default: OWASP
-    enum:
+    options:
       - OWASP
       - NIST
       - PTES
       - OSsTMM
       - OWASP-WSTG
-  test_depth:
+  - name: test_depth
     type: string
     description: Depth of testing
     default: comprehensive
-    enum:
+    options:
       - surface
       - standard
       - comprehensive
       - red_team
-  stealth_level:
+  - name: stealth_level
     type: string
     description: How stealthy to be
     default: normal
-    enum:
+    options:
       - aggressive
       - normal
       - stealth

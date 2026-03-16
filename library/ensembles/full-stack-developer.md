@@ -14,38 +14,102 @@ tags:
   - full-stack
   - software-engineering
 license: MIT
-components:
-  personas:
-    - software-architect
-    - code-reviewer
-    - debug-detective
-  skills:
-    - git-workflow-automation
-    - docker-containerization
-    - api-design-patterns
-  tools:
-    - code-formatter
-    - security-scanner
-    - dependency-analyzer
-  prompts:
-    - code-review-checklist
-    - architecture-decision-record
-    - bug-report-template
-  templates:
-    - project-readme
-    - api-documentation
-    - test-plan
-coordination_strategy: Task-based activation with context sharing
-use_cases:
-  - Building production applications
-  - Code review and quality assurance
-  - System architecture design
-  - Debugging complex issues
-dependencies:
-  - Git version control
-  - Docker (optional)
-  - Node.js or Python runtime
-created: 2025-07-15T00:00:00.000Z
+activation_strategy: conditional
+conflict_resolution: priority
+context_sharing: selective
+elements:
+  - element_name: software-architect
+    element_type: persona
+    role: primary
+    priority: 100
+    activation: always
+    purpose: System design and architecture decisions
+  - element_name: code-reviewer
+    element_type: persona
+    role: support
+    priority: 90
+    activation: on-demand
+    purpose: Code quality assessment and best practices
+  - element_name: debug-detective
+    element_type: persona
+    role: support
+    priority: 85
+    activation: conditional
+    condition: debugging_requested || error_investigation
+    purpose: Root cause analysis and systematic debugging
+  - element_name: git-workflow-automation
+    element_type: skill
+    role: support
+    priority: 80
+    activation: on-demand
+    purpose: Branch management and PR workflows
+  - element_name: docker-containerization
+    element_type: skill
+    role: support
+    priority: 70
+    activation: on-demand
+    purpose: Container best practices and multi-stage builds
+  - element_name: api-design-patterns
+    element_type: skill
+    role: support
+    priority: 75
+    activation: on-demand
+    purpose: RESTful and GraphQL API design
+  - element_name: code-formatter
+    element_type: skill
+    role: support
+    priority: 65
+    activation: on-demand
+    purpose: Language-specific formatting and team standards
+  - element_name: security-scanner
+    element_type: skill
+    role: support
+    priority: 80
+    activation: on-demand
+    purpose: Vulnerability detection and dependency auditing
+  - element_name: dependency-analyzer
+    element_type: skill
+    role: support
+    priority: 60
+    activation: on-demand
+    purpose: License compliance and version management
+  - element_name: code-review-checklist
+    element_type: template
+    role: support
+    priority: 70
+    activation: on-demand
+    purpose: Structured code review process
+  - element_name: architecture-decision-record
+    element_type: template
+    role: support
+    priority: 65
+    activation: on-demand
+    purpose: Architecture decision documentation
+  - element_name: bug-report-template
+    element_type: template
+    role: support
+    priority: 60
+    activation: on-demand
+    purpose: Standardized issue tracking
+  - element_name: project-readme
+    element_type: template
+    role: support
+    priority: 70
+    activation: on-demand
+    purpose: Project documentation
+  - element_name: api-documentation
+    element_type: template
+    role: support
+    priority: 65
+    activation: on-demand
+    purpose: API specification and documentation
+  - element_name: test-plan
+    element_type: template
+    role: support
+    priority: 60
+    activation: on-demand
+    purpose: Test planning and coverage documentation
+created: '2025-07-15'
 ---
 
 # Full-Stack Developer Ensemble

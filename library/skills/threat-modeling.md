@@ -19,41 +19,41 @@ proficiency_levels:
   intermediate: STRIDE methodology and attack tree analysis
   advanced: Custom frameworks and quantitative risk modeling
 parameters:
-  methodology:
+  - name: methodology
     type: string
     description: Threat modeling methodology
     default: STRIDE
-    enum:
+    options:
       - STRIDE
       - PASTA
       - OCTAVE
       - TRIKE
       - VAST
       - hybrid
-  scope:
+  - name: scope
     type: string
     description: Analysis scope
     default: application
-    enum:
+    options:
       - application
       - system
       - network
       - organization
       - supply_chain
-  risk_appetite:
+  - name: risk_appetite
     type: string
     description: Organization's risk tolerance
     default: moderate
-    enum:
+    options:
       - low
       - moderate
       - high
       - very_high
-  compliance_requirements:
+  - name: compliance_requirements
     type: array
     description: Regulatory requirements to consider
     default: []
-    enum:
+    options:
       - PCI-DSS
       - HIPAA
       - GDPR

@@ -12,7 +12,9 @@
 (() => {
   const REPO    = 'DollhouseMCP/collection';
   const BRANCH  = 'main';
-  const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
+  // Use local server in dev, GitHub raw in production
+  const IS_LOCAL = ['localhost', '127.0.0.1', 'host.docker.internal'].includes(globalThis.location?.hostname);
+  const RAW_BASE = IS_LOCAL ? '..' : `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
   const GITHUB_BASE = `https://github.com/${REPO}/blob/${BRANCH}`;
 
   // ── Constants ──────────────────────────────────────────────────────────────
@@ -33,6 +35,7 @@
   let openElementIndex = -1;   // index of currently open modal element in filteredElements
   let modalShowRaw = false;    // sticky raw/rendered toggle — persists across prev/next navigation
   let activeTopic = 'all';
+  let highlightedCardIndex = -1; // keyboard-highlighted card in the grid
 
   // Normalize plural index keys → singular CSS/display type names
   const SINGULAR_TYPE = {
@@ -295,6 +298,7 @@
     if (!grid) return;
 
     filteredElements = sortElements(filteredElements);
+    highlightedCardIndex = -1; // reset grid keyboard selection on re-render
 
     const total = filteredElements.length;
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -601,9 +605,10 @@
     // Show modal with loading state
     const body = document.getElementById('modal-body');
     body.innerHTML = '<p class="loading">Loading content…</p>';
+    body.tabIndex = -1; // make scrollable body focusable for keyboard scrolling
     modal.showModal();
     document.body.classList.add('modal-open');
-    modal.querySelector('.modal-close').focus();
+    body.focus(); // focus body so arrow/Page/Home/End keys scroll content natively
 
     // Fetch full .md file (or use cached local content)
     try {
@@ -620,7 +625,7 @@
 
       function renderModalBody() {
         if (modalShowRaw) {
-          body.innerHTML = `<pre class="element-source"><code class="element-code">${escapeHtml(content)}</code></pre>`;
+          body.innerHTML = `<pre class="element-source"><code class="element-code language-yaml">${escapeHtml(content)}</code></pre>`;
           if (globalThis.hljs) body.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
         } else {
           body.innerHTML = renderDetailView(content, element.type);
@@ -835,28 +840,198 @@
     return gHtml ? detailSection('Gatekeeper', gHtml) : '';
   }
 
-  function renderAgentSection(fm) {
-    let html = '';
-    if (fm.instructions) {
-      const rendered = globalThis.marked
-        ? `<div class="element-rendered">${marked.parse(String(fm.instructions))}</div>`
-        : `<pre class="detail-multiline">${escapeHtml(String(fm.instructions))}</pre>`;
-      html += detailSection('Instructions', rendered);
+  // ── Agent sub-section helpers (extracted for cognitive complexity) ──────
+
+  function renderLegacyGoals(fm) {
+    if (!fm.goals || typeof fm.goals !== 'object') return '';
+    let goalsHtml = '';
+    if (fm.goals.primary) goalsHtml += `<p class="detail-prose">${escapeHtml(String(fm.goals.primary))}</p>`;
+    if (Array.isArray(fm.goals.secondary) && fm.goals.secondary.length) {
+      const items = fm.goals.secondary.map(g => `<li>${escapeHtml(g)}</li>`).join('');
+      goalsHtml += `<ul class="detail-list">${items}</ul>`;
     }
-    if (fm.goal && typeof fm.goal === 'object') {
-      html += renderGoalSection(fm.goal);
+    return goalsHtml ? detailSection('Goals', goalsHtml) : '';
+  }
+
+  function renderStateSection(fm) {
+    if (!fm.state || typeof fm.state !== 'object') return '';
+    let stateHtml = '';
+    for (const [k, v] of Object.entries(fm.state)) {
+      if (Array.isArray(v)) {
+        stateHtml += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v)}</span></div>`;
+      } else {
+        stateHtml += detailField(k.replaceAll('_', ' '), String(v));
+      }
     }
-    if (fm.autonomy && typeof fm.autonomy === 'object') {
-      html += renderAutonomySection(fm.autonomy);
+    return stateHtml ? detailSection('State', stateHtml) : '';
+  }
+
+  function renderAgentToolsSection(fm) {
+    if (!fm.tools || typeof fm.tools !== 'object') return '';
+    let toolsHtml = '';
+    if (Array.isArray(fm.tools.allowed) && fm.tools.allowed.length) {
+      toolsHtml += `<div class="detail-field"><span class="detail-label">allowed</span><span class="detail-value">${fm.tools.allowed.map(v => detailPill(v, 'pill-tag')).join(' ')}</span></div>`;
     }
-    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') {
-      html += renderGatekeeperSection(fm.gatekeeper);
+    if (Array.isArray(fm.tools.denied) && fm.tools.denied.length) {
+      toolsHtml += `<div class="detail-field"><span class="detail-label">denied</span><span class="detail-value">${fm.tools.denied.map(v => detailPill(v, 'pill-required')).join(' ')}</span></div>`;
     }
+    return toolsHtml ? detailSection('Tools', toolsHtml) : '';
+  }
+
+  function renderAgentV1Config(fm) {
     const agentConfig = ['decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals']
       .map(k => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), fm[k] == null ? null : String(fm[k])))
       .filter(Boolean).join('');
-    if (agentConfig) html += detailSection('Configuration', agentConfig);
+    return agentConfig ? detailSection('Configuration', agentConfig) : '';
+  }
+
+  function renderMarkdownOrPre(text) {
+    return globalThis.marked
+      ? `<div class="element-rendered">${marked.parse(String(text))}</div>`
+      : `<pre class="detail-multiline">${escapeHtml(String(text))}</pre>`;
+  }
+
+  function renderActivatesSection(fm) {
+    if (!fm.activates || typeof fm.activates !== 'object') return '';
+    const entries = Object.entries(fm.activates)
+      .filter(([, v]) => Array.isArray(v) && v.length)
+      .map(([k, v]) => `<div class="detail-field"><span class="detail-label">${escapeHtml(k)}</span><span class="detail-value">${detailPillList(v)}</span></div>`)
+      .join('');
+    return entries ? detailSection('Activates', entries) : '';
+  }
+
+  function renderResilienceSection(fm) {
+    if (!fm.resilience || typeof fm.resilience !== 'object') return '';
+    const fields = Object.entries(fm.resilience)
+      .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').toLowerCase().trim(), String(v)))
+      .filter(Boolean).join('');
+    return fields ? detailSection('Resilience', fields) : '';
+  }
+
+  function renderRiskThresholds(fm) {
+    if (!fm.risk_thresholds || typeof fm.risk_thresholds !== 'object') return '';
+    const thresholds = Object.entries(fm.risk_thresholds)
+      .map(([k, v]) => detailField(k.replaceAll('_', ' '), String(v)))
+      .filter(Boolean).join('');
+    return thresholds ? detailSection('Risk thresholds', thresholds) : '';
+  }
+
+  function renderAgentSection(fm) {
+    let html = '';
+    if (fm.instructions) html += detailSection('Instructions', renderMarkdownOrPre(fm.instructions));
+    if (fm.goal && typeof fm.goal === 'object') html += renderGoalSection(fm.goal);
+    html += renderLegacyGoals(fm);
+    if (fm.autonomy && typeof fm.autonomy === 'object') html += renderAutonomySection(fm.autonomy);
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') html += renderGatekeeperSection(fm.gatekeeper);
+    if (fm.systemPrompt) html += detailSection('System prompt', renderMarkdownOrPre(fm.systemPrompt));
+    html += renderActivatesSection(fm);
+    html += renderAgentToolsSection(fm);
+    html += renderResilienceSection(fm);
+    if (Array.isArray(fm.capabilities) && fm.capabilities.length) {
+      html += detailSection('Capabilities', detailPillList(fm.capabilities.map(c => String(c).replaceAll('_', ' ')), 'pill-tag'));
+    }
+    if (fm.decision_framework && typeof fm.decision_framework === 'object') html += renderDecisionFramework(fm.decision_framework);
+    html += renderStateSection(fm);
+    html += renderRiskThresholds(fm);
+    html += renderAgentV1Config(fm);
     return html;
+  }
+
+  // ── Ensemble-specific rendering ──────────────────────────────────────────
+
+  function buildElementPills(el) {
+    const elType = el.element_type || el.type || '';
+    const pills = [];
+    if (elType) pills.push(detailPill(elType, 'pill-meta'));
+    if (el.role) {
+      const cls = (el.role === 'primary' || el.role === 'core') ? 'pill-required' : 'pill-tag';
+      pills.push(detailPill(el.role, cls));
+    }
+    if (el.activation) {
+      const cls = el.activation === 'always' ? 'pill-trigger' : '';
+      pills.push(detailPill(el.activation, cls));
+    }
+    if (el.priority != null) {
+      pills.push(detailPill(`priority ${el.priority}`));
+    }
+    return pills.join(' ');
+  }
+
+  function renderEnsembleElementRow(el) {
+    if (typeof el !== 'object' || el === null) return '';
+    const elName = el.element_name || el.name || '(unnamed)';
+    const pills = buildElementPills(el);
+    const purposeLine = el.purpose ? `<div class="detail-param-desc">${escapeHtml(el.purpose)}</div>` : '';
+    const condLine = el.condition ? `<div class="detail-param-desc"><em>when:</em> <code>${escapeHtml(el.condition)}</code></div>` : '';
+    const deps = Array.isArray(el.dependencies) && el.dependencies.length;
+    const depsLine = deps ? `<div class="detail-param-desc"><em>depends on:</em> ${el.dependencies.map(d => detailPill(d)).join(' ')}</div>` : '';
+    return `<div class="detail-param">
+      <div class="detail-param-header"><span class="detail-param-name">${escapeHtml(elName)}</span>${pills}</div>
+      ${purposeLine}${condLine}${depsLine}
+    </div>`;
+  }
+
+  function renderEnsembleElements(elements) {
+    if (!Array.isArray(elements) || !elements.length) return '';
+    const rows = elements.map(renderEnsembleElementRow).filter(Boolean).join('');
+    return rows ? detailSection('Elements', rows) : '';
+  }
+
+  function renderResourceLimits(fm) {
+    const limits = fm.resource_limits || fm.resourceLimits;
+    if (!limits || typeof limits !== 'object') return '';
+    const fields = Object.entries(limits)
+      .map(([k, v]) => detailField(k.replaceAll(/([A-Z])/g, ' $1').replaceAll('_', ' ').toLowerCase().trim(), String(v)))
+      .filter(Boolean).join('');
+    return fields ? detailSection('Resource limits', fields) : '';
+  }
+
+  function renderEnsembleSection(fm) {
+    let html = '';
+    if (fm.instructions) html += detailSection('Instructions', renderMarkdownOrPre(fm.instructions));
+    const configFields = [
+      detailField('Activation strategy', fm.activation_strategy || fm.activationStrategy),
+      detailField('Conflict resolution', fm.conflict_resolution || fm.conflictResolution),
+      detailField('Context sharing', fm.context_sharing || fm.contextSharing),
+      detailField('Allow nested', fm.allowNested == null ? null : String(fm.allowNested)),
+      detailField('Max nesting depth', fm.maxNestingDepth == null ? null : String(fm.maxNestingDepth)),
+    ].filter(Boolean).join('');
+    if (configFields) html += detailSection('Ensemble configuration', configFields);
+    html += renderEnsembleElements(fm.elements);
+    html += renderResourceLimits(fm);
+    if (fm.gatekeeper && typeof fm.gatekeeper === 'object') html += renderGatekeeperSection(fm.gatekeeper);
+    return html;
+  }
+
+  function renderNestedDfObject(obj) {
+    let nested = '';
+    for (const [sk, sv] of Object.entries(obj)) {
+      if (Array.isArray(sv)) {
+        nested += `<div class="detail-field"><span class="detail-label">${escapeHtml(sk.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(sv.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
+      } else {
+        nested += detailField(sk.replaceAll('_', ' '), String(sv));
+      }
+    }
+    return nested;
+  }
+
+  function renderDecisionFramework(df) {
+    let html = '';
+    if (df.type) html += detailField('Type', String(df.type).replaceAll(/[-_]/g, ' '));
+
+    // Render any array fields as pill lists (rules_engine, ml_components, evaluation_criteria, etc.)
+    for (const [k, v] of Object.entries(df)) {
+      if (k === 'type') continue;
+      if (Array.isArray(v)) {
+        html += `<div class="detail-field"><span class="detail-label">${escapeHtml(k.replaceAll('_', ' '))}</span><span class="detail-value">${detailPillList(v.map(i => String(i).replaceAll('_', ' ')))}</span></div>`;
+      } else if (typeof v === 'object' && v !== null) {
+        const nested = renderNestedDfObject(v);
+        if (nested) html += detailSection(k.replaceAll('_', ' '), nested);
+      } else {
+        html += detailField(k.replaceAll('_', ' '), String(v));
+      }
+    }
+    return html ? detailSection('Decision framework', html) : '';
   }
 
   function renderDetailParameters(fm) {
@@ -876,20 +1051,44 @@
     return paramRows ? detailSection('Parameters', paramRows) : '';
   }
 
+  function renderDetailVariables(fm) {
+    if (!Array.isArray(fm.variables) || !fm.variables.length) return '';
+    const rows = fm.variables.map(v => {
+      if (typeof v === 'string') return `<div class="detail-param"><span class="detail-param-name">${escapeHtml(v)}</span></div>`;
+      if (typeof v !== 'object' || v === null) return '';
+      return `<div class="detail-param">
+        <div class="detail-param-header">
+          <span class="detail-param-name">${escapeHtml(v.name || '')}</span>
+          ${v.type ? `<span class="detail-pill pill-meta">${escapeHtml(v.type)}</span>` : ''}
+          ${v.required ? `<span class="detail-pill pill-required">required</span>` : ''}
+          ${v.default === undefined ? '' : `<span class="detail-pill">default: ${escapeHtml(String(v.default))}</span>`}
+        </div>
+        ${v.description ? `<span class="detail-param-desc">${escapeHtml(v.description)}</span>` : ''}
+      </div>`;
+    }).filter(Boolean).join('');
+    return rows ? detailSection('Variables', rows) : '';
+  }
+
   function renderDetailExtra(fm, body) {
     const knownFields = new Set([
       'name','type','description','author','version','category','license','age_rating',
       'created','created_date','updated','modified','tags','triggers','use_cases','parameters',
-      'proficiency_levels','coordination_strategy',
+      'proficiency_levels','coordination_strategy','variables',
       'personas','skills','tools','templates','prompts','memories',
-      'instructions','goal','autonomy','gatekeeper',
+      'instructions','goal','goals','autonomy','gatekeeper',
+      'systemPrompt','activates','tools','resilience',
+      'capabilities','decision_framework','state','risk_thresholds',
       'decisionFramework','riskTolerance','learningEnabled','maxConcurrentGoals',
+      'specializations','ruleEngineConfig',
+      'activation_strategy','activationStrategy','conflict_resolution','conflictResolution',
+      'context_sharing','contextSharing','resource_limits','resourceLimits',
+      'elements','allowNested','maxNestingDepth','components',
     ]);
     const extraFields = Object.entries(fm)
       .filter(([k]) => !knownFields.has(k))
       .map(([k, v]) => {
         let display;
-        if (Array.isArray(v)) display = v.join(', ');
+        if (Array.isArray(v)) display = v.map(item => typeof item === 'object' && item !== null ? JSON.stringify(item) : String(item)).join(', ');
         else if (typeof v === 'object' && v !== null) display = JSON.stringify(v);
         else display = String(v);
         return detailField(k.replaceAll('_', ' '), display);
@@ -965,6 +1164,9 @@
     // ── Parameters (skills/tools) ──
     html += renderDetailParameters(fm);
 
+    // ── Variables (templates) ──
+    html += renderDetailVariables(fm);
+
     // ── Proficiency levels (skills) ──
     if (fm.proficiency_levels && typeof fm.proficiency_levels === 'object') {
       const levels = Object.entries(fm.proficiency_levels)
@@ -975,6 +1177,11 @@
     // ── Agent fields ──
     if (type === 'agent') {
       html += renderAgentSection(fm);
+    }
+
+    // ── Ensemble fields ──
+    if (type === 'ensemble') {
+      html += renderEnsembleSection(fm);
     }
 
     // ── Catch-all + body ──
@@ -988,6 +1195,100 @@
     if (!modal) return;
     modal.close();
     document.body.classList.remove('modal-open');
+  }
+
+  // ── Grid keyboard navigation ───────────────────────────────────────────────
+
+  function highlightCard(index) {
+    const grid = document.getElementById('elements-grid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.element-card');
+    // Clear previous highlight
+    cards.forEach(c => c.classList.remove('keyboard-focus'));
+    if (index < 0 || index >= cards.length) return;
+    highlightedCardIndex = index;
+    const card = cards[index];
+    card.classList.add('keyboard-focus');
+    card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function getVisibleCardCount() {
+    const grid = document.getElementById('elements-grid');
+    return grid ? grid.querySelectorAll('.element-card').length : 0;
+  }
+
+  function getGridColumns() {
+    const grid = document.getElementById('elements-grid');
+    if (!grid) return 1;
+    // For list view, it's always a single column
+    if (grid.dataset.view === 'list') return 1;
+    // Read actual computed column count from the CSS grid
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    return Math.max(1, cols);
+  }
+
+  function openHighlightedCard() {
+    const grid = document.getElementById('elements-grid');
+    if (!grid || highlightedCardIndex < 0) return;
+    const card = grid.querySelectorAll('.element-card')[highlightedCardIndex];
+    if (!card) return;
+    const idx = Number.parseInt(card.dataset.index, 10);
+    const el = filteredElements[idx];
+    if (!el) return;
+    const isListView = grid.dataset.view === 'list';
+    if (isListView) {
+      toggleInlineExpand(card, el);
+    } else if (!card.dataset.unavailable) {
+      openModal(el, idx);
+    }
+  }
+
+  function getModalNavTarget(key) {
+    const last = filteredElements.length - 1;
+    if ((key === 'ArrowLeft' || key === 'k') && openElementIndex > 0) return openElementIndex - 1;
+    if ((key === 'ArrowRight' || key === 'j') && openElementIndex < last) return openElementIndex + 1;
+    return -1;
+  }
+
+  function handleModalKeyboard(e, modal) {
+    if (e.key === 'r' || e.key === 'R') {
+      const renderBtn = modal.querySelector('#btn-render');
+      if (renderBtn?.onclick) { e.preventDefault(); renderBtn.onclick(); }
+      return;
+    }
+    const target = getModalNavTarget(e.key);
+    if (target >= 0) {
+      e.preventDefault();
+      openModal(filteredElements[target], target);
+    }
+  }
+
+  function handleGridKeyboard(e, sInput) {
+    const cardCount = getVisibleCardCount();
+    if (!cardCount) return;
+    const last = cardCount - 1;
+    const cols = getGridColumns();
+    let target = highlightedCardIndex;
+    switch (e.key) {
+      case 'ArrowRight':  target = Math.min(last, target + 1); break;
+      case 'ArrowLeft':   target = Math.max(0, target <= 0 ? 0 : target - 1); break;
+      case 'j': case 'ArrowDown':  target = Math.min(last, (target < 0 ? -cols : target) + cols); break;
+      case 'k': case 'ArrowUp':    target = Math.max(0, target - cols); break;
+      case 'Home':        target = 0; break;
+      case 'End':         target = last; break;
+      case 'PageDown':    target = Math.min(last, target + cols * 3); break;
+      case 'PageUp':      target = Math.max(0, target - cols * 3); break;
+      case 'Enter': case ' ':
+        if (highlightedCardIndex >= 0) { e.preventDefault(); openHighlightedCard(); }
+        return;
+      case '/':
+        e.preventDefault();
+        sInput?.focus();
+        return;
+      default: return;
+    }
+    e.preventDefault();
+    highlightCard(target);
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -1312,29 +1613,26 @@
 
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        closeModal();
-        return;
-      }
+      const inInput = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
       const modal = document.getElementById('element-modal');
       const modalOpen = modal?.open;
-      // Arrow keys navigate between elements when modal is open
-      if (modalOpen && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
-        if (e.key === 'ArrowLeft' && openElementIndex > 0) {
-          e.preventDefault();
-          openModal(filteredElements[openElementIndex - 1], openElementIndex - 1);
-          return;
-        }
-        if (e.key === 'ArrowRight' && openElementIndex < filteredElements.length - 1) {
-          e.preventDefault();
-          openModal(filteredElements[openElementIndex + 1], openElementIndex + 1);
-          return;
-        }
+
+      // ── Escape: close modal or clear search ──
+      if (e.key === 'Escape') {
+        if (modalOpen) { closeModal(); return; }
+        if (inInput && searchInput) { searchInput.blur(); return; }
+        return;
       }
-      // Press / to focus search (unless already in an input)
-      if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
-        e.preventDefault();
-        searchInput?.focus();
+
+      // ── Modal-open shortcuts ──
+      if (modalOpen && !inInput) {
+        handleModalKeyboard(e, modal);
+        return;
+      }
+
+      // ── Grid navigation (modal closed) ──
+      if (!inInput) {
+        handleGridKeyboard(e, searchInput);
       }
     });
 

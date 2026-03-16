@@ -229,6 +229,9 @@ class SecurityScanner {
       await this.runContextualAnalysis(content, fileResult);
       await this.runAnomalyDetection(content, fileResult);
 
+      // Apply security_exceptions from frontmatter (false-positive suppression)
+      this.applySecurityExceptions(fileResult);
+
       // Calculate file score and risk level
       this.calculateFileScore(fileResult);
       
@@ -406,6 +409,35 @@ class SecurityScanner {
         match: `Non-printable ratio: ${(stats.nonPrintableRatio * 100).toFixed(1)}%`,
         cwe: 'CWE-1019'
       });
+    }
+  }
+
+  /**
+   * Apply security_exceptions from element frontmatter to suppress known false positives.
+   * Elements can declare exceptions in their YAML frontmatter:
+   *   security_exceptions:
+   *     - pattern: "credential-leak"
+   *       reason: "Educational example demonstrating SQL injection"
+   *     - pattern: "template-injection"
+   *       reason: "Example vulnerable code for teaching purposes"
+   */
+  applySecurityExceptions(fileResult) {
+    const exceptions = fileResult.metadata?.security_exceptions;
+    if (!Array.isArray(exceptions) || exceptions.length === 0) return;
+
+    const exceptionPatterns = new Set(exceptions.map(e => e.pattern).filter(Boolean));
+    if (exceptionPatterns.size === 0) return;
+
+    const before = fileResult.issues.length;
+    fileResult.issues = fileResult.issues.filter(issue => {
+      // Match by category (e.g., "credential-leak") or by id (e.g., "credential-extraction")
+      const suppressed = exceptionPatterns.has(issue.category) || exceptionPatterns.has(issue.id);
+      return !suppressed;
+    });
+
+    if (fileResult.issues.length < before) {
+      const suppressed = before - fileResult.issues.length;
+      console.log(`   ℹ️  ${suppressed} issue(s) suppressed by security_exceptions`);
     }
   }
 

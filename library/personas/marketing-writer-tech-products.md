@@ -108,7 +108,7 @@ Once you have the voice profile, check every piece against it:
 - Would they actually say this out loud?
 - Are the sentence rhythms natural for their speaking style?
 - Have any corporate phrases crept in?
-- Is the level of technical detail right for this persons comfort zone?
+- Is the level of technical detail right for this person's comfort zone?
 
 ## Multi-Channel Content Strategy
 
@@ -134,7 +134,7 @@ Once you have the voice profile, check every piece against it:
 Characteristics:
 - Length: 1500-2500 words
 - Tone: Professional, authoritative, authentic
-- Voice: Founders conversational style
+- Voice: Founder's conversational style
 - Structure: Problem, Evolution, Solution, Opportunity
 - Include: Technical details, code examples, comparisons
 - Goal: Establish thought leadership, SEO, comprehensive resource
@@ -146,8 +146,8 @@ Structure Template:
 
 ## Opening Hook
 - Personal connection or observation
-- Why this matters now
-- What the reader will learn
+- Why this matters now?
+- What the reader will learn?
 
 ## The Journey/Story
 - How we got here (timeline narrative)
@@ -156,16 +156,16 @@ Structure Template:
 
 ## The Discovery/Insight
 - Key findings
-- What makes this interesting
+- What makes this interesting?
 - Evidence and examples
 
 ## The Bigger Picture
-- What this means
+- What this means?
 - Broader implications
 - Future possibilities
 
 ## Try It Yourself
-- How readers can explore
+- How readers can explore?
 - Resources and links
 - Community invitation
 ```
@@ -182,7 +182,7 @@ Characteristics:
 Approach:
 - Title: Factual observation, not clickbait
 - Opening: Interesting technical problem or observation
-- Body: How you solved it, what you learned
+- Body: How you solved it, what you learned?
 - Close: Invite discussion, open questions
 - Engagement: Respond thoughtfully to all comments
 
@@ -214,7 +214,7 @@ Characteristics:
 Structure:
 - Hook: Interesting industry observation
 - Story: Personal experience or case study
-- Insight: What this reveals about the industry
+- Insight: What this reveals about the industry?
 - Takeaway: Lessons for others
 - CTA: Continue conversation
 
@@ -249,7 +249,7 @@ Thread Structure:
 Characteristics:
 - Length: 300-400 words
 - Tone: Personal, direct, value-focused
-- Focus: What it means for them specifically
+- Focus: What it means for them specifically?
 - Customize: Per recipient relationship
 - Goal: Start conversation, specific next step
 
@@ -262,7 +262,7 @@ From master content, identify:
 2. Supporting points: 3-5 key evidence points
 3. Proof points: Timeline, data, examples
 4. Value propositions: Benefits for different audiences
-5. Call to action: What you want the reader to do
+5. Call to action: What you want the reader to do?
 
 ### Adaptation Process
 
@@ -299,7 +299,7 @@ When a competitor releases something similar to your product:
 Before publishing any content:
 
 ### Voice and Tone
-- [ ] Matches the founders or brands authentic voice
+- [ ] Matches the founder's or brand's authentic voice
 - [ ] Reads naturally when spoken aloud
 - [ ] Conversational, not corporate
 - [ ] Specific examples, not generic terms
@@ -382,4 +382,4 @@ No hype, no "revolutionary," just the honest story of why it exists.
 
 ---
 
-Remember: The best marketing for technical products doesnt feel like marketing. It feels like valuable information shared by someone who genuinely wants to help.
+Remember: The best marketing for technical products doesn't feel like marketing. It feels like valuable information shared by someone who genuinely wants to help.

@@ -396,7 +396,7 @@ class IntegrationTester {
       prompt: ['name', 'description', 'unique_id', 'author', 'type'],
       template: ['name', 'description', 'unique_id', 'author', 'type'],
       tool: ['name', 'description', 'unique_id', 'author', 'type'],
-      ensemble: ['name', 'description', 'unique_id', 'author', 'type', 'components'],
+      ensemble: ['name', 'description', 'unique_id', 'author', 'type'],
       memory: ['name', 'description', 'unique_id', 'author', 'type']
     };
 
@@ -567,8 +567,11 @@ class IntegrationTester {
     const metadata = fileResult.metadata;
     
     // Check for ensemble circular references
-    if (metadata.type === 'ensemble' && metadata.components) {
-      const allRefs = Object.values(metadata.components).flat().filter(v => typeof v === 'string');
+    if (metadata.type === 'ensemble' && (metadata.components || metadata.elements)) {
+      const refs = metadata.components
+        ? Object.values(metadata.components).flat().filter(v => typeof v === 'string')
+        : (metadata.elements || []).map(el => el.element_name || el.name).filter(Boolean);
+      const allRefs = refs;
       if (allRefs.includes(metadata.unique_id)) {
         return {
           passed: false,

@@ -17,38 +17,38 @@ proficiency_levels:
   intermediate: Correlation analysis and trend detection
   advanced: Predictive modeling and complex visualizations
 parameters:
-  analysis_type:
+  - name: analysis_type
     type: array
     description: Types of analysis to perform
     default:
       - descriptive
       - diagnostic
-    enum:
+    options:
       - descriptive
       - diagnostic
       - predictive
       - prescriptive
-  visualization_format:
+  - name: visualization_format
     type: string
     description: Preferred visualization format
     default: auto
-    enum:
+    options:
       - auto
       - charts
       - tables
       - narrative
       - dashboard
-  confidence_level:
+  - name: confidence_level
     type: number
     description: Statistical confidence level
     default: 0.95
     min: 0.9
     max: 0.99
-  handle_missing_data:
+  - name: handle_missing_data
     type: string
     description: How to handle missing values
     default: interpolate
-    enum:
+    options:
       - ignore
       - interpolate
       - drop

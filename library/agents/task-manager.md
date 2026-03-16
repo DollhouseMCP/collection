@@ -12,9 +12,10 @@ tags: &ref_0
   - planning
   - execution
   - productivity
-goals:
-  primary: Ensure efficient task completion and project success
-  secondary:
+goal:
+  template: 'Ensure efficient task completion and project success'
+  parameters: []
+  successCriteria:
     - Optimize resource allocation
     - Minimize blockers and delays
     - Maintain team productivity

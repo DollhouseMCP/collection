@@ -90,11 +90,11 @@ Enable this skill to enhance data analysis capabilities.
       expect(result.issues).toHaveLength(0);
     });
 
-    it('should fail validation for skill missing required capabilities', async () => {
-      const invalidSkill = `---
+    it('should pass validation for skill without capabilities (optional in v2)', async () => {
+      const skillWithoutCapabilities = `---
 unique_id: test-skill-002
-name: Invalid Skill
-description: Skill without capabilities
+name: Valid Skill Without Capabilities
+description: Skill without capabilities field which is optional in v2
 type: skill
 version: 1.0.0
 author: Test Author
@@ -103,20 +103,17 @@ updated_date: 2024-01-01T00:00:00Z
 category: professional
 ---
 
-# Invalid Skill
+# Valid Skill
 
-This skill is missing the required capabilities field.
+This skill has no capabilities field, which is optional in v2.0 schema.
 `;
 
-      const testFile = join(testDir, 'invalid-skill.md');
-      writeFileSync(testFile, invalidSkill);
-      
+      const testFile = join(testDir, 'skill-no-capabilities.md');
+      writeFileSync(testFile, skillWithoutCapabilities);
+
       const result = await validator.validateContent(testFile);
-      
-      expect(result.passed).toBe(false);
-      expect(result.issues.some(issue => 
-        issue.type === 'missing_field' && issue.details.includes('capabilities')
-      )).toBe(true);
+
+      expect(result.passed).toBe(true);
     });
   });
 
@@ -539,35 +536,31 @@ A lightweight ensemble focused on creative writing with just personas and prompt
   });
 
   describe('Cross-type validation', () => {
-    it('should reject content with mismatched type', async () => {
-      const mismatchedContent = `---
-unique_id: mismatched-001
-name: Mismatched Content
-description: Content where type doesn't match structure
-type: skill
+    it('should reject content with invalid type value', async () => {
+      const invalidTypeContent = `---
+unique_id: invalid-type-001
+name: Invalid Type Content
+description: This content has an unrecognized type value
+type: widget
 version: 1.0.0
 author: Test Author
 created_date: 2024-01-01T00:00:00Z
 updated_date: 2024-01-01T00:00:00Z
 category: professional
-# This is persona-specific field on a skill type
-triggers:
-  - "hello"
-  - "hi"
 ---
 
-# Mismatched Content
+# Invalid Type
 
-This content has persona fields but claims to be a skill.
+This content has an invalid type that does not match any known element type.
 `;
 
-      const testFile = join(testDir, 'mismatched.md');
-      writeFileSync(testFile, mismatchedContent);
-      
+      const testFile = join(testDir, 'invalid-type.md');
+      writeFileSync(testFile, invalidTypeContent);
+
       const result = await validator.validateContent(testFile);
-      
+
       expect(result.passed).toBe(false);
-      expect(result.issues.some(issue => 
+      expect(result.issues.some(issue =>
         issue.type === 'missing_field' || issue.type === 'invalid_metadata'
       )).toBe(true);
     });

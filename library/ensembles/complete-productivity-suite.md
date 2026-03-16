@@ -14,20 +14,47 @@ tags:
   - efficiency
   - workflow
 license: MIT
-components:
-  personas:
-    - productivity-coach_20250715-100000_dollhousemcp
-  skills:
-    - debugging-assistant_20250715-100000_dollhousemcp
-  agents:
-    - academic-researcher_20250715-100100_dollhousemcp
-  prompts:
-    - story-starter_20250715-100200_dollhousemcp
-  templates:
-    - project-proposal_20250715-100300_dollhousemcp
-  tools:
-    - task-prioritizer_20250715-100400_dollhousemcp
-created: 2025-07-15T00:00:00.000Z
+activation_strategy: conditional
+conflict_resolution: priority
+context_sharing: selective
+elements:
+  - element_name: productivity-coach
+    element_type: persona
+    role: primary
+    priority: 100
+    activation: always
+    purpose: Coaching and motivation for daily planning
+  - element_name: debugging-assistant
+    element_type: skill
+    role: support
+    priority: 80
+    activation: on-demand
+    purpose: Technical problem-solving capabilities
+  - element_name: academic-researcher
+    element_type: agent
+    role: support
+    priority: 85
+    activation: on-demand
+    purpose: Autonomous background research
+  - element_name: story-starter
+    element_type: skill
+    role: support
+    priority: 60
+    activation: on-demand
+    purpose: Creative inspiration and idea generation
+  - element_name: project-proposal
+    element_type: template
+    role: support
+    priority: 70
+    activation: on-demand
+    purpose: Standardized project planning documents
+  - element_name: task-prioritizer
+    element_type: skill
+    role: support
+    priority: 90
+    activation: always
+    purpose: Task organization and priority management
+created: '2025-07-15'
 ---
 
 # Complete Productivity Suite Ensemble

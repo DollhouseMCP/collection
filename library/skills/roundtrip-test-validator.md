@@ -19,18 +19,18 @@ capabilities:
   - submission_verification
   - installation_checking
 parameters:
-  test_mode:
+  - name: test_mode
     type: boolean
     default: true
     description: Enable test mode for validation
-  verbosity:
+  - name: verbosity
     type: string
-    enum: ['minimal', 'normal', 'detailed']
+    options: ['minimal', 'normal', 'detailed']
     default: 'normal'
     description: Level of output detail
-  workflow_step:
+  - name: workflow_step
     type: string
-    enum: ['browse', 'search', 'install', 'submit', 'validate']
+    options: ['browse', 'search', 'install', 'submit', 'validate']
     default: 'validate'
     description: Which workflow step to validate
 ---
