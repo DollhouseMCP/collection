@@ -121,11 +121,15 @@ jobs:
               { pattern: /\brequire\s*\(/i, risk: 'HIGH', desc: 'Node.js require attempt' },
               { pattern: /\bimport\s+.*\bfs\b/i, risk: 'HIGH', desc: 'File system access attempt' },
               { pattern: /\bprocess\./i, risk: 'HIGH', desc: 'Process object access' },
-              { pattern: /javascript:/i, risk: 'HIGH', desc: 'JavaScript protocol' },
+              { pattern: /javascript\s*:/i, risk: 'CRITICAL', desc: 'JavaScript protocol' },
               { pattern: /data:.*base64/i, risk: 'MEDIUM', desc: 'Base64 data URL' },
+              { pattern: /data\s*:\s*text\/html/i, risk: 'CRITICAL', desc: 'Data URI HTML injection' },
               { pattern: /\$\{.*\}/i, risk: 'MEDIUM', desc: 'Template literal injection' },
-              { pattern: /<script/i, risk: 'HIGH', desc: 'Script tag injection' },
-              { pattern: /on\w+\s*=/i, risk: 'MEDIUM', desc: 'HTML event handler' }
+              { pattern: /<script[\s>]/i, risk: 'CRITICAL', desc: 'Script tag injection' },
+              { pattern: /<iframe[\s>]/i, risk: 'CRITICAL', desc: 'Iframe injection' },
+              { pattern: /\bon\w+\s*=/i, risk: 'CRITICAL', desc: 'HTML event handler' },
+              { pattern: /<(object|embed|applet)[\s>]/i, risk: 'CRITICAL', desc: 'Object/embed tag injection' },
+              { pattern: /<svg[\s>][\s\S]{0,200}(onload|onerror|onclick)/i, risk: 'CRITICAL', desc: 'SVG script execution' }
             ];
 
             let criticalIssues = 0;
@@ -418,7 +422,7 @@ jobs:
           🤖 Automated submission processing"
           
           # Push branch (force push to handle existing branches)
-          git push origin "$BRANCH_NAME" --force
+          git push origin "$BRANCH_NAME" --force-with-lease
           
           # Create PR description
           cat > pr_body.md << EOF

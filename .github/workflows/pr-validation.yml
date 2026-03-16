@@ -3,10 +3,6 @@ name: PR Validation Pipeline
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - 'library/**/*'
-      - 'showcase/**/*'
-      - 'catalog/**/*'
 
 # Security: pull_request_target removed — it granted elevated permissions while running
 # fork code, enabling pwn request attacks. See DollhouseMCP/collection#227.
@@ -28,9 +24,9 @@ jobs:
       contents: read
       statuses: write
     outputs:
-      security-passed: ${{ steps.scan.outputs.passed }}
-      security-score: ${{ steps.scan.outputs.score }}
-      security-report: ${{ steps.scan.outputs.report }}
+      security-passed: ${{ steps.scan.outputs.passed || steps.skip-check.outputs.passed }}
+      security-score: ${{ steps.scan.outputs.score || steps.skip-check.outputs.score }}
+      security-report: ${{ steps.scan.outputs.report || steps.skip-check.outputs.report }}
     
     steps:
       - name: Checkout repository
@@ -57,13 +53,21 @@ jobs:
             catalog/**/*.md
           separator: ','
 
+      - name: Skip if no content changes
+        id: skip-check
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: |
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "score=0" >> $GITHUB_OUTPUT
+          echo "report=No content files changed — skipped" >> $GITHUB_OUTPUT
+
       - name: Run security scan
         id: scan
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "Running security analysis on changed files..."
           FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
+
           if [ -n "$FILES" ]; then
             node scripts/pr-validation/security-scanner.mjs "$FILES"
           else
@@ -76,8 +80,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const passed = '${{ steps.scan.outputs.passed }}' === 'true';
-            const score = '${{ steps.scan.outputs.score }}' || '0';
+            const passed = '${{ steps.scan.outputs.passed || steps.skip-check.outputs.passed }}' === 'true';
+            const score = '${{ steps.scan.outputs.score || steps.skip-check.outputs.score }}' || '0';
             
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -104,15 +108,14 @@ jobs:
       contents: read
       statuses: write
     outputs:
-      schema-passed: ${{ steps.validate.outputs.passed }}
-      schema-errors: ${{ steps.validate.outputs.errors }}
-    
+      schema-passed: ${{ steps.validate.outputs.passed || steps.skip-check.outputs.passed }}
+      schema-errors: ${{ steps.validate.outputs.errors || steps.skip-check.outputs.errors }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -136,13 +139,20 @@ jobs:
             catalog/**/*.md
           separator: ' '
 
+      - name: Skip if no content changes
+        id: skip-check
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: |
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "errors=0" >> $GITHUB_OUTPUT
+
       - name: Validate schemas
         id: validate
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "Validating YAML/JSON schemas..."
           FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
+
           if [ -n "$FILES" ]; then
             # Use existing validation infrastructure
             node dist/src/cli/validate-content.js $FILES
@@ -157,8 +167,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const passed = '${{ steps.validate.outputs.passed }}' === 'true';
-            const errors = '${{ steps.validate.outputs.errors }}' || '0';
+            const passed = '${{ steps.validate.outputs.passed || steps.skip-check.outputs.passed }}' === 'true';
+            const errors = '${{ steps.validate.outputs.errors || steps.skip-check.outputs.errors }}' || '0';
             
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -177,16 +187,15 @@ jobs:
       contents: read
       statuses: write
     outputs:
-      quality-passed: ${{ steps.analyze.outputs.passed }}
-      quality-score: ${{ steps.analyze.outputs.score }}
-      quality-report: ${{ steps.analyze.outputs.report }}
-    
+      quality-passed: ${{ steps.analyze.outputs.passed || steps.skip-check.outputs.passed }}
+      quality-score: ${{ steps.analyze.outputs.score || steps.skip-check.outputs.score }}
+      quality-report: ${{ steps.analyze.outputs.report || steps.skip-check.outputs.report }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -207,13 +216,21 @@ jobs:
             catalog/**/*.md
           separator: ','
 
+      - name: Skip if no content changes
+        id: skip-check
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: |
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "score=100" >> $GITHUB_OUTPUT
+          echo "report=No content files changed — skipped" >> $GITHUB_OUTPUT
+
       - name: Analyze content quality
         id: analyze
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "Analyzing content quality..."
           FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
+
           if [ -n "$FILES" ]; then
             node scripts/pr-validation/quality-analyzer.mjs "$FILES"
           else
@@ -226,8 +243,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const passed = '${{ steps.analyze.outputs.passed }}' === 'true';
-            const score = '${{ steps.analyze.outputs.score }}' || '100';
+            const passed = '${{ steps.analyze.outputs.passed || steps.skip-check.outputs.passed }}' === 'true';
+            const score = '${{ steps.analyze.outputs.score || steps.skip-check.outputs.score }}' || '100';
             
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -254,15 +271,14 @@ jobs:
       contents: read
       statuses: write
     outputs:
-      integration-passed: ${{ steps.test.outputs.passed }}
-      integration-report: ${{ steps.test.outputs.report }}
-    
+      integration-passed: ${{ steps.test.outputs.passed || steps.skip-check.outputs.passed }}
+      integration-report: ${{ steps.test.outputs.report || steps.skip-check.outputs.report }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -286,13 +302,20 @@ jobs:
             catalog/**/*.md
           separator: ','
 
+      - name: Skip if no content changes
+        id: skip-check
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: |
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "report=No content files changed — skipped" >> $GITHUB_OUTPUT
+
       - name: Run integration tests
         id: test
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "Running integration tests..."
           FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
+
           if [ -n "$FILES" ]; then
             node scripts/pr-validation/integration-tester.mjs "$FILES"
           else
@@ -304,7 +327,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const passed = '${{ steps.test.outputs.passed }}' === 'true';
+            const passed = '${{ steps.test.outputs.passed || steps.skip-check.outputs.passed }}' === 'true';
             
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,

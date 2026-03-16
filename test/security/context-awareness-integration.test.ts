@@ -107,7 +107,7 @@ describe('Context Awareness Integration Tests', () => {
         const issues = scanForSecurityPatterns(phrase);
         expect(issues.length).toBeGreaterThan(0);
         expect(issues[0].category).toBe('context_awareness');
-        expect(issues[0].pattern).toBe('training_data_extraction');
+        expect(issues[0].pattern).toMatch(/^training_data_/);
         expect(issues[0].severity).toBe('high');
       });
     });
@@ -206,7 +206,7 @@ describe('Context Awareness Integration Tests', () => {
       const patterns = issues.map(i => i.pattern);
       expect(patterns).toContain('system_prompt_extraction');
       expect(patterns).toContain('conversation_history');
-      expect(patterns).toContain('training_data_extraction');
+      expect(patterns.some(p => p.startsWith('training_data_'))).toBe(true);
     });
   });
 });

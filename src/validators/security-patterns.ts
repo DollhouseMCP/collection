@@ -392,7 +392,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'context_awareness'
   },
   {
-    name: 'training_data_extraction',
+    name: 'training_data_display',
     // Pattern: Commands to show/display training data or examples
     pattern: /\b(show|display|reveal|provide|give|list|output)\s+(me\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|information|details)/i,
     severity: 'high',
@@ -400,7 +400,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'context_awareness'
   },
   {
-    name: 'training_data_extraction',
+    name: 'training_data_questions',
     // Pattern: Questions about what the AI was trained on
     pattern: /\b(what|which)\s+(dataset|data|examples?|information)\s+(were\s+you|was\s+I|have\s+you\s+been)\s+trained\s+(on|with)/i,
     severity: 'high',
@@ -408,7 +408,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'context_awareness'
   },
   {
-    name: 'training_data_extraction',
+    name: 'training_data_sources',
     // Pattern: Questions about learning sources
     pattern: /\bwhat\s+.{0,20}(have\s+you|did\s+you)\s+(learned|learn)\s+from/i,
     severity: 'high',
@@ -416,7 +416,7 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'context_awareness'
   },
   {
-    name: 'training_data_extraction',
+    name: 'training_data_access',
     // Pattern: Direct references to accessing training data
     pattern: /\b(access|examine|inspect|view)\s+(to\s+)?(the\s+)?(your\s+)?training\s+(data|dataset|examples?|corpus)/i,
     severity: 'high',
@@ -424,12 +424,91 @@ export const SECURITY_PATTERNS: SecurityPattern[] = [
     category: 'context_awareness'
   },
   {
-    name: 'training_data_extraction',
+    name: 'training_data_possessive',
     // Pattern: Possessive references to training data
     pattern: /\byour\s+(original\s+)?training\s+(data|dataset|examples?|corpus|information)/i,
     severity: 'high',
     description: 'Attempts to extract training data',
     category: 'context_awareness'
+  },
+
+  // HTML/XSS Injection Patterns
+  {
+    name: 'script_tag',
+    pattern: /<script[\s>]/i,
+    severity: 'critical',
+    description: 'Script tag injection',
+    category: 'xss'
+  },
+  {
+    name: 'iframe_tag',
+    pattern: /<iframe[\s>]/i,
+    severity: 'critical',
+    description: 'Iframe injection for content embedding attacks',
+    category: 'xss'
+  },
+  {
+    name: 'event_handler_xss',
+    pattern: /\bon\w+\s*=/i,
+    severity: 'critical',
+    description: 'HTML event handler injection (onclick, onerror, etc.)',
+    category: 'xss'
+  },
+  {
+    name: 'javascript_protocol_xss',
+    pattern: /javascript\s*:/i,
+    severity: 'critical',
+    description: 'JavaScript protocol in URLs',
+    category: 'xss'
+  },
+  {
+    name: 'html_entity_script',
+    pattern: /&#x0{0,4}3c;|&#0{0,4}60;/i,
+    severity: 'critical',
+    description: 'Entity-encoded angle bracket for tag evasion',
+    category: 'xss'
+  },
+  {
+    name: 'svg_script',
+    pattern: /<svg[\s>][^>]{0,200}(onload|onerror|onclick)/i,
+    severity: 'critical',
+    description: 'SVG with embedded script execution',
+    category: 'xss'
+  },
+  {
+    name: 'data_uri_html',
+    pattern: /data\s*:\s*text\/html/i,
+    severity: 'critical',
+    description: 'Data URI with HTML content for XSS',
+    category: 'xss'
+  },
+  {
+    name: 'css_expression',
+    pattern: /expression\s*\(|behavior\s*:\s*url/i,
+    severity: 'high',
+    description: 'CSS expression or behavior for script execution',
+    category: 'xss'
+  },
+  {
+    name: 'object_embed_tag',
+    pattern: /<(object|embed|applet)[\s>]/i,
+    severity: 'critical',
+    description: 'Object/embed/applet tag for content injection',
+    category: 'xss'
+  },
+  {
+    name: 'meta_refresh',
+    pattern: /<meta[^>]{0,100}http-equiv\s*=\s*["']?refresh/i,
+    severity: 'high',
+    description: 'Meta refresh redirect for phishing',
+    category: 'xss'
+  },
+  {
+    name: 'form_action_xss',
+    pattern: /<form[\s>][^>]{0,200}action\s*=/i,
+    severity: 'high',
+    description: 'Form tag with action for credential phishing',
+    category: 'xss'
   },
 
   // Resource Exhaustion
