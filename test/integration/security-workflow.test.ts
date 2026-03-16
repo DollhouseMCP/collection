@@ -456,7 +456,7 @@ category: educational
 
 ## Common Attack Patterns to Avoid
 - SQL Injection: User input like ' OR '1'='1 should be rejected
-- XSS: Scripts like <script>alert('xss')</script> must be filtered
+- XSS: Scripts like \`&lt;script&gt;alert('xss')&lt;/script&gt;\` must be filtered
 - Command Injection: Input containing ; or | should be validated
 
 ## Secure Coding Examples

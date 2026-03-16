@@ -30,11 +30,15 @@ jobs:
 
       - name: Determine version
         id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
+          if [ "$EVENT_NAME" == "workflow_dispatch" ]; then
+            VERSION="$INPUT_VERSION"
           else
-            VERSION="${{ github.ref_name }}"
+            VERSION="$REF_NAME"
           fi
           
           # Validate version format
@@ -48,9 +52,11 @@ jobs:
           echo "✅ Version: $VERSION"
 
       - name: Check CHANGELOG
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if ! grep -q "${{ steps.version.outputs.version }}" CHANGELOG.md; then
-            echo "⚠️ Warning: Version ${{ steps.version.outputs.version }} not found in CHANGELOG.md"
+          if ! grep -q "$RELEASE_VERSION" CHANGELOG.md; then
+            echo "⚠️ Warning: Version $RELEASE_VERSION not found in CHANGELOG.md"
           fi
 
   build-release:
@@ -78,10 +84,12 @@ jobs:
         run: npm run build
 
       - name: Package release
+        env:
+          RELEASE_VERSION: ${{ needs.validate-release.outputs.version }}
         run: |
           # Create release directory
           mkdir -p release
-          
+
           # Copy distribution files
           cp -r dist release/
           cp package.json release/
@@ -89,9 +97,9 @@ jobs:
           cp README.md release/
           cp LICENSE release/
           cp LICENSE-CONTENT release/
-          
+
           # Create tarball
-          tar -czf "dollhousemcp-collection-${{ needs.validate-release.outputs.version }}-ubuntu.tar.gz" release/
+          tar -czf "dollhousemcp-collection-${RELEASE_VERSION}-ubuntu.tar.gz" release/
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
@@ -117,8 +125,10 @@ jobs:
 
       - name: Generate release notes
         id: release-notes
+        env:
+          RELEASE_VERSION: ${{ needs.validate-release.outputs.version }}
         run: |
-          VERSION="${{ needs.validate-release.outputs.version }}"
+          VERSION="$RELEASE_VERSION"
           
           # Extract changelog section for this version
           cat > release-notes.md << EOF
