@@ -165,7 +165,7 @@ describe('Security Scanner Performance Benchmarks', () => {
         // This threshold catches algorithmic bugs while tolerating environment noise
         const degradation = curr.timePerPattern / prev.timePerPattern;
 
-        expect(degradation).toBeLessThan(3.0);
+        expect(degradation).toBeLessThan(3);
       }
       
       // Also verify overall complexity is closer to O(n) than O(n²)
