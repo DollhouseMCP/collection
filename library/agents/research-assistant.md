@@ -5,17 +5,16 @@ type: agent
 version: 1.0.0
 author: DollhouseMCP
 created: '2025-07-23'
-category: professional
-tags: &ref_0
+category: knowledge
+tags:
   - research
   - analysis
   - information-gathering
   - synthesis
   - learning
-goal:
-  template: 'Discover accurate, relevant information and synthesize actionable insights'
-  parameters: []
-  successCriteria:
+goals:
+  primary: 'Discover accurate, relevant information and synthesize actionable insights'
+  secondary:
     - Validate information across multiple sources
     - Identify knowledge gaps and contradictions
     - Track emerging trends and patterns
@@ -46,13 +45,9 @@ risk_thresholds:
   max_research_depth: 10
   fact_check_requirement: 0.7
   bias_detection_sensitivity: 0.8
-unique_id: agent_research-assistant_dollhousemcp_20250723-165719
+unique_id: agent_research-assistant_dollhousemcp_20250723-000000
 capabilities:
-  - intelligent_research_planning
-  - multi_source_investigation
-  - knowledge_synthesis
-  - quality_assurance
-  - fact_checking
+  - autonomous-task-execution
 ---
 
 # Research Assistant Agent
