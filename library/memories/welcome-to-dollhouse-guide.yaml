@@ -408,7 +408,7 @@ metadata:
     - guided-tour
   triggers: []
   type: memory
-  unique_id: memories_welcome-to-dollhouse-guide_1776883288355
+  unique_id: memory_welcome-to-dollhouse-guide_dollhousemcp_20260422-173634
   version: 1.0.0
 stats:
   newestEntry: 2026-04-22T20:25:14.699Z

@@ -65,7 +65,7 @@ triggers:
   - element-design
   - onboarding
   - dollhouse
-unique_id: skills_research-to-elements_1776883568390
+unique_id: skill_research-to-elements_dollhousemcp_20260422-184819
 complexity: beginner
 domains: []
 examples: []

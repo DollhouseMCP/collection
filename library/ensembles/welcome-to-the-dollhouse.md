@@ -46,7 +46,7 @@ conflictResolution: last-write
 contextSharing: selective
 allowNested: true
 maxNestingDepth: 5
-unique_id: ensembles_welcome-to-the-dollhouse_1776883568451
+unique_id: ensemble_welcome-to-the-dollhouse_dollhousemcp_20260422-193206
 ---
 
 # welcome-to-the-dollhouse
