@@ -178,7 +178,13 @@ p, li { max-width: 69ch; }
   pointer-events: none;
 }
 
-.header-brand { display: flex; flex-direction: column; gap: 0.05rem; }
+.header-brand { display: flex; flex-direction: row; align-items: center; gap: 0.6rem; min-width: 0; }
+
+.brand-link { display: inline-flex; flex-shrink: 0; line-height: 0; }
+
+.brand-logo { width: 2.4rem; height: 2.4rem; display: block; }
+
+.brand-text { display: flex; flex-direction: column; gap: 0.05rem; min-width: 0; }
 
 .site-title {
   font-family: var(--font-heading);

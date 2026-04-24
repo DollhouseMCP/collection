@@ -1,0 +1,17 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dollhouse logo enterprise — full slate with gold chimney and corner office">
+  <defs>
+    <linearGradient id="roofEntSlate" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#64748b"></stop><stop offset="100%" stop-color="#334155"></stop></linearGradient>
+    <linearGradient id="baseEntSlate" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#475569"></stop><stop offset="100%" stop-color="#1e293b"></stop></linearGradient>
+    <linearGradient id="chimneyEntGold2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e6c46a"></stop><stop offset="100%" stop-color="#8a6b1f"></stop></linearGradient>
+    <linearGradient id="cornerGold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f1d680"></stop><stop offset="100%" stop-color="#b48a2a"></stop></linearGradient>
+  </defs>
+  <rect x="23" y="16" width="9" height="15" rx="2" fill="url(#chimneyEntGold2)" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <path d="M50 10 L88 32 H12 Z" fill="url(#roofEntSlate)"></path>
+  <rect x="17" y="32" width="66" height="46" rx="4" fill="#64748b"></rect>
+  <rect x="22" y="37" width="56" height="36" rx="4" fill="#ffffff"></rect>
+  <rect x="26" y="40" width="22" height="12" rx="3" fill="#cbd5e1" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="52" y="40" width="22" height="12" rx="3" fill="url(#cornerGold)" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="26" y="56" width="22" height="12" rx="3" fill="#64748b" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="52" y="56" width="22" height="12" rx="3" fill="#334155" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="14" y="78" width="72" height="7" rx="3" fill="url(#baseEntSlate)"></rect>
+</svg>

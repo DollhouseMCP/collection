@@ -1,0 +1,31 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dollhouse logo with orange chimney">
+  <defs>
+    <linearGradient id="roofBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f8ff7"></stop>
+      <stop offset="100%" stop-color="#2f6ddd"></stop>
+    </linearGradient>
+    <linearGradient id="baseBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2b5ec8"></stop>
+      <stop offset="100%" stop-color="#1f4caf"></stop>
+    </linearGradient>
+    <linearGradient id="chimneyOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"></stop>
+      <stop offset="100%" stop-color="#f97316"></stop>
+    </linearGradient>
+  </defs>
+
+  
+  <rect x="23" y="16" width="9" height="15" rx="2" fill="url(#chimneyOrange)" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <path d="M50 10 L88 32 H12 Z" fill="url(#roofBlue)"></path>
+
+  <rect x="17" y="32" width="66" height="46" rx="4" fill="#4f8ff7"></rect>
+  
+  <rect x="22" y="37" width="56" height="36" rx="4" fill="#ffffff"></rect>
+
+  <rect x="26" y="40" width="22" height="12" rx="3" fill="#3b82f6" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="52" y="40" width="22" height="12" rx="3" fill="#6366f1" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="26" y="56" width="22" height="12" rx="3" fill="#7c3aed" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+  <rect x="52" y="56" width="22" height="12" rx="3" fill="#a855f7" stroke="#0a1020" stroke-width="1" stroke-opacity="0.4" vector-effect="non-scaling-stroke" paint-order="stroke fill"></rect>
+
+  <rect x="14" y="78" width="72" height="7" rx="3" fill="url(#baseBlue)"></rect>
+</svg>
