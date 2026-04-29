@@ -151,44 +151,62 @@ function getElementType(filePath: string): ElementType | null {
 }
 
 /**
- * Parse and extract metadata from a collection element file.
+ * Detect the file extension we care about (`.md` / `.yaml` / `.yml`).
+ * Anything else falls through to `.md` so the markdown parser is used —
+ * the glob pattern in `buildCollectionIndex` keeps non-element files out.
+ */
+function detectExtension(filePath: string): '.md' | '.yaml' | '.yml' {
+  const lower = filePath.toLowerCase();
+  if (lower.endsWith('.yaml')) return '.yaml';
+  if (lower.endsWith('.yml')) return '.yml';
+  return '.md';
+}
+
+/**
+ * Extract the metadata block from a parsed element file.
  *
- * Supports two file shapes:
- *   - Markdown (`.md`) with YAML frontmatter — metadata at the top level
- *   - Pure YAML (`.yaml` / `.yml`) — used by v2 memories. Metadata lives under
- *     a top-level `metadata:` key (with `entries:` / `extensions:` / `stats:`
- *     siblings). Falls back to top-level keys for older flat YAML shapes.
+ *   - `.md`: gray-matter returns frontmatter under `.data`.
+ *   - `.yaml` / `.yml`: js-yaml returns the whole document. v2 memories nest
+ *     metadata under a top-level `metadata:` key (siblings of `entries:` /
+ *     `extensions:` / `stats:`). For older flat YAML shapes we fall back to
+ *     the top-level keys directly.
+ */
+function parseElementMetadata(content: string, ext: '.md' | '.yaml' | '.yml'): RawFrontmatter {
+  if (ext === '.md') {
+    return matter(content).data as RawFrontmatter;
+  }
+  const doc = yaml.load(content) as Record<string, unknown> | null;
+  const nested = (doc && typeof doc === 'object' && doc.metadata && typeof doc.metadata === 'object')
+    ? doc.metadata as Record<string, unknown>
+    : null;
+  return (nested ?? doc ?? {}) as RawFrontmatter;
+}
+
+/**
+ * Normalize a `created` value to a string. js-yaml turns unquoted YAML dates
+ * (e.g. `created: 2026-04-22`) into `Date` objects; calling `String(date)`
+ * would leak locale-formatted strings like
+ * "Wed Apr 22 2026 00:00:00 GMT-0400 (EDT)" into the index.
+ */
+function normalizeCreatedDate(dateVal: unknown): string {
+  if (dateVal instanceof Date) return dateVal.toISOString().slice(0, 10);
+  if (typeof dateVal === 'string') return dateVal;
+  return String(dateVal);
+}
+
+/**
+ * Parse and extract metadata from a collection element file.
  */
 async function parseElementFile(filePath: string): Promise<IndexedElement | null> {
   try {
     const content: string = await readFile(filePath, 'utf-8');
-    const ext: string = filePath.toLowerCase().endsWith('.yaml')
-      ? '.yaml'
-      : filePath.toLowerCase().endsWith('.yml')
-        ? '.yml'
-        : '.md';
+    const ext = detectExtension(filePath);
+    const frontmatter: RawFrontmatter = parseElementMetadata(content, ext);
 
-    let frontmatter: RawFrontmatter;
-    if (ext === '.md') {
-      const parsed = matter(content);
-      frontmatter = parsed.data as RawFrontmatter;
-    } else {
-      const doc = yaml.load(content) as Record<string, unknown> | null;
-      const docMetadata = (doc && typeof doc === 'object' && 'metadata' in doc && doc.metadata && typeof doc.metadata === 'object')
-        ? doc.metadata as Record<string, unknown>
-        : null;
-      // Prefer nested `metadata:` block (v2 memory shape); fall back to top-level
-      frontmatter = (docMetadata ?? doc ?? {}) as RawFrontmatter;
-    }
-
-    // Calculate file hash for change detection
     const sha: string = await calculateFileSHA(filePath);
-
-    // Determine element type
     const type: ElementType | null = getElementType(filePath);
 
-    // Extract and sanitize core metadata
-    const baseElement = {
+    const elementData: Record<string, unknown> = {
       path: relative(ROOT_DIR, filePath),
       type: type || 'other',
       name: sanitizeField(frontmatter.name || basename(filePath, ext), FIELD_LIMITS.name),
@@ -198,33 +216,22 @@ async function parseElementFile(filePath: string): Promise<IndexedElement | null
       tags: sanitizeArrayField(frontmatter.tags || [], FIELD_LIMITS.tag),
       sha: sha
     };
-    
-    // Build final element with optional fields
-    const elementData: Record<string, unknown> = { ...baseElement };
-    
+
     if (frontmatter.keywords) {
       elementData.keywords = sanitizeArrayField(frontmatter.keywords, FIELD_LIMITS.keyword);
     }
-    
     if (frontmatter.category) {
       elementData.category = sanitizeField(frontmatter.category, 50);
     }
-    
     if (frontmatter.created || frontmatter.created_date) {
-      const dateVal = frontmatter.created || frontmatter.created_date;
-      // js-yaml parses unquoted YAML dates (e.g. `created: 2026-04-22`) into Date
-      // objects. Normalize to ISO so the index doesn't leak locale-formatted strings.
-      elementData.created = dateVal instanceof Date
-        ? dateVal.toISOString().slice(0, 10)
-        : (typeof dateVal === 'string' ? dateVal : String(dateVal));
+      elementData.created = normalizeCreatedDate(frontmatter.created || frontmatter.created_date);
     }
-    
     if (frontmatter.license) {
       elementData.license = sanitizeField(frontmatter.license, 30);
     }
-    
+
     return elementData as unknown as IndexedElement;
-    
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.warn(`Warning: Failed to parse ${filePath}:`, errorMessage);
@@ -243,7 +250,7 @@ async function buildCollectionIndex(): Promise<void> {
   try {
     // Find all element files in library — markdown personas/skills/agents/templates/ensembles
     // plus YAML memories (v2 memory format is pure YAML, not markdown+frontmatter).
-    const pattern: string = join(LIBRARY_DIR, '**', '*.{md,yaml,yml}').replace(/\\/g, '/');
+    const pattern: string = join(LIBRARY_DIR, '**', '*.{md,yaml,yml}').replaceAll('\\', '/');
     const files: string[] = await glob(pattern, {
       ignore: ['**/node_modules/**', '**/.*'],
       absolute: true
