@@ -157,8 +157,12 @@ function getElementType(filePath: string): ElementType | null {
  */
 function detectExtension(filePath: string): '.md' | '.yaml' | '.yml' {
   const lower = filePath.toLowerCase();
-  if (lower.endsWith('.yaml')) return '.yaml';
-  if (lower.endsWith('.yml')) return '.yml';
+  if (lower.endsWith('.yaml')) {
+    return '.yaml';
+  }
+  if (lower.endsWith('.yml')) {
+    return '.yml';
+  }
   return '.md';
 }
 
@@ -189,8 +193,12 @@ function parseElementMetadata(content: string, ext: '.md' | '.yaml' | '.yml'): R
  * "Wed Apr 22 2026 00:00:00 GMT-0400 (EDT)" into the index.
  */
 function normalizeCreatedDate(dateVal: unknown): string {
-  if (dateVal instanceof Date) return dateVal.toISOString().slice(0, 10);
-  if (typeof dateVal === 'string') return dateVal;
+  if (dateVal instanceof Date) {
+    return dateVal.toISOString().slice(0, 10);
+  }
+  if (typeof dateVal === 'string') {
+    return dateVal;
+  }
   return String(dateVal);
 }
 
