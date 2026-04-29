@@ -17,6 +17,7 @@ import { dirname, join, relative, basename, sep } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 import matter from 'gray-matter';
+import yaml from 'js-yaml';
 import { glob } from 'glob';
 import sanitizeHtml from 'sanitize-html';
 
@@ -150,24 +151,47 @@ function getElementType(filePath: string): ElementType | null {
 }
 
 /**
- * Parse and extract metadata from a markdown file
+ * Parse and extract metadata from a collection element file.
+ *
+ * Supports two file shapes:
+ *   - Markdown (`.md`) with YAML frontmatter — metadata at the top level
+ *   - Pure YAML (`.yaml` / `.yml`) — used by v2 memories. Metadata lives under
+ *     a top-level `metadata:` key (with `entries:` / `extensions:` / `stats:`
+ *     siblings). Falls back to top-level keys for older flat YAML shapes.
  */
 async function parseElementFile(filePath: string): Promise<IndexedElement | null> {
   try {
     const content: string = await readFile(filePath, 'utf-8');
-    const { data: frontmatter }: { data: RawFrontmatter } = matter(content);
-    
+    const ext: string = filePath.toLowerCase().endsWith('.yaml')
+      ? '.yaml'
+      : filePath.toLowerCase().endsWith('.yml')
+        ? '.yml'
+        : '.md';
+
+    let frontmatter: RawFrontmatter;
+    if (ext === '.md') {
+      const parsed = matter(content);
+      frontmatter = parsed.data as RawFrontmatter;
+    } else {
+      const doc = yaml.load(content) as Record<string, unknown> | null;
+      const docMetadata = (doc && typeof doc === 'object' && 'metadata' in doc && doc.metadata && typeof doc.metadata === 'object')
+        ? doc.metadata as Record<string, unknown>
+        : null;
+      // Prefer nested `metadata:` block (v2 memory shape); fall back to top-level
+      frontmatter = (docMetadata ?? doc ?? {}) as RawFrontmatter;
+    }
+
     // Calculate file hash for change detection
     const sha: string = await calculateFileSHA(filePath);
-    
+
     // Determine element type
     const type: ElementType | null = getElementType(filePath);
-    
+
     // Extract and sanitize core metadata
     const baseElement = {
       path: relative(ROOT_DIR, filePath),
       type: type || 'other',
-      name: sanitizeField(frontmatter.name || basename(filePath, '.md'), FIELD_LIMITS.name),
+      name: sanitizeField(frontmatter.name || basename(filePath, ext), FIELD_LIMITS.name),
       description: sanitizeField(frontmatter.description || '', FIELD_LIMITS.description),
       version: sanitizeField(frontmatter.version || '1.0.0', FIELD_LIMITS.version),
       author: sanitizeField(frontmatter.author || 'unknown', FIELD_LIMITS.author),
@@ -187,8 +211,12 @@ async function parseElementFile(filePath: string): Promise<IndexedElement | null
     }
     
     if (frontmatter.created || frontmatter.created_date) {
-      const dateStr = frontmatter.created || frontmatter.created_date;
-      elementData.created = typeof dateStr === 'string' ? dateStr : String(dateStr);
+      const dateVal = frontmatter.created || frontmatter.created_date;
+      // js-yaml parses unquoted YAML dates (e.g. `created: 2026-04-22`) into Date
+      // objects. Normalize to ISO so the index doesn't leak locale-formatted strings.
+      elementData.created = dateVal instanceof Date
+        ? dateVal.toISOString().slice(0, 10)
+        : (typeof dateVal === 'string' ? dateVal : String(dateVal));
     }
     
     if (frontmatter.license) {
@@ -213,17 +241,18 @@ async function buildCollectionIndex(): Promise<void> {
   console.log('🔍 Scanning library directory...');
   
   try {
-    // Find all markdown files in library
-    const pattern: string = join(LIBRARY_DIR, '**', '*.md').replace(/\\/g, '/');
-    const files: string[] = await glob(pattern, { 
+    // Find all element files in library — markdown personas/skills/agents/templates/ensembles
+    // plus YAML memories (v2 memory format is pure YAML, not markdown+frontmatter).
+    const pattern: string = join(LIBRARY_DIR, '**', '*.{md,yaml,yml}').replace(/\\/g, '/');
+    const files: string[] = await glob(pattern, {
       ignore: ['**/node_modules/**', '**/.*'],
       absolute: true
     });
-    
-    console.log(`📄 Found ${files.length} markdown files`);
-    
+
+    console.log(`📄 Found ${files.length} element files`);
+
     if (files.length === 0) {
-      console.warn('⚠️  No markdown files found in library directory');
+      console.warn('⚠️  No element files found in library directory');
       return;
     }
     

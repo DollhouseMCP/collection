@@ -1,10 +1,20 @@
 name: Deploy to GitHub Pages
 
+# Pages is in workflow build mode (since #282), so the artifact this workflow
+# uploads is what's actually served at collection.dollhousemcp.com. Trigger on
+# any change that affects the deployable surface — public/ assets *and* library
+# elements (because we rebuild collection-index.json from library/ inline).
 on:
   push:
     branches: [main]
     paths:
       - 'public/**'
+      - 'library/**/*.md'
+      - 'library/**/*.yaml'
+      - 'library/**/*.yml'
+      - 'scripts/build-collection-index.ts'
+      - 'scripts/build-html-index.js'
+      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -25,6 +35,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Rebuild collection-index.json from library/
+        run: node dist/scripts/build-collection-index.js
+
+      - name: Build HTML index page
+        run: node scripts/build-html-index.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
