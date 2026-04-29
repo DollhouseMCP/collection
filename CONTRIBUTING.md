@@ -131,6 +131,55 @@ Good: "Process this information..."
 3. Avoid encoded or obfuscated instructions
 4. Keep content transparent and auditable
 
+## 🛡️ PII / Sensitive Content Scanning
+
+Every PR that touches `library/` is scanned for personally-identifiable
+information and credentials. This catches accidents like real email
+addresses left in examples, file paths under your home directory, API
+keys committed in templates, etc.
+
+### What gets scanned
+
+| Severity | Examples | CI behavior |
+|---|---|---|
+| 🛑 **Critical** | API keys, GitHub PATs, AWS keys, private keys, hardcoded passwords, JWTs, bearer tokens | **Blocks merge** |
+| ⚠️ **High** | Real email addresses, phone numbers, SSNs, credit-card-shaped numbers | **Blocks merge** |
+| 🔶 **Medium** | User home paths (`/Users/<name>`, `C:\Users\<name>`), public IP addresses, MAC addresses | PR comment, doesn't block |
+| ℹ️ **Low** | UUIDs, SHA hashes — surfaced for review in case they're real session/secret values | Informational only |
+
+### Run the scanner locally before submitting
+
+```bash
+npm run scan-pii path/to/your/element.md
+```
+
+Or scan everything you've drafted:
+
+```bash
+npm run scan-pii "library/personas/your-*.md"
+```
+
+The CLI exits non-zero if it finds critical or high-severity items, so
+you can wire it into your editor or pre-commit hook.
+
+### Documented placeholders that are safe to use
+
+- Email: `user@example.com`, `noreply@anything.com`, `*@users.noreply.github.com`, addresses on `*.example.{com,org,net,io}` / `*.test` / `*.invalid` / `*.localhost`
+- IPv4: anything in RFC1918 (`10.*`, `172.16-31.*`, `192.168.*`), loopback (`127.*`), or RFC5737 documentation ranges (`192.0.2.*`, `198.51.100.*`, `203.0.113.*`)
+- Phone: the `(555) 0100`–`(555) 0199` reserved-for-fictional-use range
+- Paths: `/Users/<USER>/`, `/home/{username}/`, `C:\Users\USER\`, `~/`
+- Cards: the canonical Stripe test card numbers (e.g. `4242424242424242`)
+
+If you have content you genuinely need to ship that the scanner flags
+as a false positive, comment on the PR — the override mechanism is
+intentionally manual review for now.
+
+### Need help cleaning a draft?
+
+The companion **`pii-anonymizer` Dollhouse skill** (issue #292) will
+walk you through findings interactively. Until that ships, run the
+CLI and edit by hand.
+
 ## 🧪 Testing Your Content
 
 Before submitting:
