@@ -105,7 +105,45 @@ async function expandPatterns(patterns: string[]): Promise<string[]> {
       }
     }
   }
-  return [...expanded].sort();
+  return [...expanded].sort((a, b) => a.localeCompare(b));
+}
+
+async function scanAll(files: string[]): Promise<FileScanResult[] | null> {
+  const results: FileScanResult[] = [];
+  for (const f of files) {
+    try {
+      results.push(await scanFile(f));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`Failed to scan ${f}: ${msg}\n`);
+      return null;
+    }
+  }
+  return results;
+}
+
+function emitOutput(opts: CliOptions, results: FileScanResult[], summary: ReturnType<typeof summarize>): void {
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify({ summary, results }, null, 2)}\n`);
+    return;
+  }
+  if (!opts.quiet) {
+    const report = formatHumanReadable(results);
+    if (report) {
+      process.stdout.write(`${report}\n\n`);
+    }
+  }
+  process.stdout.write(`${formatSummaryLine(summary)}\n`);
+}
+
+function computeExitCode(opts: CliOptions, summary: ReturnType<typeof summarize>): number {
+  const threshold = SEVERITY_RANK[opts.blockSeverity];
+  let blocking = 0;
+  if (threshold >= SEVERITY_RANK.critical) {blocking += summary.critical;}
+  if (threshold >= SEVERITY_RANK.high) {blocking += summary.high;}
+  if (threshold >= SEVERITY_RANK.medium) {blocking += summary.medium;}
+  if (threshold >= SEVERITY_RANK.low) {blocking += summary.low;}
+  return blocking > 0 ? 1 : 0;
 }
 
 export async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
@@ -125,40 +163,14 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<numb
     return 2;
   }
 
-  const results: FileScanResult[] = [];
-  for (const f of files) {
-    try {
-      results.push(await scanFile(f));
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      process.stderr.write(`Failed to scan ${f}: ${msg}\n`);
-      return 2;
-    }
+  const results = await scanAll(files);
+  if (results === null) {
+    return 2;
   }
 
   const summary = summarize(results);
-
-  if (opts.json) {
-    process.stdout.write(JSON.stringify({ summary, results }, null, 2));
-    process.stdout.write('\n');
-  } else {
-    if (!opts.quiet) {
-      const report = formatHumanReadable(results);
-      if (report) {
-        process.stdout.write(`${report}\n\n`);
-      }
-    }
-    process.stdout.write(`${formatSummaryLine(summary)}\n`);
-  }
-
-  // Exit code logic — block when any finding meets or exceeds the threshold.
-  const threshold = SEVERITY_RANK[opts.blockSeverity];
-  let blocking = 0;
-  if (threshold >= SEVERITY_RANK.critical) {blocking += summary.critical;}
-  if (threshold >= SEVERITY_RANK.high) {blocking += summary.high;}
-  if (threshold >= SEVERITY_RANK.medium) {blocking += summary.medium;}
-  if (threshold >= SEVERITY_RANK.low) {blocking += summary.low;}
-  return blocking > 0 ? 1 : 0;
+  emitOutput(opts, results, summary);
+  return computeExitCode(opts, summary);
 }
 
 // When invoked directly as a script, run main(). When imported (tests), don't.
@@ -167,11 +179,11 @@ const isDirectInvocation =
   process.argv[1]?.endsWith('scan-pii.js');
 
 if (isDirectInvocation) {
-  main().then(
-    (code) => process.exit(code),
-    (err) => {
-      process.stderr.write(`scan-pii: ${err instanceof Error ? err.message : String(err)}\n`);
-      process.exit(2);
-    }
-  );
+  try {
+    const code = await main();
+    process.exit(code);
+  } catch (err) {
+    process.stderr.write(`scan-pii: ${err instanceof Error ? err.message : String(err)}\n`);
+    process.exit(2);
+  }
 }

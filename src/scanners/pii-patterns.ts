@@ -42,18 +42,32 @@ export interface PIIPattern {
 /** Email addresses we tolerate as documented placeholders. */
 function isPlaceholderEmail(match: string): boolean {
   const lower = match.toLowerCase();
-  // Common documented placeholder domains
-  if (/@(example|test|invalid|localhost)\.(com|org|net|io|test|local)$/.test(lower)) {return true;}
-  if (/@example$/.test(lower)) {return true;}
-  // Common no-reply / system addresses are not personal PII
-  if (/^(noreply|no-reply|donotreply|do-not-reply)@/.test(lower)) {return true;}
-  // Org-scoped non-personal accounts
-  if (/^(admin|info|support|hello|contact|hi)@/.test(lower)) {return true;}
+  const at = lower.indexOf('@');
+  if (at < 0) {return false;}
+  const local = lower.slice(0, at);
+  const domain = lower.slice(at + 1);
+
+  // Common documented placeholder domains (RFC2606 + community conventions)
+  const placeholderDomains = [
+    'example.com', 'example.org', 'example.net', 'example.io', 'example.test', 'example.local', 'example',
+    'test.com', 'test.org', 'test.net', 'test.io', 'test.test', 'test.local',
+    'invalid.com', 'invalid.org', 'invalid.net', 'invalid.io', 'invalid.test', 'invalid.local',
+    'localhost.com', 'localhost.org', 'localhost.net', 'localhost.io', 'localhost.test', 'localhost.local',
+  ];
+  if (placeholderDomains.includes(domain)) {return true;}
+
   // GitHub-Actions / CI synthetic addresses
-  if (/@users\.noreply\.github\.com$/.test(lower)) {return true;}
-  if (/^[0-9]+\+[a-z0-9-]+@users\.noreply\.github\.com$/.test(lower)) {return true;}
+  if (domain === 'users.noreply.github.com') {return true;}
   // Anthropic Claude attribution
-  if (/^noreply@anthropic\.com$/.test(lower)) {return true;}
+  if (lower === 'noreply@anthropic.com') {return true;}
+
+  // Common no-reply / system addresses are not personal PII
+  const systemLocals = ['noreply', 'no-reply', 'donotreply', 'do-not-reply'];
+  if (systemLocals.includes(local)) {return true;}
+  // Org-scoped non-personal accounts
+  const roleLocals = ['admin', 'info', 'support', 'hello', 'contact', 'hi'];
+  if (roleLocals.includes(local)) {return true;}
+
   // Obvious placeholders by literal substring
   if (lower.includes('your-email') || lower.includes('your.email') || lower.includes('placeholder')) {return true;}
   return false;
@@ -62,20 +76,40 @@ function isPlaceholderEmail(match: string): boolean {
 /** IPs that are documentation-safe (private / loopback / reserved / test ranges). */
 function isSafeIPv4(match: string): boolean {
   // Loopback
-  if (/^127\./.test(match)) {return true;}
+  if (match.startsWith('127.')) {return true;}
   // RFC1918 private
-  if (/^10\./.test(match)) {return true;}
-  if (/^192\.168\./.test(match)) {return true;}
-  if (/^172\.(1[6-9]|2[0-9]|3[01])\./.test(match)) {return true;}
-  // Unspecified / broadcast / multicast / TEST-NET
-  if (/^0\.0\.0\.0$/.test(match)) {return true;}
-  if (/^255\./.test(match)) {return true;}
-  if (/^192\.0\.2\./.test(match)) {return true;}     // RFC5737 TEST-NET-1
-  if (/^198\.51\.100\./.test(match)) {return true;}  // RFC5737 TEST-NET-2
-  if (/^203\.0\.113\./.test(match)) {return true;}   // RFC5737 TEST-NET-3
+  if (match.startsWith('10.')) {return true;}
+  if (match.startsWith('192.168.')) {return true;}
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(match)) {return true;}
+  // Unspecified / broadcast / multicast
+  if (match === '0.0.0.0') {return true;}
+  if (match.startsWith('255.')) {return true;}
+  // RFC5737 documentation ranges
+  if (match.startsWith('192.0.2.')) {return true;}
+  if (match.startsWith('198.51.100.')) {return true;}
+  if (match.startsWith('203.0.113.')) {return true;}
   // Link-local
-  if (/^169\.254\./.test(match)) {return true;}
+  if (match.startsWith('169.254.')) {return true;}
   return false;
+}
+
+/**
+ * Universally-known Stripe test card numbers — exact matches only.
+ * Real cards that happen to share a prefix (e.g. real Mastercards starting
+ * 5555, real Visas starting 4000) still get flagged.
+ */
+const STRIPE_TEST_CARDS: ReadonlySet<string> = new Set([
+  '4242424242424242', // Visa
+  '4000056655665556', // Visa (debit)
+  '4000000000000002', // Visa - generic decline
+  '5555555555554444', // Mastercard
+  '5200828282828210', // Mastercard (debit)
+  '378282246310005',  // Amex (15 digits, won't hit our 16-digit regex anyway)
+  '6011111111111117', // Discover
+]);
+
+function isStripeTestCard(match: string): boolean {
+  return STRIPE_TEST_CARDS.has(match.replace(/\D/g, ''));
 }
 
 /** Common path prefixes that aren't PII even though they match the user-path shape. */
@@ -83,12 +117,12 @@ function isSafeUserPath(match: string): boolean {
   // Documentation patterns where <user> or {user} is the placeholder
   if (/<[a-z_-]+>/i.test(match)) {return true;}
   if (/\{[a-z_-]+\}/i.test(match)) {return true;}
-  // Generic placeholder names. Match end-of-string OR boundary char
-  // because the scanner regex strips the trailing path separator.
+  // Generic placeholder names. Match end-of-string because the scanner regex
+  // strips the trailing path separator.
   if (/\/(?:Users|home)\/(?:USER|user|username|name|YOUR_USER|yourname|youruser)$/i.test(match)) {return true;}
   if (/^C:\\Users\\(?:USER|user|username|name|YOUR_USER|yourname|youruser)$/i.test(match)) {return true;}
   // Tilde expansion documentation
-  if (/^~\//.test(match)) {return true;}
+  if (match.startsWith('~/')) {return true;}
   return false;
 }
 
@@ -112,7 +146,7 @@ export const PII_PATTERNS: PIIPattern[] = [
     id: 'aws-secret-access-key',
     // Only flag in clear "secret access key" context — the bare regex would
     // false-positive constantly on any 40-char base64 string.
-    pattern: /\b(?:aws[_-]?)?secret[_-]?access[_-]?key\s*[:=]\s*["']?([A-Za-z0-9/+=]{40})["']?/gi,
+    pattern: /\b(?:aws[_-]?)?secret[_-]?access[_-]?key\s*[:=]\s*["']?([A-Za-z0-9+/=]{40})["']?/gi,
     severity: 'critical',
     category: 'credential',
     description: 'AWS secret access key (in assignment context)',
@@ -152,7 +186,7 @@ export const PII_PATTERNS: PIIPattern[] = [
   },
   {
     id: 'generic-api-key-assignment',
-    pattern: /\b(?:api[_-]?key|apikey|api[_-]?secret|access[_-]?token|auth[_-]?token)\s*[:=]\s*["']([A-Za-z0-9_\-./+=]{16,})["']/gi,
+    pattern: /\b(?:api[_-]?(?:key|secret)|(?:access|auth)[_-]?token)\s*[:=]\s*["']([\w./+=-]{16,})["']/gi,
     severity: 'critical',
     category: 'credential',
     description: 'API key / token in assignment context',
@@ -190,7 +224,7 @@ export const PII_PATTERNS: PIIPattern[] = [
   },
   {
     id: 'bearer-token',
-    pattern: /\bbearer\s+([A-Za-z0-9_\-./+=]{20,})\b/gi,
+    pattern: /\bbearer\s+([\w./+=-]{20,})\b/gi,
     severity: 'critical',
     category: 'credential',
     description: 'Bearer token in code',
@@ -238,32 +272,24 @@ export const PII_PATTERNS: PIIPattern[] = [
     suggestion: 'XXX-XX-XXXX',
   },
   {
-    id: 'credit-card-shaped',
-    // Either 16 contiguous digits with a card prefix, or 4-4-4-4 with
-    // explicit dash/space separators. Avoids matching arbitrary 12-digit
-    // runs (which would catch UUID tails) by requiring the full 16-digit
-    // length unambiguously.
-    pattern: /\b(?:4\d{3}|5[1-5]\d{2}|6(?:011|5\d{2})|3[47]\d{2})(?:\d{12}|[-\s]\d{4}[-\s]\d{4}[-\s]\d{4})\b/g,
+    // 16-digit contiguous form. Split from the 4-4-4-4 separator form to
+    // keep each pattern below Sonar's 20-complexity threshold.
+    id: 'credit-card-shaped-solid',
+    pattern: /\b(?:4\d{3}|5[1-5]\d{2}|6(?:011|5\d{2})|3[47]\d{2})\d{12}\b/g,
     severity: 'high',
     category: 'pii',
-    description: 'Credit-card-shaped number',
+    description: 'Credit-card-shaped number (16-digit)',
     suggestion: '4242 4242 4242 4242',
-    isFalsePositive: (match) => {
-      // Allow only the universally-known Stripe test card numbers — exact
-      // matches on the canonical 16-digit forms. Anything else (e.g. real
-      // Mastercards beginning 5555, real Visas beginning 4000) gets flagged.
-      const digits = match.replace(/\D/g, '');
-      const stripeTestCards = new Set([
-        '4242424242424242', // Visa
-        '4000056655665556', // Visa (debit)
-        '4000000000000002', // Visa - generic decline
-        '5555555555554444', // Mastercard
-        '5200828282828210', // Mastercard (debit)
-        '378282246310005',  // Amex (15 digits, won't hit this regex anyway)
-        '6011111111111117', // Discover
-      ]);
-      return stripeTestCards.has(digits);
-    },
+    isFalsePositive: isStripeTestCard,
+  },
+  {
+    id: 'credit-card-shaped-grouped',
+    pattern: /\b(?:4\d{3}|5[1-5]\d{2}|6(?:011|5\d{2})|3[47]\d{2})[-\s]\d{4}[-\s]\d{4}[-\s]\d{4}\b/g,
+    severity: 'high',
+    category: 'pii',
+    description: 'Credit-card-shaped number (4-4-4-4 grouped)',
+    suggestion: '4242 4242 4242 4242',
+    isFalsePositive: isStripeTestCard,
   },
 
   // -------------------------------------------------------------------------

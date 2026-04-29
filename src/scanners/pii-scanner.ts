@@ -94,7 +94,7 @@ function findAllMatches(content: string, pattern: PIIPattern): PIIFinding[] {
   let m: RegExpExecArray | null;
   while ((m = regex.exec(content)) !== null) {
     const matched = m[0];
-    if (pattern.isFalsePositive && pattern.isFalsePositive(matched)) {
+    if (pattern.isFalsePositive?.(matched)) {
       continue;
     }
     const { line, column } = offsetToLineColumn(content, m.index);
