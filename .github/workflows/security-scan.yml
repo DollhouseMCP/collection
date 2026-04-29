@@ -145,10 +145,15 @@ jobs:
       - name: Upload audit report
         if: always()
         run: |
-          npm audit --json > npm-audit.json; AUDIT_EXIT=$?
-          if [ $AUDIT_EXIT -gt 1 ]; then
+          # Capture exit code without tripping `bash -e`. `npm audit` exits 1
+          # whenever advisories exist (even low-severity), so we must use
+          # `||` to suppress -e and still capture the code for the threshold
+          # check. Only exit codes > 1 indicate a genuine audit error.
+          AUDIT_EXIT=0
+          npm audit --json > npm-audit.json || AUDIT_EXIT=$?
+          if [ "$AUDIT_EXIT" -gt 1 ]; then
             echo "npm audit encountered an error (exit code: $AUDIT_EXIT)"
-            exit $AUDIT_EXIT
+            exit "$AUDIT_EXIT"
           fi
           echo "### NPM Audit Report" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
