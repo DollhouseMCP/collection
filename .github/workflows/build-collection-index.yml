@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'library/**/*.md'
+      - 'library/**/*.yaml'
+      - 'library/**/*.yml'
       - 'scripts/build-collection-index.ts'
       - '.github/workflows/build-collection-index.yml'
     branches:
@@ -12,6 +14,8 @@ on:
   pull_request:
     paths:
       - 'library/**/*.md'
+      - 'library/**/*.yaml'
+      - 'library/**/*.yml'
       - 'scripts/build-collection-index.ts'
       - '.github/workflows/build-collection-index.yml'
   workflow_dispatch:
@@ -124,11 +128,9 @@ jobs:
           path: public/
           retention-days: 30
 
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          keep_files: false
-          enable_jekyll: false
+      # NOTE: No deployment step here. The site at collection.dollhousemcp.com is
+      # served via deploy-pages.yml which rebuilds the index inline from library/
+      # before uploading the Pages artifact. The previous peaceiris/actions-gh-pages
+      # step pushed to a gh-pages branch that GitHub Pages no longer reads from
+      # (Pages switched to workflow build mode in #282) — it was dead-letter and
+      # has been removed to stop generating misleading deploy commits.
