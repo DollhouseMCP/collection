@@ -124,7 +124,7 @@ export default [
   
   // Configuration for configuration files and scripts
   {
-    files: ['*.config.js', '*.config.ts', '*.config.mjs', '*.config.cjs', 'scripts/**/*.js', 'src/cli/**/*.ts'],
+    files: ['*.config.js', '*.config.ts', '*.config.mjs', '*.config.cjs', 'scripts/**/*.{js,ts}', 'src/cli/**/*.ts'],
     languageOptions: {
       globals: {
         ...globals.node
