@@ -109,7 +109,7 @@ const STRIPE_TEST_CARDS: ReadonlySet<string> = new Set([
 ]);
 
 function isStripeTestCard(match: string): boolean {
-  return STRIPE_TEST_CARDS.has(match.replace(/\D/g, ''));
+  return STRIPE_TEST_CARDS.has(match.replaceAll(/\D/g, ''));
 }
 
 /** Common path prefixes that aren't PII even though they match the user-path shape. */
@@ -146,7 +146,8 @@ export const PII_PATTERNS: PIIPattern[] = [
     id: 'aws-secret-access-key',
     // Only flag in clear "secret access key" context — the bare regex would
     // false-positive constantly on any 40-char base64 string.
-    pattern: /\b(?:aws[_-]?)?secret[_-]?access[_-]?key\s*[:=]\s*["']?([A-Za-z0-9+/=]{40})["']?/gi,
+    // The /i flag makes A-Z and a-z equivalent; only one case range is needed.
+    pattern: /\b(?:aws[_-]?)?secret[_-]?access[_-]?key\s*[:=]\s*["']?([a-z0-9+/=]{40})["']?/gi,
     severity: 'critical',
     category: 'credential',
     description: 'AWS secret access key (in assignment context)',
@@ -170,7 +171,7 @@ export const PII_PATTERNS: PIIPattern[] = [
   },
   {
     id: 'slack-token',
-    pattern: /\bxox[baprs]-[0-9]{10,}-[0-9a-zA-Z-]{24,}\b/g,
+    pattern: /\bxox[baprs]-\d{10,}-[\dA-Za-z-]{24,}\b/g,
     severity: 'critical',
     category: 'credential',
     description: 'Slack API token',
@@ -284,7 +285,7 @@ export const PII_PATTERNS: PIIPattern[] = [
   },
   {
     id: 'credit-card-shaped-grouped',
-    pattern: /\b(?:4\d{3}|5[1-5]\d{2}|6(?:011|5\d{2})|3[47]\d{2})[-\s]\d{4}[-\s]\d{4}[-\s]\d{4}\b/g,
+    pattern: /\b(?:4\d{3}|5[1-5]\d{2}|6(?:011|5\d{2})|3[47]\d{2})(?:[-\s]\d{4}){3}\b/g,
     severity: 'high',
     category: 'pii',
     description: 'Credit-card-shaped number (4-4-4-4 grouped)',

@@ -171,11 +171,11 @@ describe('pii-scanner', () => {
     });
 
     it('detects Windows user paths', () => {
-      expect(findIds('C:\\Users\\janedoe\\Documents')).toContain('windows-user-path');
+      expect(findIds(String.raw`C:\Users\janedoe\Documents`)).toContain('windows-user-path');
     });
 
     it('does not flag Windows placeholder paths', () => {
-      expect(findIds('C:\\Users\\USER\\Documents')).not.toContain('windows-user-path');
+      expect(findIds(String.raw`C:\Users\USER\Documents`)).not.toContain('windows-user-path');
     });
 
     it('detects public IPv4', () => {

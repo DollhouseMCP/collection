@@ -11,7 +11,7 @@
  * See issue #245 for the full design and severity model.
  */
 
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 import { PIIPattern, PIISeverity, PII_PATTERNS } from './pii-patterns.js';
 
 // ============================================================================
@@ -70,7 +70,7 @@ function offsetToLineColumn(content: string, offset: number): { line: number; co
   let line = 1;
   let lastNewline = -1;
   for (let i = 0; i < offset; i++) {
-    if (content.charCodeAt(i) === 10 /* '\n' */) {
+    if (content.codePointAt(i) === 10 /* '\n' */) {
       line++;
       lastNewline = i;
     }
@@ -214,11 +214,11 @@ export function formatHumanReadable(results: FileScanResult[]): string {
     for (const f of r.findings) {
       lines.push(
         `  ${SEVERITY_ICON[f.severity]} ${f.severity.toUpperCase()} ` +
-        `${f.file}:${f.line}:${f.column}  ${f.description} [${f.patternId}]`
+          `${f.file}:${f.line}:${f.column}  ${f.description} [${f.patternId}]`,
+        `     match: ${truncate(f.matchedText, 80)}`,
+        `     context: ${truncate(f.contextLine.trim(), 100)}`,
+        `     suggestion: redact to e.g. ${f.suggestion}`,
       );
-      lines.push(`     match: ${truncate(f.matchedText, 80)}`);
-      lines.push(`     context: ${truncate(f.contextLine.trim(), 100)}`);
-      lines.push(`     suggestion: redact to e.g. ${f.suggestion}`);
     }
   }
   return lines.join('\n').trim();
