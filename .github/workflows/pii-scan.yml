@@ -1,0 +1,159 @@
+name: PII Scan
+
+# Scans changed library/ files for PII (emails, phones, credit cards, file paths,
+# API keys, etc.) on every PR. Critical and high-severity findings block the
+# merge; medium are commented for reviewer attention; low are informational.
+#
+# Module under src/scanners/pii-scanner.ts (issue #245). Same scanner is invoked
+# by the planned PII anonymizer skill (#292) and MCP scan_for_pii tool (#293)
+# so contributors and CI agree on what counts as PII.
+
+on:
+  pull_request:
+    paths:
+      - 'library/**/*.md'
+      - 'library/**/*.yaml'
+      - 'library/**/*.yml'
+      - 'src/scanners/**'
+      - 'src/cli/scan-pii.ts'
+      - '.github/workflows/pii-scan.yml'
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: 'Glob patterns to scan (space- or comma-separated)'
+        required: false
+        type: string
+        default: 'library/**/*.md library/**/*.yaml library/**/*.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pii-scan:
+    name: PII Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Determine files to scan
+        id: paths
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_PATHS: ${{ github.event.inputs.paths }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$MANUAL_PATHS" ]; then
+            # Manual run — caller passed glob patterns directly.
+            echo "patterns=$MANUAL_PATHS" >> "$GITHUB_OUTPUT"
+            echo "mode=manual" >> "$GITHUB_OUTPUT"
+          else
+            # PR run — only scan files changed against the base branch.
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+            CHANGED=$(git diff --name-only --diff-filter=AM "$BASE...$HEAD" -- \
+              'library/**/*.md' 'library/**/*.yaml' 'library/**/*.yml' || true)
+            if [ -z "$CHANGED" ]; then
+              echo "patterns=" >> "$GITHUB_OUTPUT"
+              echo "mode=skip" >> "$GITHUB_OUTPUT"
+            else
+              # Convert newline-separated to space-separated for the CLI.
+              echo "patterns=$(echo "$CHANGED" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+              echo "mode=pr" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Skip notice
+        if: steps.paths.outputs.mode == 'skip'
+        run: echo "No library/ files changed in this PR — nothing to scan."
+
+      - name: Run PII scanner
+        if: steps.paths.outputs.mode != 'skip'
+        id: scan
+        shell: bash
+        run: |
+          set +e
+          # Severity threshold "high" — block on critical and high findings.
+          # Medium and low findings still appear in the report but don't fail.
+          node dist/src/cli/scan-pii.js --severity=high ${{ steps.paths.outputs.patterns }} > pii-report.txt
+          SCAN_EXIT=$?
+          set -e
+          # Save outputs for the comment + status steps
+          {
+            echo "exit_code=$SCAN_EXIT"
+            echo "report<<PII_EOF"
+            cat pii-report.txt
+            echo "PII_EOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "----- scan output -----"
+          cat pii-report.txt
+          # Also dump JSON for the artifact
+          node dist/src/cli/scan-pii.js --json --severity=high ${{ steps.paths.outputs.patterns }} > pii-report.json || true
+
+      - name: Upload report artifact
+        if: steps.paths.outputs.mode != 'skip'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pii-scan-report
+          path: |
+            pii-report.txt
+            pii-report.json
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.paths.outputs.mode != 'skip'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.scan.outputs.report }}`;
+            const exitCode = '${{ steps.scan.outputs.exit_code }}';
+            const passed = exitCode === '0';
+
+            const icon = passed ? '✅' : '🛑';
+            const status = passed ? 'No blocking PII findings' : 'Blocking PII findings detected';
+
+            const body = [
+              `## ${icon} PII Scan: ${status}`,
+              '',
+              passed
+                ? 'Critical and high-severity PII patterns are clean. Any medium/low findings below are informational.'
+                : '**This PR cannot merge until critical and high-severity findings are redacted.** See the [PII anonymizer skill (#292)](https://github.com/DollhouseMCP/collection/issues/292) for guided cleanup, or scrub manually.',
+              '',
+              '<details><summary>Full report</summary>',
+              '',
+              '```',
+              report || '(no findings)',
+              '```',
+              '',
+              '</details>',
+              '',
+              '<sub>🤖 Automated PII scan — see #245 for the design and pattern set</sub>',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+
+      - name: Fail if blocking findings
+        if: steps.paths.outputs.mode != 'skip' && steps.scan.outputs.exit_code != '0'
+        run: |
+          echo "::error::Critical or high-severity PII findings detected. Redact before merging."
+          exit 1

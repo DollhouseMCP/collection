@@ -29,6 +29,8 @@
     "validate:all": "npm run lint && npm run test:all",
     "validate:content": "node dist/src/cli/validate.js library/**/*.md",
     "security:check": "node scripts/security-check.js",
+    "scan-pii": "node dist/src/cli/scan-pii.js",
+    "prescan-pii": "npm run build",
     "build:index": "tsx scripts/build-collection-index.ts",
     "build:index:dev": "tsx scripts/build-collection-index.ts",
     "build:index:prod": "npm run build && node dist/scripts/build-collection-index.js",
